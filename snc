@@ -1,0 +1,94 @@
+#!/bin/bash
+ 
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+# name of this script 
+export this_script=` basename $0 `
+
+vim_opts="-n -p"
+v="vim $vim_opts"
+rsync="rsync -avz --size-only"
+
+alias cdop="cd ~/svn/SCRIPTS/op/"
+
+define_base_dirs(){
+# main Wales group software directory
+
+export wg_dir="$shd/../../"
+packdir=$HOME/arch/packed
+unpackdir=$HOME/arch/unpacked
+
+}
+
+display_help(){
+# {{{
+cat << EOF
+=============================================
+SCRIPT NAME: $this_script 
+PROJECT: ~/scripts
+PURPOSE: synchronizing 
+USAGE: $this_script [ OPTIONS ] 
+
+	OPTIONS:
+
+	============
+	General
+	============
+
+			display the help message
+
+	vm		v(iew) m(yself), i.e., edit this script
+	
+	============
+
+	Specific
+
+	op 		in SCRIPTS/: sync:
+       				op and all with clust 
+
+	vn		scp iwg => venus
+
+	clust
+
+REMARKS:
+AUTHOR: O. Poplavskyy
+=============================================
+EOF
+# }}}
+}
+
+[ -z $* ] && ( display_help; exit 0 )
+
+# main part 
+# {{{
+
+script_opts=( $* )
+
+while [ ! -z "$1" ]; do
+  	arg="$1"
+  	shift
+  	case "$arg" in
+		  # {{{
+	  	vm) $v $0; exit ;;
+		h) display_help $*; exit ;;
+		iwg) cd ~/svn/SCRIPTS/op/; $rsync iwg $venus:~/ ;;
+		op) 
+			cd ~/svn/SCRIPTS/
+			$rsync ./op ./all $clust:~/svn/SCRIPTS/ 
+			;;
+		clust) 
+			#cd ~/svn/; $rsync PATHSAMPLE SCRIPTS include $clust:~/svn/ 
+			#cd ~
+			$rsync scripts $clust:~/
+			$rsync vrt $clust:~/
+			$rsync .bashrc $clust:~/
+			$rsync .vimrc $clust:~/
+			;;
+		vn) rsync iwg $venus:~/ ;;
+	  	*) ;;
+	esac
+        #}}}
+done
+
+# }}}
+

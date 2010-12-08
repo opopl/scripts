@@ -1,0 +1,68 @@
+#!/bin/bash
+ 
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+# name of this script 
+export this_script=` basename $0 `
+# main Wales group software directory
+export wg_dir="$shd/../../"
+packdir="$HOME/arch/packed/"
+
+vim_opts="-n -p"
+v="vim $vim_opts"
+
+display_help(){
+# {{{
+cat << EOF
+=============================================
+SCRIPT NAME: $this_script 
+PURPOSE: 
+USAGE: $this_script [ OPTIONS ] 
+
+	OPTIONS:
+
+	============
+	General
+	============
+			display the help message
+	vm		v(iew) m(yself), i.e., edit this script
+	
+	============
+
+REMARKS:
+=============================================
+EOF
+# }}}
+}
+
+[ -z $* ] && display_help
+
+# main part 
+# {{{
+
+script_opts=( $* )
+ext=.tar.gz
+
+while [ ! -z "$1" ]; do
+  	case "$1" in
+	  	vm) $v $0; exit ;;
+		elinks) a=http://elinks.or.cz/download/elinks-0.11.7.tar.gz ;;
+		alpine) a=ftp://ftp.cac.washington.edu/alpine/alpine.tar.gz ;;
+		2vcard) a=http://www.netmeister.org/apps/2vcard-0.5.tar.gz ;;
+		 #  gunzip 2vcard-0.5.tar.gz
+		   #tar xvf 2vcard-0.5.tar
+		   #cd 2vcard-0.5
+		   #make install --prefix=$HOME
+		   #logout
+		   #2vcard -F
+		   #2vcard -f pine -i .addressbook -o addressbook
+		   #cat addressbook 
+		hg) a="http://mercurial.selenic.com/release/mercurial-1.7.2.tar.gz"  ;;
+	  	*) ;;
+	esac
+	wget -O $packdir/$1$ext "$a"
+	shift
+done
+
+# }}}
+

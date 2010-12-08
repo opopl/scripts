@@ -1,0 +1,52 @@
+#!/bin/bash
+# mscp - remote copy using ssh
+
+#ssh -L 10000:clust.ch.cam.ac.uk:22 -l op226 chimaera.ch.cam.ac.uk
+
+# Usage: mscp [Source] [Target] [Direction] [Remote machine] [Username] [Copy command]
+# Usage: mscp [Options]
+
+scdir="`dirname $(readlink -f $0)`"
+source "$scdir/sh/func.sh"
+this_script=` basename $0 `
+
+source=$1
+target=$2
+direction="t"
+machine="leonov"
+username=op226
+copy_command="scp -r -P 10000 '-oNoHostAuthenticationForLocalhost=yes'"
+regime="copy"
+
+if [ -z "$1" ] 
+	then 
+ 	 echo_h "$this_script"
+	 regime="show_help"
+       else
+	 while [ ! -z "$1" ] 
+	   	do
+		  case "$1" in
+			"-t") target=$2 ;;
+			"-s") source=$2   ;;
+			"-d") direction=$2  ;;
+			"-rm") machine=$2  ;;
+			"-un") username=$2  ;;
+			"-cc") copy_command=$2  ;;
+		  esac
+		  shift
+	done
+fi
+
+case $regime in
+  	"copy")
+case "$copy_command" in
+  	"scp") copy_command="scp -r -P 10000 '-oNoHostAuthenticationForLocalhost=yes'" ;;
+	"rs")  copy_command="rsync -ave 'ssh -p 10000 -oNoHostAuthenticationForLocalhost=yes'" ;;
+esac
+
+case "$direction" in
+	"t") $copy_command $source $username@localhost:$target ;;
+	"f") $copy_command $username@localhost:$source $target ;;
+esac
+esac
+

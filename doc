@@ -1,0 +1,26 @@
+#!/bin/bash
+
+this_script=` basename $0 `
+vim_opts="-n -p"
+v="vim $vim_opts"
+
+docdir="$HOME/doc/coms"
+d="$docdir"
+
+if [ -z "$1" ]; then 
+cat << EOF
+================================================
+SCRIPT NAME: $this_script
+USAGE: $this_script OPTS
+PURPOSE: display documentation for different things
+OPTS:
+	awk sed rsync pbs 
+PARAMETERS:
+	docs directory:		$docdir
+================================================
+EOF
+else
+  	case "$1" in
+  		*) $v $d/$1.tex ;; 
+	esac
+fi
