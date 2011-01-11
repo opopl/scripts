@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# intro {{{
+
 this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 vrt=$HOME/vrt/
@@ -7,6 +9,8 @@ vrt=$HOME/vrt/
 vim_opts="-n -p"
 v="vim $vim_opts"
 let i=0
+
+# }}}
 
 set_files(){
 #{{{
@@ -18,6 +22,7 @@ done
 }
 
 if [ -z "$1" ]; then 
+# help message {{{
 cat << EOF
 ================================================
 SCRIPT NAME: $this_script
@@ -42,8 +47,10 @@ OPTS:
 	hi	cnf h && make && make install
 ================================================
 EOF
+# }}}
 else
   while [ ! -z "$1" ]; do
+# {{{
 		case $1 in
 		  	lasu) 
 				od=$vrt/ftplugin/latex-suite/
@@ -57,10 +64,13 @@ else
 			"pn") bf=( .pinerc ) ; od=~/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
+			hi) shift; $0 h $* && make && make install; exit ;;
+			he) ./configure --help | less; exit ;;
 			"for") bf=( $vrt/ftplugin/fortran.vim $vrt/syntax/fortran.vim $vrt/plugin/SyntaxFolds.vim $HOME/.vimrc ) od="" ;;
 		esac
 		set_files
 		shift
 	done
 	$v $files
+# }}}
 fi

@@ -20,7 +20,17 @@ PARAMETERS:
 ================================================
 EOF
 else
-  	case "$1" in
-  		*) $v $d/$1.tex ;; 
-	esac
+  	case $1 in
+	  	vm) $v $0 ;; 
+		*)
+		  	case "$1" in
+			  g | gmin) file=gmin ;; 
+			  o | optim) file=optim ;; 
+			  ps | pathsample) file=pathsample ;; 
+			  *) file=$1 ;; 
+			esac
+			
+			$v $d/$file.tex
+		;;
+      esac
 fi

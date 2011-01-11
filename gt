@@ -38,6 +38,12 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
+	s		git status
+	sm		git status for modified & new files
+	c		git commit -a 
+	u		git pull
+	a		git add
+
 REMARKS:
 AUTHOR: O. Poplavskyy
 =============================================

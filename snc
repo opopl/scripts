@@ -46,9 +46,9 @@ USAGE: $this_script [ OPTIONS ]
 	op 		in SCRIPTS/: sync:
        				op and all with clust 
 
-	vn		scp iwg => venus
+	iwg		scp iwg => venus
 
-	clust
+	clust vn www mq
 
 REMARKS:
 AUTHOR: O. Poplavskyy
@@ -76,15 +76,26 @@ while [ ! -z "$1" ]; do
 			cd ~/svn/SCRIPTS/
 			$rsync ./op ./all $clust:~/svn/SCRIPTS/ 
 			;;
-		clust) 
+		rep) 
+		$rsync $HOME/wrk/rep/ $venus:~/rep/
+		;;
+		clust | mq | vn | www) 
+			case $arg in
+			  	clust) host=clust ;;
+			  	mq) host=mek-quake ;;
+			  	vn) host=0502790@venus.phys.uu.nl ;;
+			  	www) host=op226@www-wales.ch.private.cam.ac.uk ;;
+			  	srcf) host=op226@shell.srcf.ucam.org ;;
+			esac
 			#cd ~/svn/; $rsync PATHSAMPLE SCRIPTS include $clust:~/svn/ 
-			#cd ~
-			$rsync scripts $clust:~/
-			$rsync vrt $clust:~/
-			$rsync .bashrc $clust:~/
-			$rsync .vimrc $clust:~/
+			cd $HOME
+			$rsync scripts $host:~/
+			$rsync vrt $host:~/
+			$rsync .bashrc $host:~/
+			$rsync .vimrc $host:~/
+			$rsync .pinerc $host:~/
 			;;
-		vn) rsync iwg $venus:~/ ;;
+		iwg) rsync iwg $venus:~/ ;;
 	  	*) ;;
 	esac
         #}}}
