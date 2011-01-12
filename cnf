@@ -6,6 +6,7 @@ this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 vrt=$HOME/vrt/
 
+od=$HOME/
 vim_opts="-n -p"
 v="vim $vim_opts"
 let i=0
@@ -14,7 +15,7 @@ let i=0
 
 set_files(){
 #{{{
-for f in "${bf[@]}"; do
+for f in ${bf[@]}; do
 	files[$i]=$od$f
 	i=$(($i+1))
 done
@@ -32,8 +33,10 @@ PURPOSE:
 	running ./configure scripts
 OPTS:
 		display help message
-
 	m,vm	view myself
+
+	wgg	git for wg (in .git subdirectory)
+			config description
 
 	rg	ranger
 	s	screen
@@ -42,6 +45,8 @@ OPTS:
 	b	edit ~/.bashrc
 
 	lasu	Latex-Suite files 
+
+	for 	fortran & vim 
 
 	h	./configure --prefix=\$HOME \$*
 	hi	cnf h && make && make install
@@ -66,11 +71,17 @@ else
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
 			hi) shift; $0 h $* && make && make install; exit ;;
 			he) ./configure --help | less; exit ;;
-			"for") bf=( $vrt/ftplugin/fortran.vim $vrt/syntax/fortran.vim $vrt/plugin/SyntaxFolds.vim $HOME/.vimrc ) od="" ;;
+			"for") 
+			bf=( $vrt/ftplugin/fortran.vim $vrt/syntax/fortran.vim $vrt/plugin/SyntaxFolds.vim $HOME/.vimrc ) od="" ;;
+			wgg) 
+				bf=( config description git-svn info/exclude ../.gitignore ) 
+				od=$wgdir/../.git/ 
+				;;
+			git) bf=( .gitconfig ) ;;
 		esac
 		set_files
 		shift
 	done
-	$v $files
+	$v ${files[@]}
 # }}}
 fi

@@ -7,6 +7,7 @@ export this_script=` basename $0 `
 
 vim_opts="-n -p"
 v="vim $vim_opts"
+logf=gt.log
 
 define_base_dirs(){
 # {{{
@@ -38,11 +39,21 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
+	l 		git log
 	s		git status
 	sm		git status for modified & new files
 	c		git commit -a 
 	u		git pull
 	a		git add
+
+	============
+	SVN 
+	============
+
+	sv		git svn
+	svr, sv rb	git svn rebase
+	svl		git svn log
+
 
 REMARKS:
 AUTHOR: O. Poplavskyy
@@ -60,8 +71,31 @@ case $1 in
  	a) shift; git add $* ;;
 	u) git pull ;;
 	c) git commit -a ;;
-	s) git status ;;
+	s) git status | less ;;
+	l) shift; git log $* ;;
 	sm) $0 s | awk '$0 ~ /modified:/ || $0 ~ /new file:/' ;;
+	# SVN {{{
+	sv) shift;
+       		case $1 in 
+	  		rb) shift; git svn rebase $* ;;
+			*) git svn $* ;;
+	        esac
+	      ;;
+	svl) shift; git svn log $* ;;
+	svr) shift; 
+		eoo 
+		git svn rebase $* >> $logf  ;;
+	svf) shift; git svn fetch $* ;;
+	# }}}
+	# viewing {{{
+	v) 
+	shift
+	case $1 in
+	  	log) files=( $logf ) ;;
+	esac
+	$v ${files[@]}
+	;;
+	# }}}
 esac	
 
 # }}}
