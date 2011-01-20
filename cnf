@@ -50,6 +50,11 @@ OPTS:
 
 	h	./configure --prefix=\$HOME \$*
 	hi	cnf h && make && make install
+
+	sh	.bashrc .profile .bash_profile
+
+	git	.gitconfig
+
 ================================================
 EOF
 # }}}
@@ -61,6 +66,9 @@ else
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
 			        	custommacros.vim texrc ../tex_latexSuite.vim )
+					set_files 
+				bf=( lasu.tex ) 
+				od=( $HOME/doc/coms/ ) 
 			;;
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"s") bf=( .screenrc ) ; od=~/ ;; 
@@ -78,6 +86,7 @@ else
 				od=$wgdir/../.git/ 
 				;;
 			git) bf=( .gitconfig ) ;;
+			sh) bf=( .bashrc .profile .bash_profile ) ;;
 		esac
 		set_files
 		shift
