@@ -65,7 +65,8 @@ else
 		  	lasu) 
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
-			        	custommacros.vim texrc ../tex_latexSuite.vim )
+			        	custommacros.vim texrc ../tex_latexSuite.vim \ 
+					wizardfuncs.vim )
 					set_files 
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
