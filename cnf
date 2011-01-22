@@ -33,7 +33,7 @@ PURPOSE:
 	running ./configure scripts
 OPTS:
 		display help message
-	m,vm	view myself
+	m, vm	view myself
 
 	wgg	git for wg (in .git subdirectory)
 			config description
@@ -41,19 +41,32 @@ OPTS:
 	rg	ranger
 	s	screen
 	pn	~/.pinerc
-	v	edit ~/.vimrc
 	b	edit ~/.bashrc
+
+	=================
+	vim plugins 
+	=================
 
 	lasu	Latex-Suite files 
 
+	vcs 	VCSCommand - integration of vim and different version tracking
+			software - git, svn etc.
+
+	=================
+	vim stuff 
+	=================
+
+	v	edit ~/.vimrc
+
 	for 	fortran & vim 
 
-	h	./configure --prefix=\$HOME \$*
-	hi	cnf h && make && make install
 
 	sh	.bashrc .profile .bash_profile
 
 	git	.gitconfig
+
+	h	./configure --prefix=\$HOME \$*
+	hi	cnf h && make && make install
 
 ================================================
 EOF
@@ -66,7 +79,7 @@ else
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
 			        	custommacros.vim texrc ../tex_latexSuite.vim \ 
-					wizardfuncs.vim )
+					wizardfuncs.vim mathmacros.vim brackets.vim  )
 					set_files 
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
@@ -74,7 +87,7 @@ else
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"s") bf=( .screenrc ) ; od=~/ ;; 
 			"b") bf=( .bashrc ) ; od=~/ ;; 
-			"v") bf=( .vimrc ) ; od=~/ ;; 
+			"v") bf=( $MYVIMRC ) ; od="" ;; 
 			"pn") bf=( .pinerc ) ; od=~/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
@@ -88,6 +101,7 @@ else
 				;;
 			git) bf=( .gitconfig ) ;;
 			sh) bf=( .bashrc .profile .bash_profile ) ;;
+			vcs) od=$VIMRUNTIME/plugin/; cd $od;  bf=( ` ls vcs*.vim ` ) ;;
 		esac
 		set_files
 		shift
