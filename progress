@@ -1,0 +1,64 @@
+#!/bin/bash
+# A script to tell you the % completion of a GMIN run
+# Note - this could be improved as it currently assumes that Final Quenches take
+# as long as quenches which is only true if SLOPPYCONV=TIGHTCONV. The reason 
+# this was not taken into account is that the increase in time with convergence
+# does not scale in a simple manner and is highly system dependant.
+
+# DOES GMIN_out exist?
+if [ -s "GMIN_out" ]
+   then echo 'GMIN run progress:' 
+else
+   echo 'No GMIN_out file found. Are you in the right place?'
+   exit
+fi
+# WHAT WAS REQUESTED?
+# Number of STEPS requested in the data file
+steps=`grep STEPS data | awk '{print $2}'`
+# Number of final quenches/structures to SAVE
+save=`grep SAVE data | awk '{print $2}'`
+# Total number of quenches requested
+totreq=$((steps + save))
+# As there is an initial quench, this must be included i.e. increment totreq by 1
+totreq=$((totreq +1))
+
+# WORK OUT WHAT HAS BEEN DONE
+# Number of quenches done so far (including initial)
+qdone=`grep 'Qu ' GMIN_out  | wc | awk '{print $1}'`
+# Number of final quenches done so far
+fqdone=`grep 'Final Quench' GMIN_out | wc | awk '{print $1}'`
+# Total number of quenches done so far
+totdone=$((qdone + fqdone))
+
+# Work out % done (using bc to allow floating point)
+echo '('$totdone'/'$totreq')*100' > bc.in
+percent=`bc -l < bc.in | awk '{printf "%2.2f", $1}'`
+rm bc.in
+echo $percent'% done'
+
+# TIME REMAINING
+# Identify if we have started doing final quenches
+if [ $fqdone -gt 0 ]
+   then t=`grep 'time= ' GMIN_out | awk '{print $12}' | tail -n1`
+else
+   t=`grep 't= ' GMIN_out | awk '{print $13}' | tail -n1`
+fi
+
+# How many quenches are there remaining (inc Final Quenches)?
+remain=$((totreq - totdone))
+
+# This bit requires floating point therefore we use bc again
+# Work out the time/Qu (inc Final Quenches)
+echo '('$t'/'$totdone')' > bc.in
+tperq=`bc -l < bc.in | awk '{printf "%2.3f", $1}'`
+rm bc.in
+# Work out how much time roughly remains
+echo '('$tperq'*'$remain')' > bc.in
+tremain=`bc -l < bc.in | awk '{printf "%2.3f", $1}'`
+rm bc.in
+# Convert into hours (ish)
+echo '('$tremain'/ 3600)'> bc.in
+hrsremain=`bc -l < bc.in | awk '{printf "%2.1f", $1}'`
+rm bc.in
+# Print the output
+echo $hrsremain' hours remaining'

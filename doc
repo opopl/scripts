@@ -27,8 +27,9 @@ else
 			  g | gmin) file=gmin ;; 
 			  o | optim) file=optim ;; 
 			  ls)
+			  	 start=$2 
 			 	 cd $d ; 
-				 entries=( ` ls *.tex | sed 's/.tex$//g' ` ); 
+				 entries=( ` ls *.tex | awk "/^$start/" |  sed 's/.tex$//g' ` ); 
 				 echo "${entries[@]}"	
 			   	 exit 
 				 ;;

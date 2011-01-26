@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cat << EOF
+	NAME: a2so
+	PURPOSE: create a shared library (*.so) from a static one (*.a)
+	USAGE: a2so STATIC_LIB_NAME.a
+	OUTPUT: STATIC_LIB_NAME.so
+EOF
+

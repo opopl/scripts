@@ -40,7 +40,10 @@ OPTS:
 
 	rg	ranger
 	s	screen
-	pn	~/.pinerc
+
+	pn, pine	in home folder: 
+				.pinerc .signature
+
 	b	edit ~/.bashrc
 
 	=================
@@ -89,7 +92,7 @@ else
 			"s") bf=( .screenrc ) ; od=~/ ;; 
 			"b") bf=( .bashrc ) ; od=~/ ;; 
 			"v") bf=( $MYVIMRC ) ; od="" ;; 
-			"pn") bf=( .pinerc ) ; od=~/ ;; 
+			pn | "pine") bf=( .pinerc .signature ) ; od=~/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
 			hi) shift; $0 h $* && make && make install; exit ;;
