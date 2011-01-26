@@ -26,7 +26,12 @@ else
 		  	case "$1" in
 			  g | gmin) file=gmin ;; 
 			  o | optim) file=optim ;; 
-			  ls) cd $d ; ls $d ;;
+			  ls)
+			 	 cd $d ; 
+				 entries=( ` ls *.tex | sed 's/.tex$//g' ` ); 
+				 echo "${entries[@]}"	
+			   	 exit 
+				 ;;
 			  ps | pathsample) file=pathsample ;; 
 			  *) file=$1 ;; 
 			esac
