@@ -79,7 +79,8 @@ else
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
 			        	custommacros.vim texrc ../tex_latexSuite.vim \ 
-					wizardfuncs.vim mathmacros.vim brackets.vim  )
+					wizardfuncs.vim mathmacros.vim brackets.vim \
+				        folding.vim 	)
 					set_files 
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
@@ -101,7 +102,9 @@ else
 				;;
 			git) bf=( .gitconfig ) ;;
 			sh) bf=( .bashrc .profile .bash_profile ) ;;
-			vcs) od=$VIMRUNTIME/plugin/; cd $od;  bf=( ` ls vcs*.vim ` ) ;;
+			vcs) od=$VIMRUNTIME/plugin/; cd $od;  bf=( ` ls vcs*.vim ` ); set_files
+		       	     od=$HOME/doc/coms/; bf=( vcscommand.tex ) 
+					;;
 		esac
 		set_files
 		shift

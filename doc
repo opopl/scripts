@@ -26,6 +26,7 @@ else
 		  	case "$1" in
 			  g | gmin) file=gmin ;; 
 			  o | optim) file=optim ;; 
+			  ls) cd $d ; ls $d ;;
 			  ps | pathsample) file=pathsample ;; 
 			  *) file=$1 ;; 
 			esac
