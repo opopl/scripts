@@ -9,20 +9,12 @@ vim_opts="-n -p"
 v="vim $vim_opts"
 
 define_base_dirs(){
+# {{{
 # main Wales group software directory
-
 export wg_dir="$shd/../../"
 packdir=$HOME/arch/packed
 unpackdir=$HOME/arch/unpacked
-
-}
-
-define_base_vars(){
-ext=.tar.gz
-}
-
-cdpack(){
-cd $packdir
+# }}}
 }
 
 display_help(){
@@ -30,9 +22,9 @@ display_help(){
 cat << EOF
 =============================================
 SCRIPT NAME: $this_script 
-PROJECT: ~/scripts/
-PURPOSE: 
-USAGE: $this_script [ OPTIONS ] 
+PROJECT: ~/scripts
+PURPOSE: deal with file systems
+USAGE: $this_script [ HOST COMMAND ] 
 
 	OPTIONS:
 
@@ -46,7 +38,14 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
-	vim	
+	HOST(S):
+
+	mq => mek-quake
+	cl => clust
+
+	COMMAND(S):
+
+	mnt - mount to /scratch/\$USER/\$host
 
 REMARKS:
 AUTHOR: O. Poplavskyy
@@ -57,25 +56,42 @@ EOF
 
 [ -z $* ] && ( display_help; exit 0 )
 
+main(){
+# {{{
+
+mkdir -p /scratch/op226/$host
+tdir="/scratch/op226/$hdir"
+
+case "$1" in
+  "mq") host="mek-quake" ; hdir="mq" ;;
+  "cl") host="clust" ; hdir="clust" ;;
+  "www") host="www-wales.ch.private.cam.ac.uk" ; hdir="www" ;;
+  "mnt") sshfs op226@$host:/home/op226 $tdir; cd $tdir ;;
+  *)
+  ;;
+esac    # --- end of case ---
+  	
+
+# }}}
+}
+
 # main part 
 # {{{
 
 script_opts=( $* )
-
-mkdir -p $packdir $unpackdir
+define_base_dirs
 
 while [ ! -z "$1" ]; do
-  	arg="$1"
-  	shift
-  	case "$arg" in
+  	case "$1" in
 		  #{{{
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
-		vim) cd $unpackdir/$1 ; ./i ;; 
-		*) atool $packdir/$1$ext -X $unpackdir/  ;;
+	  	*) main $* && exit 0 ;;
 	esac
+  	shift
         #}}}
 done
 
 # }}}
+
 

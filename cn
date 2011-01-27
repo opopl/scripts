@@ -30,6 +30,12 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
+	tex2man FILE	
+			converts latex to man pages 
+				requires: 
+				dblatex: latex => docbook 
+				docbook2X: docbook => texinfo, man
+
 REMARKS:
 AUTHOR: O. Poplavskyy
 =============================================
@@ -51,13 +57,15 @@ while [ ! -z "$1" ]; do
 		  #{{{
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
-		) pats=( "BEGIN:VCARD" "END:VCARD" \
+		"vcf2pine") pats=( "BEGIN:VCARD" "END:VCARD" \
 			"EMAIL;TYPE=OTHER:" \
 			"NICKNAME:" \
 			"NOTE:" \ 
 			"FN:" \ 
 			"N:" )
 	  	*) ;;
+		tex2man) dblatex $1.tex ;; 
+
 	esac
         #}}}
 done

@@ -20,7 +20,24 @@ PARAMETERS:
 ================================================
 EOF
 else
-  	case "$1" in
-  		*) $v $d/$1.tex ;; 
-	esac
+  	case $1 in
+	  	vm) $v $0 ;; 
+		*)
+		  	case "$1" in
+			  g | gmin) file=gmin ;; 
+			  o | optim) file=optim ;; 
+			  ls)
+			  	 start=$2 
+			 	 cd $d ; 
+				 entries=( ` ls *.tex | awk "/^$start/" |  sed 's/.tex$//g' ` ); 
+				 echo "${entries[@]}"	
+			   	 exit 
+				 ;;
+			  ps | pathsample) file=pathsample ;; 
+			  *) file=$1 ;; 
+			esac
+			
+			$v $d/$file.tex
+		;;
+      esac
 fi

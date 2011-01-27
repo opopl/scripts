@@ -4,9 +4,11 @@
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
+source $shd/f.sh
 
 vim_opts="-n -p"
 v="vim $vim_opts"
+logf=gt.log
 
 define_base_dirs(){
 # {{{
@@ -38,6 +40,22 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
+	l 		git log
+	s		git status
+	sm		git status for modified & new files
+	c		git commit -a 
+	u		git pull
+	a		git add
+
+	============
+	SVN 
+	============
+
+	sv		git svn
+	svr, sv rb	git svn rebase
+	svl		git svn log
+
+
 REMARKS:
 AUTHOR: O. Poplavskyy
 =============================================
@@ -51,11 +69,46 @@ main(){
 # {{{
 
 case $1 in 
+  	# base git commands {{{
  	a) shift; git add $* ;;
 	u) git pull ;;
 	c) git commit -a ;;
-	s) git status ;;
+	s) git status | less ;;
+	l) shift; git log $* ;;
 	sm) $0 s | awk '$0 ~ /modified:/ || $0 ~ /new file:/' ;;
+	# }}}
+	# SVN {{{
+	sv) shift;
+       		case $1 in 
+	  		rb) shift; git svn rebase $* ;;
+			*) git svn $* ;;
+	        esac
+	      ;;
+	svl) shift; git svn log $* ;;
+	svr) shift; echo "git svn rebase $* `date_dm_hm`" >> $logf
+		echo "{{{" >> $logf
+		git svn rebase $* >> $logf  
+		git svn rebase $* 2>> $logf  
+		echo "}}}" >> $logf
+		;;
+	svf) shift; git svn fetch $* ;;
+	# }}}
+	# viewing: gt v ... {{{
+	v) 
+	shift
+	case $1 in
+	  	log) files=( $logf ) ;;
+	esac
+	$v ${files[@]}
+	;;
+	# }}}
+	# removing: gt rm ... {{{
+	rm) shift
+		case $1 in 
+		  	log) rm -rf $logf ;;
+		esac
+	;;
+        # }}}	
 esac	
 
 # }}}
@@ -70,7 +123,7 @@ define_base_dirs
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0; exit ;;
+	  	vm) $v $0 $shd/f.sh; exit ;;
 		h) display_help $*; exit ;;
 	  	*) main $* && exit 0 ;;
 	esac

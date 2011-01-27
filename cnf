@@ -1,16 +1,21 @@
 #!/bin/bash
 
+# intro {{{
+
 this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 vrt=$HOME/vrt/
 
+od=$HOME/
 vim_opts="-n -p"
 v="vim $vim_opts"
 let i=0
 
+# }}}
+
 set_files(){
 #{{{
-for f in "${bf[@]}"; do
+for f in ${bf[@]}; do
 	files[$i]=$od$f
 	i=$(($i+1))
 done
@@ -18,6 +23,7 @@ done
 }
 
 if [ -z "$1" ]; then 
+# help message {{{
 cat << EOF
 ================================================
 SCRIPT NAME: $this_script
@@ -27,40 +33,85 @@ PURPOSE:
 	running ./configure scripts
 OPTS:
 		display help message
+	m, vm	view myself
 
-	m,vm	view myself
+	wgg	git for wg (in .git subdirectory)
+			config description
 
 	rg	ranger
 	s	screen
-	pn	~/.pinerc
-	v	edit ~/.vimrc
+
+	pn, pine	in home folder: 
+				.pinerc .signature
+
 	b	edit ~/.bashrc
+
+	=================
+	vim plugins 
+	=================
 
 	lasu	Latex-Suite files 
 
+	vcs 	VCSCommand - integration of vim and different version tracking
+			software - git, svn etc.
+
+	=================
+	vim stuff 
+	=================
+
+	v	edit ~/.vimrc
+
+	for 	fortran & vim 
+
+
+	sh	.bashrc .profile .bash_profile
+
+	git	.gitconfig
+
 	h	./configure --prefix=\$HOME \$*
 	hi	cnf h && make && make install
+
 ================================================
 EOF
+# }}}
 else
   while [ ! -z "$1" ]; do
+# {{{
 		case $1 in
 		  	lasu) 
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
-			        	custommacros.vim texrc ../tex_latexSuite.vim )
+			        	custommacros.vim texrc ../tex_latexSuite.vim \ 
+					wizardfuncs.vim mathmacros.vim brackets.vim \
+				        folding.vim 	)
+					set_files 
+				bf=( lasu.tex ) 
+				od=( $HOME/doc/coms/ ) 
 			;;
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"s") bf=( .screenrc ) ; od=~/ ;; 
 			"b") bf=( .bashrc ) ; od=~/ ;; 
-			"v") bf=( .vimrc ) ; od=~/ ;; 
-			"pn") bf=( .pinerc ) ; od=~/ ;; 
+			"v") bf=( $MYVIMRC ) ; od="" ;; 
+			pn | "pine") bf=( .pinerc .signature ) ; od=~/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
-			"for") bf=( $vrt/ftplugin/fortran.vim $vrt/syntax/fortran.vim $vrt/plugin/SyntaxFolds.vim $HOME/.vimrc ) od="" ;;
+			hi) shift; $0 h $* && make && make install; exit ;;
+			he) ./configure --help | less; exit ;;
+			"for") 
+			bf=( $vrt/ftplugin/fortran.vim $vrt/syntax/fortran.vim $vrt/plugin/SyntaxFolds.vim $HOME/.vimrc ) od="" ;;
+			wgg) 
+				bf=( config description git-svn info/exclude ../.gitignore ) 
+				od=$wgdir/../.git/ 
+				;;
+			git) bf=( .gitconfig ) ;;
+			sh) bf=( .bashrc .profile .bash_profile ) ;;
+			vcs) od=$VIMRUNTIME/plugin/; cd $od;  bf=( ` ls vcs*.vim ` ); set_files
+		       	     od=$HOME/doc/coms/; bf=( vcscommand.tex ) 
+					;;
 		esac
 		set_files
 		shift
 	done
-	$v $files
+	$v ${files[@]}
+# }}}
 fi
