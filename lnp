@@ -15,14 +15,17 @@ define_base_dirs(){
 export wg_dir="$shd/../../"
 packdir=$HOME/arch/packed
 unpackdir=$HOME/arch/unpacked
+
+docdir=$HOME/doc/
+Adir=$HOME/doc/A/
+papdir=$HOME/doc/papers/
 # }}}
 }
 
 
 set_base_vars(){
 # {{{
-s_purpose="view source files with vim"
-s_project="Wales group svn repository"
+s_purpose="make links"
 s_project="~/scripts"
 # }}}
 }
@@ -50,6 +53,23 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
+	$this_script [ FIELD KEYWORD ] PAPERNAME
+		FIELD can be:
+			---------------------------
+       			Purpose of the FIELD: make a link to paper PAPER from FIELD	
+			e.g., $this_script ch MillerWales99 makes a symbolic link in 
+				\$docdir/A/M/
+			------
+			ch 	papers/ChemPhys 
+			2d	papers/2D
+			bk	books
+			th	theses
+			ref	reference materials - tutorials, help etc.
+
+			---------------------------
+		KEYWORD can be:
+			a 	link all papers for FIELD
+
 REMARKS:
 AUTHOR: O. Poplavskyy
 =============================================
@@ -62,13 +82,43 @@ EOF
 main(){
 # {{{
 
-case "$1" in
-  "")
-  ;;
-  *)
-  ;;
-esac    # --- end of case ---
+field="$1"
+shift
+papname="$1"
+shift
+case $field in 
+  "ch") fdir=papers/ChemPhys ;;
+  "2d") fdir=papers/2D ;;
+  "bk") fdir=books ;;
+  "th") fdir=theses ;;
+  "ref") fdir=ref ;;
+esac
 
+case $papname in 
+  	"a")# all papers for a given FIELD {{{
+	cd $docdir/$fdir 
+	papers=` ls *.pdf` 
+	for paper in ${papers[@]}; do
+	  	$0 $field ${paper%.pdf}
+	done
+	;;
+	# }}}
+	*) # process a given paper, e.g., MillerWales99 {{{
+letter=${papname:0:1}
+lettdir=$docdir/A/$letter
+targetdir="../../$fdir/"
+
+echo "Paper name: ${papname%.pdf}"
+echo "Field name: $field"
+echo "Full field name: $ffull"
+echo "Fdir: $fdir"
+echo "Target dir: $targetdir"
+
+cd $lettdir 
+ln -s $targetdir/$papname.pdf $papname
+cd -
+# }}}
+esac
 # }}}
 }
 
