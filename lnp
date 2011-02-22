@@ -97,10 +97,12 @@ esac
 case $papname in 
   	"a")# all papers for a given FIELD {{{
 	cd $docdir/$fdir 
-	papers=` ls *.pdf` 
+	papers=( ` ls *.pdf ` )
 	for paper in ${papers[@]}; do
-	  	$0 $field ${paper%.pdf}
+	  	echo $paper $this_script
+	  	$this_script $field ${paper%.pdf}
 	done
+	cd -
 	;;
 	# }}}
 	*) # process a given paper, e.g., MillerWales99 {{{
