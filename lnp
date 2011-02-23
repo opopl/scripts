@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+# sh template: preliminary part {{{
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+# name of this script 
+export this_script=` basename $0 `
+
+vim_opts="-n -p"
+v="vim $vim_opts"
+
+define_base_dirs(){
+# {{{
+# main Wales group software directory
+export wg_dir="$shd/../../"
+packdir=$HOME/arch/packed
+unpackdir=$HOME/arch/unpacked
+
+docdir=$HOME/doc/
+Adir=$HOME/doc/A/
+papdir=$HOME/doc/papers/
+# }}}
+}
+
+
+set_base_vars(){
+# {{{
+s_purpose="make links"
+s_project="~/scripts"
+# }}}
+}
+
+set_base_vars
+
+display_help(){
+# {{{
+cat << EOF
+=============================================
+SCRIPT NAME: $this_script 
+PROJECT: $s_project
+PURPOSE: $s_purpose
+USAGE: $this_script [ OPTIONS ] 
+
+	OPTIONS:
+
+	============
+	General
+	============
+
+			display the help message
+
+	vm		v(iew) m(yself), i.e., edit this script
+	
+	============
+
+	$this_script [ FIELD KEYWORD ] PAPERNAME
+		FIELD can be:
+			---------------------------
+       			Purpose of the FIELD: make a link to paper PAPER from FIELD	
+			e.g., $this_script ch MillerWales99 makes a symbolic link in 
+				\$docdir/A/M/
+			------
+			ch 	papers/ChemPhys 
+			2d	papers/2D
+			bk	books
+			th	theses
+			ref	reference materials - tutorials, help etc.
+
+			---------------------------
+		KEYWORD can be:
+			a 	link all papers for FIELD
+
+REMARKS:
+AUTHOR: O. Poplavskyy
+=============================================
+EOF
+# }}}
+}
+# }}}
+[ -z "$*" ] && ( display_help; exit 0 )
+
+main(){
+# {{{
+
+field="$1"
+shift
+papname="$1"
+shift
+case $field in 
+  "ch") fdir=papers/ChemPhys ;;
+  "2d") fdir=papers/2D ;;
+  "bk") fdir=books ;;
+  "th") fdir=theses ;;
+  "ref") fdir=ref ;;
+esac
+
+case $papname in 
+  	"a")# all papers for a given FIELD {{{
+	cd $docdir/$fdir 
+	papers=( ` ls *.pdf ` )
+	for paper in ${papers[@]}; do
+	  	echo $paper $this_script
+	  	$this_script $field ${paper%.pdf}
+	done
+	cd -
+	;;
+	# }}}
+	*) # process a given paper, e.g., MillerWales99 {{{
+letter=${papname:0:1}
+lettdir=$docdir/A/$letter
+targetdir="../../$fdir/"
+
+echo "Paper name: ${papname%.pdf}"
+echo "Field name: $field"
+echo "Full field name: $ffull"
+echo "Fdir: $fdir"
+echo "Target dir: $targetdir"
+
+cd $lettdir 
+ln -s $targetdir/$papname.pdf $papname
+cd -
+# }}}
+esac
+# }}}
+}
+
+# main part 
+# {{{
+
+script_opts=( $* )
+define_base_dirs
+
+while [ ! -z "$1" ]; do
+  	case "$1" in
+		  #{{{
+	  	vm) $v $0; exit ;;
+		h) display_help $*; exit ;;
+	  	*) main $* && exit 0 ;;
+	esac
+  	shift
+        #}}}
+done
+
+# }}}
+
+

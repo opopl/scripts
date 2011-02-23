@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
- 
+
+# sh template: preliminary part {{{
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
@@ -55,7 +56,7 @@ AUTHOR: O. Poplavskyy
 EOF
 # }}}
 }
-
+# }}}
 [ -z "$*" ] && ( display_help; exit 0 )
 
 main(){
