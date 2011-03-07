@@ -1,3 +1,4 @@
 #/bin/bash
 
 rsync -avz --size-only $leonov:~/doc/* $HOME/doc/
+rsync -avz --size-only $leonov:~/doc/*.* $HOME/doc/
