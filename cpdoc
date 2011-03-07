@@ -1,4 +1,9 @@
 #/bin/bash
 
-rsync -avz --size-only $leonov:~/doc/* $HOME/doc/
-rsync -avz --size-only $leonov:~/doc/*.* $HOME/doc/
+dirs=( "/doc/" "/wrk/rep/pics" )
+
+for dir in ${dirs[@]}; do
+	rsync -avz --size-only $leonov:~$dir/* $HOME/$dir
+	rsync -avz --size-only $leonov:~$dir/*.* $HOME/$dir
+done
+
