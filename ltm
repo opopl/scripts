@@ -2,6 +2,10 @@
 
 # ps2pdf options taken from http://www.cs.toronto.edu/~dross/latex/
 
+# ps2pdf_opts dvips_opts vim_opts {{{
+
+vim_opts="-n -p"
+
 export ps2pdf_opts="-dOptimize=true -dUseFlateCompression=true \
 	       -dMaxSubsetPct=100 -dCompatibilityLevel=1.2 \
 		-dSubsetFonts=true -dEmbedAllFonts=true \
@@ -15,7 +19,9 @@ export dvips_opts="-Pamz -Pcmz"
 export dvips_opts="-Ppdf"
 
 mode="full"
+# }}}
 
+# dvitops dvitopdf {{{
 dvitops(){
 
 dvips $dvips_opts -o $1.ps $1.dvi
@@ -28,6 +34,7 @@ dvips $dvips_opts -o  $1.ps $1.dvi
 ps2pdf $ps2pdf_opts $1.ps $1.pdf
 
 }
+# }}}
 
 dojob(){ # {{{
 
@@ -55,21 +62,47 @@ esac
 
 if [ -z "$1" ]
  	then
+# help message {{{
 cat << EOF
 =============================================================
 SCRIPT NAME: ltm
 USAGE: ltm [options] [  latex filename (without extension) ]
 OPTIONS:
+	---------------
+	General
+	---------------
+
+	vm	view myself - edit this script with vim
+	c	clean files in the current directory, namely:
+	    		rm -f *.pdf *.ps *.dvi 	
+			    	*.bbl *.aux *.bak .*swp  	
+				*.blg *.log *.lof *~  		
+				*.lot *.out *.toc 		
+				*.backup *.pdf *.ps *.d *.dmp *.idx 
+
+	---------------
+	Latex-specific (yet to be implemented)
+	---------------
+
 	-f 	full latex cycle (set by default)
 	-s	single latex + pdf generation
 	-c	convert dvi to pdf
 	-g	run "makeglossaries" command only
+
+USAGE EXAMPLES:
+	ltm rep 
+		( source file rep.tex, output rep.pdf )
 =============================================================
 EOF
+# }}}
 	else 
+	  # {{{
 while [ ! -z "$1" ]
 	do
 	  case "$1" in
+	    "vm") vim $vim_opts $0 ;;
+	    "c") rm -f *.pdf *.ps *.dvi *.bbl *.aux *.bak .*swp *.blg *.log *.lof *~ *.lot *.out *.toc *.backup *.pdf *.ps *.d *.dmp *.idx 
+		;;
 	    "-f") mode="full" ;;
 	    "-s") mode="simple" ;;
 	    "-c") mode="convert" ;;
@@ -80,6 +113,7 @@ while [ ! -z "$1" ]
 		;;
 	  esac
 	  shift
+	  # }}}
 done
 
 fi

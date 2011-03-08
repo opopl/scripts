@@ -53,7 +53,7 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
-	$this_script [ FIELD KEYWORD ] PAPERNAME
+	$this_script FIELD KEYWORD ACTION PAPERNAME
 		FIELD can be:
 			---------------------------
        			Purpose of the FIELD: make a link to paper PAPER from FIELD	
@@ -67,10 +67,22 @@ USAGE: $this_script [ OPTIONS ]
 			ref	reference materials - tutorials, help etc.
 
 			---------------------------
+
 		KEYWORD can be:
+
 			a 	link all papers for FIELD
 
+		ACTION can be:
+
+	c		clean links for FIELD
+
 REMARKS:
+-----------------
+USAGE EXAMPLES:
+	lnp ch a  - create links to all papers in papers/ChemPhys/ subdirectory.
+			The generated links are stored in A/ subdirectory.
+	lnp ch c  - clean all links in A/ subdirectory.
+-----------------
 AUTHOR: O. Poplavskyy
 =============================================
 EOF
@@ -108,6 +120,7 @@ case $papname in
 	*) # process a given paper, e.g., MillerWales99 {{{
 letter=${papname:0:1}
 lettdir=$docdir/A/$letter
+mkdir -p $lettdir
 targetdir="../../$fdir/"
 
 echo "Paper name: ${papname%.pdf}"
@@ -134,6 +147,17 @@ while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
 	  	vm) $v $0; exit ;;
+		c) # cleaning links {{{
+		olddir=`pwd`
+		cd $Adir
+		ls 
+		letters=( ` ls ` )
+		for letter in ${letters[@]}; do
+		  	cd $letter; rm -f * ; cd $Adir
+		done
+		cd $olddir
+		# }}} 
+		;;
 		h) display_help $*; exit ;;
 	  	*) main $* && exit 0 ;;
 	esac
