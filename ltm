@@ -108,8 +108,8 @@ while [ ! -z "$1" ]
 	    "-c") mode="convert" ;;
 	    "-g") mode="gls" ;;
 	    *) 
-	    	if [ -f $1 ]; then 
 	    		n=${1%.tex} 
+	    	if [ -f $1.tex ]; then 
 	      		dojob $mode 
 		      else
 			echo "No such file! Exiting..."
