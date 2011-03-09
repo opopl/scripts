@@ -68,12 +68,13 @@ case "$1" in
 
 echo "Rsyncing directories..." # {{{
 
-dirs=( "/doc/" "/wrk/rep/pics" )
+dirs=( "doc" "wrk/rep/pics" "wchf/bin" )
 rsync="rsync -avz --size-only"
 
 for dir in ${dirs[@]}; do
-	$rsync $leonov:~$dir/* $HOME/$dir
-	$rsync $leonov:~$dir/*.* $HOME/$dir
+	echo "Rsyncing: $dir"
+	$rsync $leonov:~/$dir/* $HOME/$dir
+	$rsync $leonov:~/$dir/*.* $HOME/$dir
 done
 
 #}}}
@@ -83,7 +84,10 @@ gitdirs=( "wrk/rep" "scripts/" "wrk/cam" "vrt" "wchf"  )
 
 for gdir in ${gitdirs[@]}; do
   	cd $HOME/$gdir
+	echo "Pulling: $gdir"
 	git pull
+	echo "Pushing: $gdir"
+	git push
 done
 # }}}
 # }}}
