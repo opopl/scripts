@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #!/usr/bin/env bash
  
 # directory where this script resides
@@ -121,6 +119,3 @@ done
 # }}}
 
 
-
-
->>>>>>> 898d216... M cpdoc
