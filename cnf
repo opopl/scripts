@@ -67,6 +67,7 @@ OPTS:
 	sh	.bashrc .profile .bash_profile
 
 	git	.gitconfig
+	
 
 	h	./configure --prefix=\$HOME \$*
 	hi	cnf h && make && make install
