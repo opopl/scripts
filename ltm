@@ -41,7 +41,7 @@ dojob(){ # {{{
 case "$1" in
   	"full") # main (full cycle) mode: {{{ 
 		latex $n
-		makeglossaries $n
+		#makeglossaries $n
 		bibtex $n
 		latex $n
 		latex $n
