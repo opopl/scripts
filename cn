@@ -62,7 +62,7 @@ while [ ! -z "$1" ]; do
 			"NICKNAME:" \
 			"NOTE:" \ 
 			"FN:" \ 
-			"N:" )
+			"N:" );;
 	  	*) ;;
 		tex2man) dblatex $1.tex ;; 
 
