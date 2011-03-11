@@ -20,8 +20,7 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="view source files with vim"
-s_project="Wales group svn repository"
+s_purpose="make an ssh connection"
 s_project="~/scripts"
 # }}}
 }
@@ -49,8 +48,6 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
-	ln		syncing from leonov
-
 REMARKS:
 AUTHOR: O. Poplavskyy
 =============================================
@@ -64,39 +61,9 @@ main(){
 # {{{
 
 case "$1" in
-  ln) # main syncing from leonov {{{
-
-echo "Rsyncing directories..." # {{{
-
-#dirs=( "websites" "q" "data" "doc" "wrk/rep/pics" "wchf/bin" )
-#dirs=( "templates" "gmGof" )
-#dirs=( "doc" )
-dirs=( "bin" )
-rsync="rsync -avz --size-only"
-
-for dir in ${dirs[@]}; do
-	echo "Rsyncing: $dir"
-	$rsync $leonov:~/$dir/* $HOME/$dir
-	$rsync $leonov:~/$dir/*.* $HOME/$dir
-done
-
-#}}}
-
-#echo "Git pulling..." # {{{
-#gitdirs=( "wrk/rep" "scripts/" "wrk/cam" "vrt" "wchf"  )
-
-#for gdir in ${gitdirs[@]}; do
-          #cd $HOME/$gdir
-	#echo "Pulling: $gdir"
-	#git pull
-	#echo "Pushing: $gdir"
-	#git push
-#done
-## }}}
-# }}}
-  ;;
-  *)
-  ;;
+  srcf) ssh -X op226@shell.srcf.ucam.org ;;
+  venus) ssh -X 0502790@venus.phys.uu.nl ;;
+  *) ;;
 esac    # --- end of case ---
 
 # }}}
