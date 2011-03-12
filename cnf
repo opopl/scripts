@@ -72,6 +72,9 @@ OPTS:
 	h	./configure --prefix=\$HOME \$*
 	hi	cnf h && make && make install
 
+
+	tem	view templates in ~/templates directory
+
 ================================================
 EOF
 # }}}
@@ -109,6 +112,7 @@ else
 			vcs) od=$VIMRUNTIME/plugin/; cd $od;  bf=( ` ls vcs*.vim ` ); set_files
 		       	     od=$HOME/doc/coms/; bf=( vcscommand.tex ) 
 					;;
+			tem) od=$hm/templates/; cd $od; bf=( ` ls *.sh | sed '/~$/d' ` )
 		esac
 		set_files
 		shift

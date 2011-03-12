@@ -29,7 +29,7 @@ s_project="~/scripts"
 set_base_vars
 
 display_help(){
-# {{{
+# preliminary ones {{{
 cat << EOF
 =============================================
 SCRIPT NAME: $this_script 
@@ -48,6 +48,10 @@ USAGE: $this_script [ OPTIONS ]
 	vm		v(iew) m(yself), i.e., edit this script
 	
 	============
+EOF
+# }}}
+# main options {{{
+cat << EOF
 
 	ln		syncing from leonov
 
