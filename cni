@@ -21,7 +21,8 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="script for working with BibTeX files"
+s_purpose="view source files with vim"
+s_project="Wales group svn repository"
 s_project="~/scripts"
 # }}}
 }
@@ -29,13 +30,13 @@ s_project="~/scripts"
 set_base_vars
 
 display_help(){
-# general part {{{
+# {{{
 cat << EOF
 =============================================
 SCRIPT NAME: $this_script 
-PROJECT: $s_project
-PURPOSE: $s_purpose
-USAGE: $this_script [ OPTIONS ] [ BIBTEX FILE(S) ]
+PROJECT: ~/wrk/rep
+PURPOSE: convert images between different formats
+USAGE: $this_script STRING
 
 	OPTIONS:
 
@@ -47,25 +48,9 @@ USAGE: $this_script [ OPTIONS ] [ BIBTEX FILE(S) ]
 
 	vm		v(iew) m(yself), i.e., edit this script
 	
-EOF
-# }}}
-# script-specific {{{
-cat << EOF
 	============
 
-	rm *		remove:
-				k 	 	keywords 
-
-	v		view:
-				abs 	 	abstract 
-				
-	l		list:
-
 REMARKS:
-USAGE EXAMPLES:
-	$this_script rm k repdoc.bib 
-			remove all keywords from repdoc.bib
-
 AUTHOR: O. Poplavskyy
 =============================================
 EOF
@@ -74,13 +59,23 @@ EOF
 # }}}
 [ -z "$*" ] && ( display_help; exit 0 )
 
+exts=( gif ps pdf png bmp jpg )
+picdir=$shd/pics/
+
 main(){
 # {{{
 
 case "$1" in
   "")
   ;;
-  *)
+  *)    cd $picdir
+  	files=( ` ls *.png *.gif *.jpg *.bmp | awk "/^$1/"` )
+	for file in ${files[@]}; do
+  		fname=${file%.*}
+  		fext=${file##*.}
+		convert $file $fname.eps
+	done
+	cd -
   ;;
 esac    # --- end of case ---
 
@@ -105,5 +100,7 @@ while [ ! -z "$1" ]; do
 done
 
 # }}}
+
+
 
 

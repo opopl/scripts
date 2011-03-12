@@ -21,7 +21,7 @@ unpackdir=$HOME/arch/unpacked
 }
 
 display_help(){
-# {{{
+# general {{{
 cat << EOF
 =============================================
 SCRIPT NAME: $this_script 
@@ -40,8 +40,16 @@ USAGE: $this_script [ OPTIONS ]
 	vm		v(iew) m(yself), i.e., edit this script
 	
 	============
+EOF
+# }}}
+# script-specific {{{
+cat << EOF
 
 	Specific
+
+	---------------
+	Wales group
+	---------------
 
 	op 		in SCRIPTS/: sync:
        				op and all with clust 
@@ -49,6 +57,14 @@ USAGE: $this_script [ OPTIONS ]
 	iwg		scp iwg => venus
 
 	clust vn www mq
+
+	---------------
+
+	cit 		synchronize between the main citation directory 
+				doc/cit 
+			and other directories containing bib-files
+	
+	---------------
 
 REMARKS:
 AUTHOR: O. Poplavskyy
