@@ -30,7 +30,7 @@ s_project="~/scripts"
 set_base_vars
 
 display_help(){
-# {{{
+# general  {{{
 cat << EOF
 =============================================
 SCRIPT NAME: $this_script 
@@ -49,6 +49,14 @@ USAGE: $this_script STRING
 	vm		v(iew) m(yself), i.e., edit this script
 	
 	============
+EOF
+# }}}
+# script-specific part {{{
+cat << EOF
+
+	rq Q		convert images in the current directory into new ones 
+				with reduced quality Q (in range 1-100). 
+				Output images are stored in the directory called lowQ/
 
 REMARKS:
 AUTHOR: O. Poplavskyy
@@ -66,7 +74,11 @@ main(){
 # {{{
 
 case "$1" in
-  "")
+  rq)
+	  Q=$2
+	  dir=Q$Q
+	  mkdir -p $dir
+	  find . -maxdepth 1 -iname '*jpg' -exec convert -quality $Q {} $dir/{} \; 
   ;;
   *)    cd $picdir
   	files=( ` ls *.png *.gif *.jpg *.bmp | awk "/^$1/"` )

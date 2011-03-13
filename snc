@@ -1,5 +1,6 @@
 #!/bin/bash
- 
+
+# {{{
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
@@ -11,6 +12,8 @@ rsync="rsync -avz --size-only"
 
 alias cdop="cd ~/svn/SCRIPTS/op/"
 
+sync_files=( ".vimrc" ".bashrc" ".pinerc" "scripts" "vrt" "templates" "doc/coms" ) 
+
 define_base_dirs(){
 # main Wales group software directory
 
@@ -19,6 +22,7 @@ packdir=$HOME/arch/packed
 unpackdir=$HOME/arch/unpacked
 
 }
+# }}}
 
 display_help(){
 # general {{{
@@ -65,9 +69,18 @@ cat << EOF
 			and other directories containing bib-files
 	
 	---------------
+	
+ 	${sync_files[@]}
 
 REMARKS:
 AUTHOR: O. Poplavskyy
+EXAMPLES:
+	$this_script srcf 
+		copy ${sync_files[@]} to 
+			$srcf
+	$this_script srcf .bashrc 
+		copy only .bashrc to 
+			$srcf
 =============================================
 EOF
 # }}}
@@ -88,14 +101,14 @@ while [ ! -z "$1" ]; do
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
 		iwg) cd ~/svn/SCRIPTS/op/; $rsync iwg $venus:~/ ;;
-		op) 
-			cd ~/svn/SCRIPTS/
+		op) cd ~/svn/SCRIPTS/
 			$rsync ./op ./all $clust:~/svn/SCRIPTS/ 
-			;;
+		;;
 		rep) 
 		$rsync $HOME/wrk/rep/ $venus:~/rep/
 		;;
-		clust | mq | vn | www) 
+		srcf | clust | mq | vn | www) 
+		# {{{
 			case $arg in
 			  	clust) host=clust ;;
 			  	mq) host=mek-quake ;;
@@ -103,14 +116,19 @@ while [ ! -z "$1" ]; do
 			  	www) host=op226@www-wales.ch.private.cam.ac.uk ;;
 			  	srcf) host=op226@shell.srcf.ucam.org ;;
 			esac
-			#cd ~/svn/; $rsync PATHSAMPLE SCRIPTS include $clust:~/svn/ 
 			cd $HOME
-			$rsync scripts $host:~/
-			$rsync vrt $host:~/
-			$rsync .bashrc $host:~/
-			$rsync .vimrc $host:~/
-			$rsync .pinerc $host:~/
+			dest=$host:~/
+			case "$1" in
+			  	"") for file in ${sync_files[@]}; do
+					#$rsync $file $dest
+					echo $file
+					scp -r $file $dest
+				    done 
+				   ;;
+				*) $rsync $1 $dest ;;
+		        esac
 			;;
+			# }}}
 		iwg) rsync iwg $venus:~/ ;;
 	  	*) ;;
 	esac
