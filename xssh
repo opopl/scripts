@@ -62,7 +62,7 @@ main(){
 
 case "$1" in
   srcf) ssh -X op226@shell.srcf.ucam.org ;;
-  venus) ssh -X 0502790@venus.phys.uu.nl ;;
+  vn | venus) ssh -X 0502790@venus.phys.uu.nl ;;
   *) ;;
 esac    # --- end of case ---
 

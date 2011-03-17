@@ -6,6 +6,9 @@ v="vim $vim_opts"
 
 docdir="$HOME/doc/coms"
 d="$docdir"
+cd $d ; 
+entries=( ` ls *.tex  |  sed 's/.tex$//g' ` ); 
+cd -
 
 if [ -z "$1" ]; then 
 cat << EOF
@@ -14,7 +17,7 @@ SCRIPT NAME: $this_script
 USAGE: $this_script OPTS
 PURPOSE: display documentation for different things
 OPTS:
-	awk sed rsync pbs 
+	${entries[@]}
 PARAMETERS:
 	docs directory:		$docdir
 ================================================

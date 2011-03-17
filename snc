@@ -12,7 +12,8 @@ rsync="rsync -avz --size-only"
 
 alias cdop="cd ~/svn/SCRIPTS/op/"
 
-sync_files=( ".vimrc" ".bashrc" ".pinerc" "scripts" "vrt" "templates" "doc/coms" ) 
+sync_files=( ".vimrc" ".bashrc" ".pinerc"  ) 
+sync_dirs=( "scripts" "vrt" "templates" "doc/coms" ) 
 
 define_base_dirs(){
 # main Wales group software directory
@@ -121,9 +122,9 @@ while [ ! -z "$1" ]; do
 			case "$1" in
 			  	"") for file in ${sync_files[@]}; do
 					#$rsync $file $dest
-					echo $file
-					scp -r $file $dest
-				    done 
+						echo $file
+						scp -r $file $dest
+					done 
 				   ;;
 				*) $rsync $1 $dest ;;
 		        esac
