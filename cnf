@@ -99,7 +99,7 @@ else
 				cd $PWD/../config; files=( gitconfig bashrc pinerc vimrc screenrc addressbook ) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
-					mv $HOME/.$file $HOME/$file.old
+					#cp $HOME/.$file $HOME/$file.old
 				  	cp $file $HOME/.$file
 				done
 				cd -
