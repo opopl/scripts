@@ -4,9 +4,10 @@
 
 this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
-vrt=$HOME/vrt/
+export hmo="$shd/../"
+vrt=$hm/vrt/
 
-od=$HOME/
+od=$hm/
 vim_opts="-n -p"
 v="vim $vim_opts"
 let i=0
@@ -45,6 +46,18 @@ OPTS:
 				.pinerc .signature
 
 	b	edit ~/.bashrc
+	
+	=================
+	(un) installing
+	=================
+
+	i		cnf i:
+				install basic configuration configuration 
+				into the home folder:
+
+					.bashrc .vimrc .
+
+	ui			un-install ( opposite to the "i" option )
 
 	=================
 	vim plugins 
@@ -82,6 +95,15 @@ else
   while [ ! -z "$1" ]; do
 # {{{
 		case $1 in
+		  	i) 
+				cd $hmo/config; files=( gitconfig bashrc pinerc vimrc screenrc addressbook ) 
+				for file in ${files[@]}; do
+				  	echo "Copying $file to $HOME..."
+					mv $HOME/.$file $HOME/$file.old
+				  	cp $file $HOME/.$file
+				done
+				cd -
+			;;
 		  	lasu) 
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
