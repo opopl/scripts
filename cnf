@@ -103,6 +103,7 @@ else
 				  	cp $file $HOME/.$file
 				done
 				cd -
+				exit
 			;;
 		  	lasu) 
 				od=$vrt/ftplugin/latex-suite/
