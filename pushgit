@@ -1,0 +1,4 @@
+#/bin/bash
+
+drn=`pwd | awk -F "/" '{ print $NF }'`
+
