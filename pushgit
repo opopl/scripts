@@ -7,4 +7,4 @@ homedir="/home/students"
 
 server="$user@venus.phys.uu.nl/$homedir/$user"
 
-git push ssh://$server/git/$drn.git '*:*'
+git push ssh://$server/git/$1.git '*:*'
