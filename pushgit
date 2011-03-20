@@ -2,3 +2,9 @@
 
 drn=`pwd | awk -F "/" '{ print $NF }'`
 
+user="0502790"
+homedir="/home/students"
+
+server="$user@venus.phys.uu.nl/$homedir/$user"
+
+git push ssh://$server/git/$drn.git '*:*'
