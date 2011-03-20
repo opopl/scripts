@@ -116,10 +116,10 @@ else
 				od=( $HOME/doc/coms/ ) 
 			;;
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
-			"s") bf=( .screenrc ) ; od=~/ ;; 
-			"b") bf=( .bashrc ) ; od=~/ ;; 
-			"v") bf=( $MYVIMRC ) ; od="" ;; 
-			pn | "pine") bf=( .pinerc .signature ) ; od=~/ ;; 
+			"b") bf=( bashrc ) ; od=~/config ;; 
+			"v") bf=( vimrc ) ; od=~/config ;; 
+			"s") bf=( screenrc ) ; od=~/config ;; 
+			"pn" | "pine") bf=( pinerc ) ; od=~/config ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
 			hi) shift; $0 h $* && make && make install; exit ;;
