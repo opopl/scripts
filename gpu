@@ -79,6 +79,9 @@ main(){
 
 prog=`pwd | awk -F "/" '{ print $NF }'`
 src=""
+com="pull"
+dirs=( `pwd` ) 
+
 
 while [ ! -z "$1" ]; do
 	case "$1" in
@@ -86,12 +89,21 @@ while [ ! -z "$1" ]; do
 		-s) src="$2" ;; 
 		-p) prog="$2" ;; 
 		-o) opts="$2" ;;
+		0 | pull)  com="pull" ;;
+		1 | push)  com="push" ;;
+		a) dirs=( config scripts templates gops wchf  ) ;;
 	esac    
 	shift
 done
 
-git pull "$src~/git/$prog.git" $opts
+git_source="$src~/git/$prog.git" 
+git_source=""
 
+for dir in ${dirs[@]}; do
+  	if [ -d $dir ]; then 
+		git $com $git_source $opts
+        fi
+done
 # }}}
 }
 
