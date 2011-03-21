@@ -5,9 +5,10 @@
 this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 export hmo="$shd/../"
-vrt=$hm/vrt/
+export confdir="$hmo/config/"
+vrt=$hmo/vrt/
 
-od=$hm/
+od=$hmo/
 vim_opts="-n -p"
 v="vim $vim_opts"
 let i=0
@@ -95,17 +96,22 @@ else
   while [ ! -z "$1" ]; do
 # {{{
 		case $1 in
-		  	i) 
-				cd $PWD/../config; files=( gitconfig bashrc pinerc vimrc screenrc addressbook ) 
+		  i) # install config files from ~/config directory to home dir {{{ 
+				files=( gitconfig bashrc pinerc vimrc \
+			       		screenrc addressbook cshrc ) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
+					echo "	from:"
+					echo "		$shd"
+					echo "	to:"
+					echo "		$HOME"
 					#cp $HOME/.$file $HOME/$file.old
-				  	cp $file $HOME/.$file
+				  	cp $confdir/$file $HOME/.$file
 				done
-				cd -
 				exit
 			;;
-		  	lasu) 
+			# }}}
+		  	lasu) # Latex-Suite {{{
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
 			        	custommacros.vim texrc ../tex_latexSuite.vim \ 
@@ -115,11 +121,12 @@ else
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
 			;;
+			# }}}
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
-			"s") bf=( .screenrc ) ; od=~/ ;; 
-			"b") bf=( .bashrc ) ; od=~/ ;; 
-			"v") bf=( $MYVIMRC ) ; od="" ;; 
-			pn | "pine") bf=( .pinerc .signature ) ; od=~/ ;; 
+			"b") bf=( bashrc ) ; od=~/config/ ;; 
+			"v") bf=( vimrc ) ; od=~/config/ ;; 
+			"s") bf=( screenrc ) ; od=~/config/ ;; 
+			"pn" | "pine") bf=( pinerc ) ; od=~/config/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
 			hi) shift; $0 h $* && make && make install; exit ;;
