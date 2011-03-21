@@ -110,11 +110,11 @@ else
 					hofile=$HOME/.$file.old
 					if [ -f $hfile ]; then
 					        echo "Backup: $file"
-						cp -r $hfile $hofile
+						cp $hfile $hofile
 					fi
 					if [ -d $hfile ]; then
 					        echo "Backup: $file"
-						cp -r $hfile $hofile
+						mv $hfile $hofile
 					fi
 				  	cp -r $confdir/$file $hfile
 					eogit(){
