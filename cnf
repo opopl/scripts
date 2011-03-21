@@ -97,7 +97,8 @@ else
 # {{{
 		case $1 in
 		  i) # install config files from ~/config directory to home dir {{{ 
-				files=( gitconfig bashrc pinerc vimrc screenrc addressbook ) 
+				files=( gitconfig bashrc pinerc vimrc \
+			       		screenrc addressbook cshrc ) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
 					echo "	from:"
