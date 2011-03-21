@@ -117,6 +117,12 @@ else
 						cp -r $hfile $hofile
 					fi
 				  	cp -r $confdir/$file $hfile
+					eogit(){
+						echo "$*" >> $HOME/.gitconfig
+					}
+					eogit "[user]" 
+					eogit "name=$USER@$HOSTNAME" 
+					eogit "email=$USER@$HOSTNAME"
 				done
 				exit
 			;;
@@ -136,6 +142,7 @@ else
 			"b") bf=( bashrc ) ; od=~/config/ ;; 
 			"v") bf=( vimrc ) ; od=~/config/ ;; 
 			"s") bf=( screenrc ) ; od=~/config/ ;; 
+			"git") bf=( gitconfig ) ; od=~/config/ ;; 
 			"pn" | "pine") bf=( pinerc ) ; od=~/config/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
 			"h") shift ; ./configure --prefix=$HOME $* ; exit ;;
@@ -147,7 +154,6 @@ else
 				bf=( config description git-svn info/exclude ../.gitignore ) 
 				od=$wgdir/../.git/ 
 				;;
-			git) bf=( .gitconfig ) ;;
 			sh) bf=( .bashrc .profile .bash_profile ) ;;
 			vcs) od=$VIMRUNTIME/plugin/; cd $od;  bf=( ` ls vcs*.vim ` ); set_files
 		       	     od=$HOME/doc/coms/; bf=( vcscommand.tex ) 
