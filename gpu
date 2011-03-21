@@ -48,6 +48,11 @@ USAGE: $this_script [ OPTIONS ]
 	vm		v(iew) m(yself), i.e., edit this script
 	
 	============
+
+	vn		
+	-s source
+	-p prog
+	-o opts
 EOF
 # }}}
 # actual interesting part {{{
@@ -73,16 +78,20 @@ main(){
 # {{{
 
 prog=`pwd | awk -F "/" '{ print $NF }'`
+src=""
 
 while [ ! -z "$1" ]; do
 	case "$1" in
-		vn) source=0502790@venus.phys.uu.nl ;;
-		*) prog=$1 ;;
+		vn) src="0502790@venus.phys.uu.nl:" ;;
+		-s) src="$2" ;; 
+		-p) prog="$2" ;; 
+		-o) opts="$2" ;;
+		*) prog="$1" ;;
 	esac    
 	shift
 done
 
-git pull $source:~/git/$prog.git
+git pull "$src~/git/$prog.git" $opts
 
 # }}}
 }
