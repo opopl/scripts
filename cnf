@@ -98,15 +98,25 @@ else
 		case $1 in
 		  i) # install config files from ~/config directory to home dir {{{ 
 				files=( gitconfig bashrc pinerc vimrc \
-			       		screenrc addressbook cshrc ) 
+			       		screenrc addressbook cshrc \
+				        config 	) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
-					echo "	from:"
-					echo "		$shd"
-					echo "	to:"
-					echo "		$HOME"
-					#cp $HOME/.$file $HOME/$file.old
-				  	cp $confdir/$file $HOME/.$file
+					echo "		from:"
+					echo "			$shd"
+					echo "		to:"
+					echo "			$HOME"
+					hfile=$HOME/.$file
+					hofile=$HOME/.$file.old
+					if [ -f $hfile ]; then
+					        echo "Backup: $file"
+						cp -r $hfile $hofile
+					fi
+					if [ -d $hfile ]; then
+					        echo "Backup: $file"
+						cp -r $hfile $hofile
+					fi
+				  	cp -r $confdir/$file $hfile
 				done
 				exit
 			;;
