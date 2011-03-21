@@ -86,7 +86,6 @@ while [ ! -z "$1" ]; do
 		-s) src="$2" ;; 
 		-p) prog="$2" ;; 
 		-o) opts="$2" ;;
-		*) prog="$1" ;;
 	esac    
 	shift
 done
