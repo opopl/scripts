@@ -4,13 +4,16 @@ this_script=` basename $0 `
 vim_opts="-n -p"
 v="vim $vim_opts"
 
-docdir="$HOME/doc/coms"
+#docdir="$HOME/doc/coms"
+docdir="$HOME/doc-coms"
+citdir="$HOME/doc-cit"
 d="$docdir"
 cd $d ; 
 entries=( ` ls *.tex  |  sed 's/.tex$//g' ` ); 
 cd -
 
 if [ -z "$1" ]; then 
+#display help message {{{
 cat << EOF
 ================================================
 SCRIPT NAME: $this_script
@@ -22,9 +25,12 @@ PARAMETERS:
 	docs directory:		$docdir
 ================================================
 EOF
+#}}}
 else
+  #{{{
   	case $1 in
 	  	vm) $v $0 ;; 
+		cit) cd $citdir; find . -name "*.bib" -exec $v '{}'  \; ;;
 		*)
 		  	case "$1" in
 			  g | gmin) file=gmin ;; 
@@ -43,4 +49,5 @@ else
 			$v $d/$file.tex
 		;;
       esac
+#}}}
 fi

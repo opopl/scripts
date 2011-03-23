@@ -117,12 +117,15 @@ else
 						mv $hfile/* $hofile
 					fi
 					cfile=$confdir/$file
-					ftype=`file $cfile | awk -F ':' '{ print $2 }' | sed 's/^[ ]*//g' `
-					case $ftype in 
-					  	"directory") mkdir -p $hfile ; cp -r $cfile/* $hfile/	;;
-						*) cp -r $cfile $hfile ;;
-					esac
-				
+					if [ -f $cfile ]; then 
+						ftype=`file $cfile | awk -F ':' '{ print $2 }' | sed 's/^[ ]*//g' `
+						case $ftype in 
+						  	"directory") mkdir -p $hfile ; cp -r $cfile/* $hfile/	;;
+							*) cp -r $cfile $hfile ;;
+						esac
+					else
+						echo "$cfile doesn't exist!"
+					fi
 					#update .gitconfig {{{
 					eogit(){
 						echo "$*" >> $HOME/.gitconfig

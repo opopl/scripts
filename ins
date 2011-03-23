@@ -7,6 +7,7 @@ export this_script=` basename $0 `
 
 vim_opts="-n -p"
 v="vim $vim_opts"
+venus="0502790@venus.phys.uu.nl"
 
 define_base_dirs(){
 # main Wales group software directory
@@ -72,7 +73,16 @@ while [ ! -z "$1" ]; do
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
 		vim) cd $unpackdir/$1 ; ./i ;; 
-		*) atool $packdir/$1$ext -X $unpackdir/  ;;
+		#*) atool $packdir/$1$ext -X $unpackdir/  ;;
+		-r) ;;
+		a)  # all first-importance repos {{{
+		cd $HOME;
+		repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" ) 
+		for repo in ${repos[@]}; do 
+			git clone $venus:~/git/$repo.git/
+	      	done 
+		;;
+		# }}}
 	esac
         #}}}
 done
