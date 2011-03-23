@@ -116,13 +116,21 @@ else
 					        echo "Backup: $file"
 						mv $hfile $hofile
 					fi
-				  	cp -r $confdir/$file $hfile
+					cfile=$confdir/$file
+					ftype=`file $cfile | awk -F ':' '{ print $2 }' | sed 's/^[ ]*//g' `
+					case $ftype in 
+					  	"directory") mkdir -p $hfile ; cp -r $cfile/* $hfile/	;;
+						*) cp -r $cfile $hfile ;;
+					esac
+				
+					#update .gitconfig {{{
 					eogit(){
 						echo "$*" >> $HOME/.gitconfig
 					}
 					eogit "[user]" 
 					eogit "name=$USER@$HOSTNAME" 
 					eogit "email=$USER@$HOSTNAME"
+				        #}}}
 				done
 				exit
 			;;
@@ -140,6 +148,7 @@ else
 			# }}}
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"b") bf=( bashrc ) ; od=~/config/ ;; 
+			"csh") bf=( cshrc ) ; od=~/config/ ;; 
 			"v") bf=( vimrc ) ; od=~/config/ ;; 
 			"s") bf=( screenrc ) ; od=~/config/ ;; 
 			"git") bf=( gitconfig ) ; od=~/config/ ;; 
