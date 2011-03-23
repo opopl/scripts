@@ -30,7 +30,11 @@ else
   #{{{
   	case $1 in
 	  	vm) $v $0 ;; 
-		cit) cd $citdir; find . -name "*.bib" -exec $v '{}'  \; ;;
+		cit) 	
+			cd $citdir; 
+			citfiles=( ` find . -name "*.bib" ` ) 
+			$v ${citfiles[@]}
+			;;
 		*)
 		  	case "$1" in
 			  g | gmin) file=gmin ;; 
