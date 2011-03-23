@@ -114,7 +114,7 @@ else
 					fi
 					if [ -d $hfile ]; then
 					        echo "Backup: $file"
-						mv $hfile $hofile
+						mv $hfile/* $hofile
 					fi
 					cfile=$confdir/$file
 					ftype=`file $cfile | awk -F ':' '{ print $2 }' | sed 's/^[ ]*//g' `
