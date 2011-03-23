@@ -74,9 +74,12 @@ EOF
 main(){
 # {{{
 
-
 case "$1" in
-  	a) cp -r ${pdirs[@]} $vrt ;;
+  	a) 
+		for pdir in ${pdirs[@]}; do
+			[ -d $pdir ] && cp -r $pdir $vrt 
+      		done
+		;;
   	*) ;;
 esac    # --- end of case ---
 
