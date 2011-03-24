@@ -38,6 +38,14 @@ EOF
 # }}}
 }
 
+set_vars(){
+#{{{
+export socketname=""
+export shell="-s bash"
+#}}}
+}
+
+set_vars
 # main part 
 # {{{
 
@@ -56,24 +64,26 @@ while [ ! -z "$1" ]; do
   	case "$1" in
 	  # {{{
 	  	d) screen -d ;;
+		-S) [ ! -z "$2" ] && socketname="$1 $2" ;;
+		-s) [ ! -z "$2" ] && shell="$1 $2" ;;
 	  	"r" | "x" | "k" ) 
 			case "$1" in
 			  	d) aso "-d" ;;
 			  	r) screen_opts="-r $screen_opts" ;;
 				x) screen_opts="-x $screen_opts" ;;
-				k) screen_opts=" $screen_opts -X kill -S" ;;
+				k) screen_opts=" $screen_opts -X -S"; screencom="kill" ;;
 			esac
 
 			[ ! -z $2 ] && let screen_num=$2
 
 			screen_title=` $0 l | awk "NR==$screen_num" | awk '{ print $2 }' `
-			screen $screen_opts $screen_title
+			screen $screen_opts $screen_title $screencom
 			;;
 		"l") screen -list \
 			| sed '/There/d ; /Sockets/d; /^[ ]*$/d' \
 			| awk '$0 ~ /Attached/ || $0 ~ /Detached/' \
 			| awk '{ print NR , $0}' ;;
-	  	*) screen $* ;;
+	  	*) screen $* $socketname $shell ;;
 	# }}}
 	esac
 	shift
