@@ -8,6 +8,7 @@ export this_script=` basename $0 `
 vim_opts="-n -p"
 v="vim $vim_opts"
 venus="0502790@venus.phys.uu.nl"
+repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" ) 
 
 define_base_dirs(){
 # main Wales group software directory
@@ -76,11 +77,15 @@ while [ ! -z "$1" ]; do
 		#*) atool $packdir/$1$ext -X $unpackdir/  ;;
 		-r) ;;
 		a)  # all first-importance repos {{{
-		cd $HOME;
-		repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" ) 
-		for repo in ${repos[@]}; do 
-			git clone $venus:~/git/$repo.git/
-	      	done 
+			for repo in ${repos[@]}; do 
+			  	if [ ! -d $HOME/$repo ]; then 
+				  	cd $HOME
+					git clone $venus:~/git/$repo.git/
+			      	else
+				  	cd $HOME/$repo
+					git pull 
+				fi
+		      	done 
 		;;
 		# }}}
 	esac
