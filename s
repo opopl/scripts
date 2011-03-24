@@ -58,7 +58,7 @@ screen_opts="-r $screen_opts"
 case "$1" in
   	"h") display_help ;;
 	"vm") $v $shd/$this_script;;
-	"") screen ;;
+	"") screen -s bash;;
 	*) 
 while [ ! -z "$1" ]; do
   	case "$1" in
@@ -83,7 +83,7 @@ while [ ! -z "$1" ]; do
 			| sed '/There/d ; /Sockets/d; /^[ ]*$/d' \
 			| awk '$0 ~ /Attached/ || $0 ~ /Detached/' \
 			| awk '{ print NR , $0}' ;;
-	  	*) screen $* $socketname $shell ;;
+	  	*) screen $* $socketname -s bash ;;
 	# }}}
 	esac
 	shift
