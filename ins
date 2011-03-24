@@ -76,6 +76,15 @@ while [ ! -z "$1" ]; do
 		vim) cd $unpackdir/$1 ; ./i ;; 
 		#*) atool $packdir/$1$ext -X $unpackdir/  ;;
 		-r) ;;
+		xvn) # install ssh to venus access {{{
+		ssh-keygen -t rsa 
+		pubkey=~/.ssh/id_rsa.pub
+		hmserv=/home/students/0502790/
+		akeys=$hmserv/.ssh/authorized_keys
+		#scp .ssh/id_rsa.pub $venus:~/.ssh/$pubkey.$HOSTNAME
+		cat $pubkey | ssh $venus cat ">>" $akeys
+		;;
+		# }}}
 		a)  # all first-importance repos {{{
 			for repo in ${repos[@]}; do 
 			  	if [ ! -d $HOME/$repo ]; then 
@@ -83,7 +92,7 @@ while [ ! -z "$1" ]; do
 					git clone $venus:~/git/$repo.git/
 			      	else
 				  	cd $HOME/$repo
-					git pull 
+					git pull $venus:~/git/$repo.git/ master
 				fi
 		      	done 
 		;;
