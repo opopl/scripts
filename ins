@@ -77,9 +77,9 @@ while [ ! -z "$1" ]; do
 		#*) atool $packdir/$1$ext -X $unpackdir/  ;;
 		-r) ;;
 		a)  # all first-importance repos {{{
-			cd $HOME;
 			for repo in ${repos[@]}; do 
-			  	if [ ! -d $repo ]; then 
+			  	if [ ! -d $HOME/$repo ]; then 
+				  	cd $HOME
 					git clone $venus:~/git/$repo.git/
 			      	else
 				  	cd $HOME/$repo
