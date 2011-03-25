@@ -75,8 +75,8 @@ main(){
 # {{{
 
 case "$1" in
-  v) make -f m >& m.log; vi m.log ;;
-  c) make -f m clean ;;
+  v) make >& m.log; vi m.log ;;
+  c) make clean ;;
   *)
   ;;
 esac    # --- end of case ---
