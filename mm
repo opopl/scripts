@@ -75,7 +75,7 @@ main(){
 # {{{
 
 case "$1" in
-  "") make -f m >& m.log; vi m.log ;;
+  v) make -f m >& m.log; vi m.log ;;
   c) make -f m clean ;;
   *)
   ;;
