@@ -21,7 +21,8 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="testing bash features"
+s_purpose="view source files with vim"
+s_project="Wales group svn repository"
 s_project="~/scripts"
 # }}}
 }
@@ -74,15 +75,8 @@ main(){
 # {{{
 
 case "$1" in
-  or)
-	s=$2
-	if ( $s == 'ifort' ) then 
-	#if ( $s == 'ifort' || $s == 'pgi' || $s == 'ifc' || $s == 'pathscale' ) then
-  echo "               integer getpid"
-  echo " "
-	fi
-
-  ;;
+  "") make -f m >& m.log; vi m.log ;;
+  c) make -f m clean ;;
   *)
   ;;
 esac    # --- end of case ---
@@ -98,7 +92,7 @@ define_base_dirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
-		  #{{{
+	#{{{
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
 	  	*) main $* && exit 0 ;;
