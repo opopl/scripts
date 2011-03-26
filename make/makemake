@@ -237,33 +237,6 @@ sub MakeDependsf90 {
          print MAKEFILE "\n";
          undef @incs;
          undef @modules;
-         #
-         # Cray F90 compiler
-         #
-         if ($compiler eq "cray") {
-            print MAKEFILE "\t\$(F90) \$(F90FLAGS) -c ";
-            foreach $depend (@dependencies) {
-               push(@modules, "-p", $depend);
                }
-            push(@modules, $file);
-            &PrintWords(30, 1, @modules);
-            print MAKEFILE "\n";
-            undef @modules;
-            }
-         #
-         # ParaSoft F90 compiler
-         #
-         if ($compiler eq "parasoft") {
-            print MAKEFILE "\t\$(F90) \$(F90FLAGS) -c ";
-            foreach $depend (@dependencies) {
-               $depend =~ s/\.o$/.f90/;
-               push(@modules, "-module", $depend);
-               }
-            push(@modules, $file);
-            &PrintWords(30, 1, @modules);
-            print MAKEFILE "\n";
-            undef @modules;
-            }
-         }
       }
    }
