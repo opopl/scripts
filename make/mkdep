@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 #
 # Changelog:
 #
@@ -10,9 +10,38 @@
 # mkdep - put under git control by op
 #
 
-use strict;
+eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
+if 0; #$running_under_some_shell
+
+#use strict;
+use File::Find ();
 use Getopt::Std;
-use File::Find;
+
+# from find2perl {{{
+# Set the variable $File::Find::dont_use_nlink if you're using AFS,
+# since AFS cheats.
+
+# for the convenience of &wanted calls, including -eval statements:
+use vars qw/*name *dir *prune/;
+*name   = *File::Find::name;
+*dir    = *File::Find::dir;
+*prune  = *File::Find::prune;
+
+sub wanted;
+
+# Traverse desired filesystems
+
+sub wanted {
+    #if ( $_ ~= /^.*\.(f90|F|f)\z/s ) { push(@fortranfiles,( "$name" ~= s/^\.\/// ) ); }
+    /^.*\.(f90|F|f)\z/s && push(@fortranfiles,"$name"); 
+    #&& print("$name\n");
+}
+
+File::Find::find({wanted => \&wanted}, '.')  ;
+
+#foreach (@fortranfiles){ s/^\.\/// };
+
+#}}}
 
 #my %opt;
 #@ARGV > 0 and getopts('n:s:m:', \%opt) and not (keys %opt > 1) or die 
@@ -26,13 +55,11 @@ use File::Find;
 		 #default is 20 biggest files
 #USAGE
 
-use File::Find;
-
-open(MAKEFILE, ">deps") or die $!; 
+my $depsfile="deps";
+open(MAKEFILE, ">$depsfile") or die $!; 
 #
 # Allow Fortran 90 module source files to have extensions other than .f90
 #
-@fexts = uniq(F,f,f90);
 @f90 = uniq(F,f,f90);
 foreach (@f90) { s/^/*./ };
 # Dependency listings
@@ -40,6 +67,8 @@ foreach (@f90) { s/^/*./ };
 &MakeDependsf90();
 #&MakeDepends("*.f *.F", '^\s*include\s+["\']([^"\']+)["\']');
 &MakeDepends("*.c",     '^\s*#\s*include\s+["\']([^"\']+)["\']');
+
+#system("sort $depsfile > n; mv n $depsfile");
 
 #Subroutines  {{{
 
@@ -167,24 +196,24 @@ sub MakeDependsf90 {
    local($objfile);
    #
    # Associate each module with the name of the file that contains it {{{
-   foreach $fext (@fexts) {
-     foreach $dir (@dirs) {
-     print "$fext $dir \n";
-   foreach $file (<$dir/*.$fext>) {
+   foreach $file (@fortranfiles) {
       open(FILE, $file) || warn "Cannot open $file: $!\n";
+      # get extension from the $file
+       if ( $file =~ /.*\.(f|F|f90)$/ ){
+	 $fext=$1;
+       }
+       # get the object name for the module
       while (<FILE>) {
 	 /^\s*module\s+([^\s!]+)/i &&
 	    ($filename{&toLower($1)} = $file) =~ s/\.$fext$/.o/;
 	 }
       }
-    }
-  }
    # }}}
    #
    # Print the dependencies of each file that has one or more include's or
    # references one or more modules
    # {{{
-   foreach $file (<@f90>) {
+   foreach $file (@fortranfiles) {
       open(FILE, $file);
       while (<FILE>) {
 	 /^\s*include\s+["\']([^"\']+)["\']/i && push(@incs, $1);
@@ -192,6 +221,9 @@ sub MakeDependsf90 {
 	 }
       if (defined @incs || defined @modules) {
 	 ($objfile = $file) =~ s/\.[^.]+$/.o/;
+	 # for each object file, print relevant dependencies 
+	 # ONLY those object files which are in the root directory
+	 if ( $objfile !~ /^(.*)\// ){
 	 print MAKEFILE "$objfile: ";
 	 undef @dependencies;
 	 foreach $module (@modules) {
@@ -201,6 +233,8 @@ sub MakeDependsf90 {
 	 &PrintWords(length($objfile) + 2, 0,
 		     @dependencies, &uniq(sort(@incs)));
 	 print MAKEFILE "\n";
+	 }
+	 #
 	 undef @incs;
 	 undef @modules;
 	       }
