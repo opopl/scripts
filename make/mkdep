@@ -240,7 +240,13 @@ sub MakeDependsf90 {
 	 print MAKEFILE "$objfile: ";
 	 undef @dependencies;
 	 foreach $module (@modules) {
+	   if (defined $filename{$module})
+	   {
 	    $mo=$filename{$module};
+	  } else
+	  {
+		 ( $mo=$module ) =~ s/$/\.o/;
+	  } 
 	    foreach $libdir (@libdirs){
 	        $libname=$libs{$libdir};
 		$mo =~ s/^$libdir\/.*/$libname/;
