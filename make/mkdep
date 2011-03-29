@@ -44,6 +44,7 @@ foreach (@fortranfiles){ s/^\.\/// };
 
 #}}}
 
+#here-doc{{{
 #my %opt;
 #@ARGV > 0 and getopts('n:s:m:', \%opt) and not (keys %opt > 1) or die 
 #+<< "USAGE";
@@ -55,6 +56,7 @@ foreach (@fortranfiles){ s/^\.\/// };
 		#use only one option at a time
 		 #default is 20 biggest files
 #USAGE
+#}}}
 
 my $depsfile="deps";
 open(MAKEFILE, ">$depsfile") or die $!; 
@@ -62,6 +64,15 @@ open(MAKEFILE, ">$depsfile") or die $!;
 # Allow Fortran 90 module source files to have extensions other than .f90
 #
 @f90 = uniq(F,f,f90);
+
+my %libs=(
+  	"CONNECT" 	=> "libnc.a",
+	"NEB"		=> "libnn.a",
+	"AMH"		=> "libamh.a",
+	"libbowman.a"	=> "libbowman.a"
+      );
+my @libdirs=keys %libs;
+
 foreach (@f90) { s/^/*./ };
 # Dependency listings
 #
@@ -225,17 +236,22 @@ sub MakeDependsf90 {
 	 ($objfile = $file) =~ s/\.[^.]+$/.o/;
 	 # for each object file, print relevant dependencies 
 	 # ONLY those object files which are in the root directory
-	 #if ( $objfile !~ /^(.*)\// ){
+	 if ( $objfile !~ /^(.*)\// ){
 	 print MAKEFILE "$objfile: ";
 	 undef @dependencies;
 	 foreach $module (@modules) {
-	    push(@dependencies, $filename{$module});
+	    $mo=$filename{$module};
+	    foreach $libdir (@libdirs){
+	        $libname=$libs{$libdir};
+		$mo =~ s/^$libdir\/.*/$libname/;
+	    }
+	    push(@dependencies, $mo);
 	    }
 	 @dependencies = &uniq(sort(@dependencies));
 	 &PrintWords(length($objfile) + 2, 0,
 		     @dependencies, &uniq(sort(@incs)));
 	 print MAKEFILE "\n";
-	 #}
+	 }
 	 #
 	 undef @incs;
 	 undef @modules;
