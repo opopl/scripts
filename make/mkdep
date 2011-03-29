@@ -65,6 +65,10 @@ open(MAKEFILE, ">$depsfile") or die $!;
 #
 @f90 = uniq(F,f,f90);
 
+my %excluded=(
+	"mpif.h" =>	"y"
+);
+
 my %libs=(
   	"CONNECT" 	=> "libnc.a",
 	"NEB"		=> "libnn.a",
@@ -229,7 +233,11 @@ sub MakeDependsf90 {
    foreach $file (@fortranfiles) {
       open(FILE, $file);
       while (<FILE>) {
-	 /^\s*include\s+["\']([^"\']+)["\']/i && push(@incs, $1);
+	 if ( $_ =~ /^\s*include\s+["\']([^"\']+)["\']/i ){ 
+	   if ( !exists $excluded{$1} ){
+     	     push(@incs, $1); 
+	   }
+	 }
 	 /^\s*use\s+([^\s,!]+)/i && push(@modules, &toLower($1));
 	 }
       if (defined @incs || defined @modules) {
@@ -251,8 +259,11 @@ sub MakeDependsf90 {
 	        $libname=$libs{$libdir};
 		$mo =~ s/^$libdir\/.*/$libname/;
 	    }
-	    push(@dependencies, $mo);
-	    }
+		    if ( ! exists $excluded{$mo} ){
+		      print "$mo \n";
+			    push(@dependencies, $mo);
+		    }
+	  }
 	 @dependencies = &uniq(sort(@dependencies));
 	 &PrintWords(length($objfile) + 2, 0,
 		     @dependencies, &uniq(sort(@incs)));
