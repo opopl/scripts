@@ -81,11 +81,10 @@ OPTS:
 	sh	.bashrc .profile .bash_profile
 
 	git	.gitconfig
+	gi	git config -e
 	
-
 	h	./configure --prefix=\$HOME \$*
 	hi	cnf h && make && make install
-
 
 	tem	view templates in ~/templates directory
 
