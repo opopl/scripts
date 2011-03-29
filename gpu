@@ -100,7 +100,10 @@ git_source="$src~/git/$prog.git"
 git_source=""
 
 for dir in ${dirs[@]}; do
+	echo "Pulling $dir..."
+	echo "git command: $com"
   	if [ -d $dir ]; then 
+	  	cd $HOME/$dir
 		git $com $git_source $opts
         fi
 done

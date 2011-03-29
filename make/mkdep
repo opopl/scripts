@@ -33,13 +33,14 @@ sub wanted;
 
 sub wanted {
     #if ( $_ ~= /^.*\.(f90|F|f)\z/s ) { push(@fortranfiles,( "$name" ~= s/^\.\/// ) ); }
+    #/^\.\/(.*)\.(f90|F|f)\z/s && push(@fortranfiles,"$1.$2"); 
     /^.*\.(f90|F|f)\z/s && push(@fortranfiles,"$name"); 
     #&& print("$name\n");
 }
 
 File::Find::find({wanted => \&wanted}, '.')  ;
 
-#foreach (@fortranfiles){ s/^\.\/// };
+foreach (@fortranfiles){ s/^\.\/// };
 
 #}}}
 
@@ -196,6 +197,7 @@ sub MakeDependsf90 {
    local($objfile);
    #
    # Associate each module with the name of the file that contains it {{{
+   
    foreach $file (@fortranfiles) {
       open(FILE, $file) || warn "Cannot open $file: $!\n";
       # get extension from the $file
@@ -223,7 +225,7 @@ sub MakeDependsf90 {
 	 ($objfile = $file) =~ s/\.[^.]+$/.o/;
 	 # for each object file, print relevant dependencies 
 	 # ONLY those object files which are in the root directory
-	 if ( $objfile !~ /^(.*)\// ){
+	 #if ( $objfile !~ /^(.*)\// ){
 	 print MAKEFILE "$objfile: ";
 	 undef @dependencies;
 	 foreach $module (@modules) {
@@ -233,7 +235,7 @@ sub MakeDependsf90 {
 	 &PrintWords(length($objfile) + 2, 0,
 		     @dependencies, &uniq(sort(@incs)));
 	 print MAKEFILE "\n";
-	 }
+	 #}
 	 #
 	 undef @incs;
 	 undef @modules;
