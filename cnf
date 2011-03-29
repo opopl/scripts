@@ -154,6 +154,7 @@ else
 			"csh") bf=( cshrc ) ; od=~/config/ ;; 
 			"v") bf=( vimrc ) ; od=~/config/ ;; 
 			"s") bf=( screenrc ) ; od=~/config/ ;; 
+			"gi") git config -e && exit ;;
 			"git") bf=( gitconfig ) ; od=~/config/ ;; 
 			"pn" | "pine") bf=( pinerc ) ; od=~/config/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;
