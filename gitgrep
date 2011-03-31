@@ -21,8 +21,7 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="view source files with vim"
-s_project="Wales group svn repository"
+s_purpose="grep ..."
 s_project="~/scripts"
 # }}}
 }
@@ -37,7 +36,7 @@ cat << EOF
 SCRIPT NAME: $this_script 
 PROJECT: $s_project
 PURPOSE: $s_purpose
-USAGE: $this_script [ OPTIONS ] 
+USAGE: $this_script  OPT PAT 
 
 	OPTIONS:
 
@@ -50,6 +49,10 @@ USAGE: $this_script [ OPTIONS ]
 	vm		v(iew) m(yself), i.e., edit this script
 	
 	============
+
+	lf		list of files which contain specified PAT (pattern) 
+	lcf 		list files with conflicts, i.e., which contain
+				<<<<<<< HEAD
 EOF
 # }}}
 # actual interesting part {{{
@@ -76,14 +79,14 @@ main(){
 
 opt=$1
 pat=$2
-files=$3
+head="<<<<<<< HEAD"
+
+exts=( *.f *.f90 *.F )
 
 case "$1" in
-  "") 
-  fgrep -m1 -iR $1 *.f | awk -F ':' '{ print $1 } END { print NR}' 
-  ;;
-  *)
-  ;;
+  lf) fgrep -m1 -iR $pat ${exts[@]}  | awk -F ':' '{ print $1 } END { print NR}' ;;
+  lcf) $0 lf "$head" ;;
+  *) ;;
 esac    # --- end of case ---
 
 # }}}
