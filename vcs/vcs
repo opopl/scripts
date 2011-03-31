@@ -74,16 +74,18 @@ EOF
 main(){
 # {{{
 
+file=$1
+delim="="
+start="<<<<<<< HEAD"
+end=">>>>>>>"
+
 case "$1" in
-  make)
-	cd $shd/make
-	mfiles=( makemake mkmf mkmk fmkmf mkdep ) 
-	$v ${mfiles[@]}
-  ;;
-  awk)
-  	cd $shd/awk
-	mfiles=( awkpl ) 
-	$v ${afiles[@]}
+  at)
+perl << EOF
+open IN, '<$file' or die;
+my @contents=<IN>;
+close IN;
+EOF
   ;;
   *)
   ;;

@@ -74,16 +74,13 @@ EOF
 main(){
 # {{{
 
+opt=$1
+pat=$2
+files=$3
+
 case "$1" in
-  make)
-	cd $shd/make
-	mfiles=( makemake mkmf mkmk fmkmf mkdep ) 
-	$v ${mfiles[@]}
-  ;;
-  awk)
-  	cd $shd/awk
-	mfiles=( awkpl ) 
-	$v ${afiles[@]}
+  "") 
+  fgrep -m1 -iR $1 *.f | awk -F ':' '{ print $1 } END { print NR}' 
   ;;
   *)
   ;;

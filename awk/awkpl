@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
- 
+
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
@@ -21,8 +21,7 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="view source files with vim"
-s_project="Wales group svn repository"
+s_purpose="print lines with awk"
 s_project="~/scripts"
 # }}}
 }
@@ -50,6 +49,12 @@ USAGE: $this_script [ OPTIONS ]
 	vm		v(iew) m(yself), i.e., edit this script
 	
 	============
+
+	[ie]b[ie]e	(include/exclude)-begin-(include/exclude)-end
+
+	ibie		include-begin-include-end
+	ebee		exclude-begin-exclude-end
+
 EOF
 # }}}
 # actual interesting part {{{
@@ -74,17 +79,14 @@ EOF
 main(){
 # {{{
 
+b=$2
+e=$3
+
 case "$1" in
-  make)
-	cd $shd/make
-	mfiles=( makemake mkmf mkmk fmkmf mkdep ) 
-	$v ${mfiles[@]}
-  ;;
-  awk)
-  	cd $shd/awk
-	mfiles=( awkpl ) 
-	$v ${afiles[@]}
-  ;;
+  ebee) awk "/$e/{p=0};p;/$b/{p=1}" ;;
+  ibee) awk "/$e/{p=0} /$b/{p=1} p" ;;
+  ebie) awk "p; /$e/{p=0} /$b/{p=1}" ;;
+  ibie) awk "/$b/,/$e/" ;; 
   *)
   ;;
 esac    # --- end of case ---

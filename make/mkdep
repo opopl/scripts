@@ -66,7 +66,8 @@ open(MAKEFILE, ">$depsfile") or die $!;
 @f90 = uniq(F,f,f90);
 
 my %excluded=(
-	"mpif.h" =>	"y"
+	"mpif.h" =>	"",
+	"MPIF.H" =>	""
 );
 
 my %libs=(
