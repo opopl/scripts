@@ -7,23 +7,24 @@ use strict;
 use File::Find ();
 
 #here-doc{{{
-my %opts;
-@ARGV > 0 and getopts('f:', \%opts) and not (keys %opt > 1) or die
-+<< "EOF";
-PURPOSE: Accept the HEAD >>>>...=== part 
-USAGE: $0 [-f file] 
+#my %opts;
+#@ARGV > 0 and getopts('f:', \%opts) and not (keys %opts > 1) or die
+#+<< "EOF";
+#PURPOSE: Accept the HEAD >>>>...=== part 
+#USAGE: $0 [-f file] 
 
-      -f  set the filename
-EOF
-#}}}
+      #-f  set the filename
+#EOF
+##}}}
 
-my $file = $opts{f};
+#my $file = $opts{f};
 
 my $head="<<<<<<< HEAD";
 my $delim="=======";
 my $end=">>>>>>>";
 
 # find2perl part {{{
+
 use vars qw/*name *dir *prune/;
 *name   = *File::Find::name;
 *dir    = *File::Find::dir;
@@ -35,14 +36,17 @@ sub doexec ($@);
 use Cwd ();
 my $cwd = Cwd::cwd();
 
-#}}}
+# }}}
 
-# wanted doexec {{{
+my @fortranfiles;
 sub wanted {
-    /^.*\.(f|f90|F)\z/s &&
-    doexec(0, 'grep',"$head",'{}');
+    if (/^.*\.(f|f90|F)\z/s ){
+      push(@fortranfiles,"$name");
+    }
+    #doexec(0, 'grep',"$head",'{}');
 }
 
+# doexec {{{
 sub doexec ($@) {
     my $ok = shift;
     my @command = @_; # copy so we don't try to s/// aliases to constants
@@ -64,11 +68,20 @@ sub doexec ($@) {
 
 sub AcceptHead{
 # {{{
-local $file=@_[0];
 
-$old = $file;                                                       
-$new = "$file.tmp.$$";                                              
-$bak = "$file.bak";                                                 
+# the array of conflict files
+my @cfiles=@_;
+my $file;
+
+#foreach $file (@cfiles){
+#@fortranfiles=( "2Dfunc.f" );
+foreach $file (@fortranfiles){
+# weed out appropriate sections {{{
+print "Processing: $file\n";
+
+my $old = $file;                                                       
+my $new = "$file.tmp.$$";                                              
+my $bak = "$file.bak";                                                 
 
 open(OLD, "< $old")         or die "can't open $old: $!";           
 open(NEW, "> $new")         or die "can't open $new: $!";           
@@ -84,12 +97,11 @@ while(<OLD>){
    if ( /^$delim/ ) {
      $id++;
    }
-   if (( ( $ih > 0 ) and ( $id==0 ) and ( !/^$head/ )) or
-   ( ( $ih==0 ) and ( !/^$end/ ) ) ){
+   if ( (( $ih > 0 ) and ( $id==0 ) and ( !/^$head/ )) or
+   (( $ih==0 ) and ( !/^$end/ )) ){
      print NEW;
    }
 }
-
 close(OLD)                  or die "can't close $old: $!";          
 close(NEW)                  or die "can't close $new: $!";          
 
@@ -98,7 +110,11 @@ rename($new, $old)          or die "can't rename $new to $old: $!";
 #}}}
 }
 
+}
+#}}}
+
 # find all the conflict files 
 File::Find::find({wanted => \&wanted}, '.');
 # resolve the conflicts
-&AcceptHead($file);
+#&AcceptHead(@conflictfiles);
+&AcceptHead;

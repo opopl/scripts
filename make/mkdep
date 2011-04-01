@@ -187,7 +187,6 @@ sub MakeDepends {
    #
    foreach $file (<${lang}>) {
       open(FILE, $file) || warn "Cannot open $file: $!\n";
-      print "Opened: $file \n";
       while (<FILE>) {
 	 /$pattern/i && push(@incs, $1);
 	 }
@@ -261,7 +260,7 @@ sub MakeDependsf90 {
 		$mo =~ s/^$libdir\/.*/$libname/;
 	    }
 		    if ( ! exists $excluded{$mo} ){
-		      print "$mo \n";
+		      #print "$mo \n";
 			    push(@dependencies, $mo);
 		    }
 	  }
