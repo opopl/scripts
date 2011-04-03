@@ -48,6 +48,7 @@ USAGE: $this_script [ OPTIONS ]
 			display the help message
 
 	vm		v(iew) m(yself), i.e., edit this script
+	-g		g(raphical) vim  invocation
 	
 	============
 EOF
@@ -103,6 +104,7 @@ while [ ! -z "$1" ]; do
 		  #{{{
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
+		-g) $v="$v -g" ;;
 	  	*) main $* && exit 0 ;;
 	esac
   	shift
