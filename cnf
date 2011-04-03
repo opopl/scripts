@@ -34,8 +34,10 @@ PURPOSE:
 	configuration of different things; 
 	running ./configure scripts
 OPTS:
+
 		display help message
 	m, vm	view myself
+	-g	fire gvim
 
 	wgg	git for wg (in .git subdirectory)
 			config description
@@ -64,10 +66,12 @@ OPTS:
 	vim plugins 
 	=================
 
-	lasu	Latex-Suite files 
+	lasu			Latex-Suite files 
 
-	vcs 	VCSCommand - integration of vim and different version tracking
-			software - git, svn etc.
+	vcs 			VCSCommand - integration of vim and different version tracking
+					software - git, svn etc.
+
+	perls			perl-support
 
 	=================
 	vim stuff 
@@ -95,6 +99,7 @@ else
   while [ ! -z "$1" ]; do
 # {{{
 		case $1 in
+		  -g) v="$v -g";;
 		  i) # install config files from ~/config directory to home dir {{{ 
 				files=( gitconfig bashrc pinerc vimrc \
 			       		screenrc addressbook cshrc \
@@ -146,6 +151,17 @@ else
 					set_files 
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
+			;;
+			# }}}
+			"perls") # perl-support {{{
+				od=$vrt/ftplugin/
+				bf=perl.vim
+				set_files
+				od=$vrt/plugin/
+				bf=perl-support.vim
+				set_files
+				od=$vrt/perl-support/doc/
+				bf=perl-hot-keys.tex
 			;;
 			# }}}
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
