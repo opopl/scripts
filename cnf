@@ -54,6 +54,8 @@ OPTS:
 	(un) installing
 	=================
 
+	igit		update .gitconfig with actual USER/HOSTNAME information
+			
 	i		cnf i:
 				install basic configuration configuration 
 				into the home folder:
@@ -130,18 +132,19 @@ else
 					else
 						echo "$cfile doesn't exist!"
 					fi
-					#update .gitconfig {{{
+					done
+				exit
+			;;
+			# }}}
+			igit) #update .gitconfig {{{
 					eogit(){
 						echo "$*" >> $HOME/.gitconfig
 					}
 					eogit "[user]" 
 					eogit "name=$USER@$HOSTNAME" 
 					eogit "email=$USER@$HOSTNAME"
-				        #}}}
-				done
-				exit
+				#}}}
 			;;
-			# }}}
 		  	lasu) # Latex-Suite {{{
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
