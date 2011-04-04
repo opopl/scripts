@@ -104,7 +104,7 @@ while [ ! -z "$1" ]; do
 		  #{{{
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
-		-g) $v="$v -g" ;;
+		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;
 	esac
   	shift
