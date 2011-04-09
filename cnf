@@ -34,8 +34,10 @@ PURPOSE:
 	configuration of different things; 
 	running ./configure scripts
 OPTS:
+
 		display help message
 	m, vm	view myself
+	-g	fire gvim
 
 	wgg	git for wg (in .git subdirectory)
 			config description
@@ -52,6 +54,8 @@ OPTS:
 	(un) installing
 	=================
 
+	igit		update .gitconfig with actual USER/HOSTNAME information
+			
 	i		cnf i:
 				install basic configuration configuration 
 				into the home folder:
@@ -64,10 +68,12 @@ OPTS:
 	vim plugins 
 	=================
 
-	lasu	Latex-Suite files 
+	lasu			Latex-Suite files 
 
-	vcs 	VCSCommand - integration of vim and different version tracking
-			software - git, svn etc.
+	vcs 			VCSCommand - integration of vim and different version tracking
+					software - git, svn etc.
+
+	perls			perl-support
 
 	=================
 	vim stuff 
@@ -81,11 +87,10 @@ OPTS:
 	sh	.bashrc .profile .bash_profile
 
 	git	.gitconfig
+	gi	git config -e
 	
-
 	h	./configure --prefix=\$HOME \$*
 	hi	cnf h && make && make install
-
 
 	tem	view templates in ~/templates directory
 
@@ -96,6 +101,7 @@ else
   while [ ! -z "$1" ]; do
 # {{{
 		case $1 in
+		  -g) v="$v -g";;
 		  i) # install config files from ~/config directory to home dir {{{ 
 				files=( gitconfig bashrc pinerc vimrc \
 			       		screenrc addressbook cshrc \
@@ -114,19 +120,31 @@ else
 					fi
 					if [ -d $hfile ]; then
 					        echo "Backup: $file"
-						mv $hfile $hofile
+						mv $hfile/* $hofile
 					fi
-				  	cp -r $confdir/$file $hfile
+					cfile=$confdir/$file
+					if [ -f $cfile -o -d $cfile ]; then 
+						ftype=`file $cfile | awk -F ':' '{ print $2 }' | sed 's/^[ ]*//g' `
+						case $ftype in 
+						  	"directory") mkdir -p $hfile ; cp -r $cfile/* $hfile/	;;
+							*) cp -r $cfile $hfile ;;
+						esac
+					else
+						echo "$cfile doesn't exist!"
+					fi
+					done
+				exit
+			;;
+			# }}}
+			igit) #update .gitconfig {{{
 					eogit(){
 						echo "$*" >> $HOME/.gitconfig
 					}
 					eogit "[user]" 
 					eogit "name=$USER@$HOSTNAME" 
 					eogit "email=$USER@$HOSTNAME"
-				done
-				exit
+				#}}}
 			;;
-			# }}}
 		  	lasu) # Latex-Suite {{{
 				od=$vrt/ftplugin/latex-suite/
 				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
@@ -138,10 +156,23 @@ else
 				od=( $HOME/doc/coms/ ) 
 			;;
 			# }}}
+			"perls") # perl-support {{{
+				od=$vrt/ftplugin/
+				bf=perl.vim
+				set_files
+				od=$vrt/plugin/
+				bf=perl-support.vim
+				set_files
+				od=$vrt/perl-support/doc/
+				bf=perl-hot-keys.tex
+			;;
+			# }}}
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"b") bf=( bashrc ) ; od=~/config/ ;; 
+			"csh") bf=( cshrc ) ; od=~/config/ ;; 
 			"v") bf=( vimrc ) ; od=~/config/ ;; 
 			"s") bf=( screenrc ) ; od=~/config/ ;; 
+			"gi") git config -e && exit ;;
 			"git") bf=( gitconfig ) ; od=~/config/ ;; 
 			"pn" | "pine") bf=( pinerc ) ; od=~/config/ ;; 
 			"m" | "vm") bf=( $0 ) ; od="" ;;

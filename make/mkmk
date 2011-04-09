@@ -1,0 +1,3 @@
+#!/bin/bash
+
+fmkmf -f90 $FC90 ` ls *.f90 ` > makefile && make 

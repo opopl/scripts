@@ -7,6 +7,8 @@ export this_script=` basename $0 `
 
 vim_opts="-n -p"
 v="vim $vim_opts"
+venus="0502790@venus.phys.uu.nl"
+repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" ) 
 
 define_base_dirs(){
 # main Wales group software directory
@@ -72,7 +74,29 @@ while [ ! -z "$1" ]; do
 	  	vm) $v $0; exit ;;
 		h) display_help $*; exit ;;
 		vim) cd $unpackdir/$1 ; ./i ;; 
-		*) atool $packdir/$1$ext -X $unpackdir/  ;;
+		#*) atool $packdir/$1$ext -X $unpackdir/  ;;
+		-r) ;;
+		xvn) # install ssh to venus access {{{
+		ssh-keygen -t rsa 
+		pubkey=~/.ssh/id_rsa.pub
+		hmserv=/home/students/0502790/
+		akeys=$hmserv/.ssh/authorized_keys
+		#scp .ssh/id_rsa.pub $venus:~/.ssh/$pubkey.$HOSTNAME
+		cat $pubkey | ssh $venus cat ">>" $akeys
+		;;
+		# }}}
+		a)  # all first-importance repos {{{
+			for repo in ${repos[@]}; do 
+			  	if [ ! -d $HOME/$repo ]; then 
+				  	cd $HOME
+					git clone $venus:~/git/$repo.git/
+			      	else
+				  	cd $HOME/$repo
+					git pull $venus:~/git/$repo.git/ master
+				fi
+		      	done 
+		;;
+		# }}}
 	esac
         #}}}
 done

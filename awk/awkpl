@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
- 
+
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
@@ -7,6 +7,7 @@ export this_script=` basename $0 `
 
 vim_opts="-n -p"
 v="vim $vim_opts"
+repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
 define_base_dirs(){
 # {{{
@@ -20,7 +21,7 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="shortcut for git pull"
+s_purpose="print lines with awk"
 s_project="~/scripts"
 # }}}
 }
@@ -49,10 +50,11 @@ USAGE: $this_script [ OPTIONS ]
 	
 	============
 
-	vn		
-	-s source
-	-p prog
-	-o opts
+	[ie]b[ie]e	(include/exclude)-begin-(include/exclude)-end
+
+	ibie		include-begin-include-end
+	ebee		exclude-begin-exclude-end
+
 EOF
 # }}}
 # actual interesting part {{{
@@ -77,36 +79,18 @@ EOF
 main(){
 # {{{
 
-prog=`pwd | awk -F "/" '{ print $NF }'`
-src=""
-com="pull"
-dirs=( `pwd` ) 
+b=$2
+e=$3
 
+case "$1" in
+  ebee) awk "/$e/{p=0};p;/$b/{p=1}" ;;
+  ibee) awk "/$e/{p=0} /$b/{p=1} p" ;;
+  ebie) awk "p; /$e/{p=0} /$b/{p=1}" ;;
+  ibie) awk "/$b/,/$e/" ;; 
+  *)
+  ;;
+esac    # --- end of case ---
 
-while [ ! -z "$1" ]; do
-	case "$1" in
-		vn) src="0502790@venus.phys.uu.nl" ;;
-		-s) src="$2" ;; 
-		-p) prog="$2" ;; 
-		-o) opts="$2" ;;
-		0 | pull)  com="pull" ;;
-		1 | push)  com="push" ;;
-		a) dirs=( config scripts templates gops wchf  ) ;;
-	esac    
-	shift
-done
-
-git_source="ssh://$src/home/students/0502790/git/$prog.git" 
-#git_source=""
-
-for dir in ${dirs[@]}; do
-	echo "Pulling $dir..."
-	echo "git command: $com"
-  	if [ -d $dir ]; then 
-	  	cd $HOME/$dir
-		git $com $git_source $opts
-        fi
-done
 # }}}
 }
 

@@ -20,7 +20,7 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="shortcut for git pull"
+s_purpose="kill things"
 s_project="~/scripts"
 # }}}
 }
@@ -48,11 +48,6 @@ USAGE: $this_script [ OPTIONS ]
 	vm		v(iew) m(yself), i.e., edit this script
 	
 	============
-
-	vn		
-	-s source
-	-p prog
-	-o opts
 EOF
 # }}}
 # actual interesting part {{{
@@ -77,36 +72,16 @@ EOF
 main(){
 # {{{
 
-prog=`pwd | awk -F "/" '{ print $NF }'`
-src=""
-com="pull"
-dirs=( `pwd` ) 
+case "$1" in
+  csh) csh_pids=( ` $shd/inf csh ` ) 
+  	for pid in ${csh_pids[@]}; do
+	  	kill $pid
+  	done
+  ;;
+  *)
+  ;;
+esac    # --- end of case ---
 
-
-while [ ! -z "$1" ]; do
-	case "$1" in
-		vn) src="0502790@venus.phys.uu.nl" ;;
-		-s) src="$2" ;; 
-		-p) prog="$2" ;; 
-		-o) opts="$2" ;;
-		0 | pull)  com="pull" ;;
-		1 | push)  com="push" ;;
-		a) dirs=( config scripts templates gops wchf  ) ;;
-	esac    
-	shift
-done
-
-git_source="ssh://$src/home/students/0502790/git/$prog.git" 
-#git_source=""
-
-for dir in ${dirs[@]}; do
-	echo "Pulling $dir..."
-	echo "git command: $com"
-  	if [ -d $dir ]; then 
-	  	cd $HOME/$dir
-		git $com $git_source $opts
-        fi
-done
 # }}}
 }
 
