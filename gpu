@@ -85,7 +85,7 @@ dirs=( `pwd` )
 
 while [ ! -z "$1" ]; do
 	case "$1" in
-		vn) src="0502790@venus.phys.uu.nl:" ;;
+		vn) src="0502790@venus.phys.uu.nl" ;;
 		-s) src="$2" ;; 
 		-p) prog="$2" ;; 
 		-o) opts="$2" ;;
@@ -96,8 +96,8 @@ while [ ! -z "$1" ]; do
 	shift
 done
 
-git_source="$src~/git/$prog.git" 
-git_source=""
+git_source="ssh://$src/home/students/0502790/git/$prog.git" 
+#git_source=""
 
 for dir in ${dirs[@]}; do
   	if [ -d $dir ]; then 
