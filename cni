@@ -68,7 +68,7 @@ EOF
 [ -z "$*" ] && ( display_help; exit 0 )
 
 exts=( gif ps pdf png bmp jpg )
-picdir=$shd/pics/
+picdir=$PWD/pics/
 
 main(){
 # {{{

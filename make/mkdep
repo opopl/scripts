@@ -45,16 +45,16 @@ foreach (@fortranfiles){ s/^\.\/// };
 #}}}
 
 #here-doc{{{
-#my %opt;
-#@ARGV > 0 and getopts('n:s:m:', \%opt) and not (keys %opt > 1) or die 
+#MY %OPT;
+#@ARGV > 0 AND GETOPTS('N:S:M:', \%OPT) AND NOT (KEYS %OPT > 1) OR DIE 
 #+<< "USAGE";
-#Shows the biggest files residing in one or several directory trees.
-#usage: $0 [-n num] [-t size] [-m size] directory [directory ...]
-      #-n  show <num> files
-      #-s  show biggest files totalling <size>
-      #-m  show all files bigger than <size>
-		#use only one option at a time
-		 #default is 20 biggest files
+#SHOWS THE BIGGEST FILES RESIDING IN ONE OR SEVERAL DIRECTORY TREES.
+#USAGE: $0 [-N NUM] [-T SIZE] [-M SIZE] DIRECTORY [DIRECTORY ...]
+	  #-N  SHOW <NUM> FILES
+	  #-S  SHOW BIGGEST FILES TOTALLING <SIZE>
+	  #-M  SHOW ALL FILES BIGGER THAN <SIZE>
+		#USE ONLY ONE OPTION AT A TIME
+		 #DEFAULT IS 20 BIGGEST FILES
 #USAGE
 #}}}
 
