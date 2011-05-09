@@ -70,6 +70,7 @@ EOF
 exts=( gif ps pdf png bmp jpg )
 #picdir=$PWD/pics/
 picdir=$PWD
+picdir=$hm/reptex/pics
 
 main(){
 # {{{
@@ -81,8 +82,9 @@ case "$1" in
 	  mkdir -p $dir
 	  find . -maxdepth 1 -iname '*jpg' -exec convert -quality $Q {} $dir/{} \; 
   ;;
-  *)    cd $picdir
-  	files=( ` ls *.png *.gif *.jpg *.bmp | awk "/^$1/"` )
+  *)    cd $picdir/$1
+        #files=( ` ls *.png *.gif *.jpg *.bmp | awk "/^$1/"` )
+  	files=( ` ls *.png *.gif *.jpg *.bmp ` )
 	for file in ${files[@]}; do
   		fname=${file%.*}
   		fext=${file##*.}
