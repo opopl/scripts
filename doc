@@ -30,6 +30,7 @@ else
   #{{{
   	case $1 in
 	  	vm) $v $0 ;; 
+		-g) v="$v -g" ;;
 		cit) 	
 			cd $citdir; 
 			citfiles=( ` find . -name "*.bib" ` ) 
