@@ -15,11 +15,12 @@ define_base_dirs(){
 export wg_dir="$shd/../../"
 packdir=$HOME/arch/packed
 unpackdir=$HOME/arch/unpacked
-ehd="/media/OneTouch4\ Mini/"
-basedir=$ehd
-docdir=$basedir/doc/
-Adir=$basedir/doc/A/
-papdir=$basedir/doc/papers/
+#ehd='/media/OneTouch4 Mini/'
+ehd="/media/O*"
+basedir="$ehd"
+docdir="$basedir/doc/"
+Adir="$basedir/doc/A/"
+papdir="$basedir/doc/papers/"
 # }}}
 }
 
