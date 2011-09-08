@@ -70,7 +70,9 @@ EOF
 exts=( gif ps pdf png bmp jpg )
 #picdir=$PWD/pics/
 picdir=$PWD
-picdir=$hm/reptex/pics
+#picdir=$hm/reptex/pics
+#picdir=$hm/wrk/rep/ppics
+
 
 main(){
 # {{{
