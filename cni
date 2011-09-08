@@ -70,9 +70,13 @@ EOF
 exts=( gif ps pdf png bmp jpg )
 #picdir=$PWD/pics/
 picdir=$PWD
+<<<<<<< HEAD
 #picdir=$hm/reptex/pics
 #picdir=$hm/wrk/rep/ppics
 
+=======
+picdir=$hm/reptex/ppics
+>>>>>>> 82137bd2987c586f6fd8e58c910e55f73f4af933
 
 main(){
 # {{{
@@ -86,7 +90,8 @@ case "$1" in
   ;;
   *)    cd $picdir/$1
         #files=( ` ls *.png *.gif *.jpg *.bmp | awk "/^$1/"` )
-  	files=( ` ls *.png *.gif *.jpg *.bmp ` )
+          #files=( ` ls *.png *.gif *.jpg *.bmp ` )
+        files=( ` ls *.png ` )
 	for file in ${files[@]}; do
   		fname=${file%.*}
   		fext=${file##*.}

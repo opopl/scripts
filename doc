@@ -5,8 +5,8 @@ vim_opts="-n -p"
 v="vim $vim_opts"
 
 #docdir="$HOME/doc/coms"
-docdir="$HOME/doc-coms"
-citdir="$HOME/doc-cit"
+docdir="$HOME/doc/coms"
+citdir="$HOME/doc/cit"
 d="$docdir"
 cd $d ; 
 entries=( ` ls *.tex  |  sed 's/.tex$//g' ` ); 
@@ -30,6 +30,7 @@ else
   #{{{
   	case $1 in
 	  	vm) $v $0 ;; 
+		-g) v="$v -g" ;;
 		cit) 	
 			cd $citdir; 
 			citfiles=( ` find . -name "*.bib" ` ) 
