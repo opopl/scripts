@@ -169,6 +169,7 @@ else
 			# }}}
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"b") bf=( bashrc ) ; od=~/config/ ;; 
+			"ssh") bf=( authorized_keys id_rsa.pub ) ; od=~/.ssh/ ;; 
 			"csh") bf=( cshrc ) ; od=~/config/ ;; 
 			"v") bf=( vimrc ) ; od=~/config/ ;; 
 			"s") bf=( screenrc ) ; od=~/config/ ;; 
