@@ -68,7 +68,8 @@ set_base_vars(){
 s_purpose="copy data files from the cluster"
 s_project="~/scripts"
 
-datadir=$hm/data/2011/10-09-11
+#datadir=$hm/data/2011/10-09-11
+datadir=$hm/data/2011/12-09-11
 server="$mq"
 suff="mek"
 remote="$server:~/gops/pbs/s/*$suff* "
@@ -85,7 +86,8 @@ cd $datadir
 
 case "$1" in
   a) 
-  rsync -avz $remote $local   ;;
+  rsync -avz --size-only $remote $local   
+  ;;
   *) ;;
 esac    # --- end of case ---
 
