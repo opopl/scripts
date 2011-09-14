@@ -133,6 +133,7 @@ else
 						echo "$cfile doesn't exist!"
 					fi
 					done
+					source $HOME/.bashrc
 				exit
 			;;
 			# }}}
@@ -185,6 +186,7 @@ else
 				$vrt/syntax/fortran.vim \
 				$vrt/plugin/SyntaxFolds.vim \
 				$vrt/after/ftplugin/fortran.vim \
+				$vrt/compiler \
 				$HOME/.vimrc ) od="" ;;
 			wgg) 
 				bf=( config description git-svn info/exclude ../.gitignore ) 
