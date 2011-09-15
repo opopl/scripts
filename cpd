@@ -69,6 +69,7 @@ s_purpose="copy data files from the cluster"
 s_project="~/scripts"
 
 datadir=$hm/data/2011/12-09-11
+datadir=$hm/data/2011/
 server="$mq"
 suff="mek"
 remote="$server:~/gops/pbs/s/*$suff* "
