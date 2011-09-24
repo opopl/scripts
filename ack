@@ -19,6 +19,7 @@ our $VERSION = '1.94';
 
 
 MAIN: {
+	#{{{
     if ( $App::Ack::VERSION ne $main::VERSION ) {
         App::Ack::die( "Program/library version mismatch\n\t$0 is $main::VERSION\n\t$INC{'App/Ack.pm'} is $App::Ack::VERSION" );
     }
@@ -55,9 +56,11 @@ MAIN: {
     }
 
     main();
+#}}}
 }
 
 sub main {
+	#{{{
     my $opt = App::Ack::get_command_line_options();
 
     $| = 1 if $opt->{flush}; # Unbuffer the output if flush mode
@@ -116,7 +119,10 @@ sub main {
     }
     close $App::Ack::fh;
     App::Ack::exit_from_ack( $nmatches );
+#}}}
 }
+
+#=head ... =cut {{{
 
 =head1 NAME
 
@@ -979,6 +985,8 @@ This program is free software; you can redistribute it and/or modify
 it under the terms of the Artistic License v2.0.
 
 =cut
+#}}}
+
 package File::Next;
 
 use strict;
