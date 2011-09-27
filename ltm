@@ -1,8 +1,17 @@
 #!/bin/bash
 
-# ps2pdf options taken from http://www.cs.toronto.edu/~dross/latex/
+# set_base_vars {{{
+set_base_vars(){
+
+export outdir=$PWD
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+# name of this script 
+export this_script=` basename $0 `
 
 # ps2pdf_opts dvips_opts vim_opts {{{
+
+# ps2pdf options taken from http://www.cs.toronto.edu/~dross/latex/
 
 vim_opts="-n -p"
 
@@ -18,9 +27,10 @@ export ps2pdf_opts="-dOptimize=true -dUseFlateCompression=true \
 export dvips_opts="-Pamz -Pcmz"
 export dvips_opts="-Ppdf"
 
-mode="full"
+export mode="full"
 # }}}
-
+}
+#}}}
 # dvitops dvitopdf {{{
 dvitops(){
 
@@ -35,30 +45,38 @@ ps2pdf $ps2pdf_opts $1.ps $1.pdf
 
 }
 # }}}
-
 dojob(){ # {{{
 
 case "$1" in
   	"full") # main (full cycle) mode: {{{ 
-		latex $n
-		#makeglossaries $n
-		bibtex $n
-		latex $n
-		latex $n
-		dvitopdf $n
+		latex $fname
+		#makeglossaries $fname
+		bibtex $fname
+		latex $fname
+		latex $fname
+		dvitopdf $fname
 	;;
 	# }}}
-	"gls") makeglossaries $n ;;
+	"gls") makeglossaries $fname ;;
 	"simple") # simple latex-to-pdf {{{
-		latex $n
-		dvitopdf $n
+		latex $fname
+		dvitopdf $fname
 	;; # }}}
 	"convert") # convert dvi to pdf {{{
-		dvitopdf $n
+		dvitopdf $fname
 	;; # }}}
 esac
 
+mkdir -p $outdir
+if [ -f $ffile ]; then
+  	cp $ffile $outdir
+	echo "$this_script> $ffile copied to: "
+	echo "		$outdir"
+fi
+
 } # }}}
+
+set_base_vars
 
 if [ -z "$1" ]
  	then
@@ -79,6 +97,9 @@ OPTIONS:
 				*.blg *.log *.lof *~  		
 				*.lot *.out *.toc 		
 				*.backup *.pdf *.ps *.d *.dmp *.idx 
+	-od DIR
+		output directory for *.ps *.pdf files. 
+		Default is the current directory
 
 	---------------
 	Latex-specific (yet to be implemented)
@@ -92,6 +113,8 @@ OPTIONS:
 USAGE EXAMPLES:
 	ltm rep 
 		( source file rep.tex, output rep.pdf )
+SCRIPT LOCATION:
+	$0
 =============================================================
 EOF
 # }}}
@@ -103,12 +126,14 @@ while [ ! -z "$1" ]
 	    "vm") vim $vim_opts $0 ;;
 	    "c") rm -f *.ps *.dvi *.bbl *.aux *.bak .*swp *.blg *.log *.lof *~ *.lot *.out *.toc *.backup *.d *.dmp *.idx 
 		;;
-	    "-f") mode="full" ;;
-	    "-s") mode="simple" ;;
-	    "-c") mode="convert" ;;
-	    "-g") mode="gls" ;;
+	    "-f") export  mode="full" ;;
+	    "-s") export  mode="simple" ;;
+	    "-c") export  mode="convert" ;;
+	    "-g") export  mode="gls" ;;
+	    "-od") export outdir=$2; shift ;;
 	    *) 
-	    		n=${1%.tex} 
+	    		export fname=${1%.tex} 
+				export ffile=$fname.pdf
 	    	if [ -f $1.tex ]; then 
 	      		dojob $mode 
 		      else
