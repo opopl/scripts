@@ -83,11 +83,17 @@ done
 # }}}
 
 # BLN model: putting "front", "side" into  eps-files {{{
-for f in ` ls *.eps `; do 
-  #fn=${f%.side.front.eps}.eps
-  #fn=${f%.eps}.front.eps
-  fn=${f%.eps}.side.eps
-  mv $f $fn
+# for f in ` ls *.eps `; do 
+  ##fn=${f%.side.front.eps}.eps
+  ##fn=${f%.eps}.front.eps
+  #fn=${f%.eps}.side.eps
+  #mv $f $fn
+# done
+# }}}
+# bak => origin {{{
+for f in `ls *.bak`;do
+  fn=${f%.bak}
+  cp $f $fn
 done
 #}}}
 

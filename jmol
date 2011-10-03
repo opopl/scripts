@@ -79,18 +79,29 @@ while [ ! -z "$1" ]; do
 	case "$1" in
 	  v) ;;
 	  x) export exec=1 ;;
-	  i) export image=1 ;;
-	  xgo) 
+	  i) export image=1 
+cat << eof
+var filename = "$pic"
+write IMAGE 800 600 $pic_ext @filename
+eof
+;;
+	  -if) iffile=$2; shift 
+cat << eof
+		load trajectory "$iffile"
+eof
+;;
+	  xgo) # execute for Go-model {{{ 
 	  	f=$1.jmol
 		opts=( init blnseq goconnect fin )  
 		for opt in ${opts[@]}; do 
 			$0 -e $opt >> $f 
 		done
-		$jmolexe -ions "$f" 
+		$jmolexe -s "$f" &
 		;;
+	  #}}}
 	  # "e" stands for "echo" {{{
 	  -e) s=$2 ; shift
-		  case $n in
+		  case "$s" in
 		  	goconnect) # {{{
 cat << eof
 
@@ -208,10 +219,10 @@ select all; spacefill 200
 #set perspectiveModel 10;
 labels on;  color labels black
 set fontSize 14
-eof 
+eof
 ;;	
 #}}}
-	blnseq)  # bln sequence {{{
+   blnseq)  # bln sequence {{{
 # BLN sequence is B9-N3-(LB)4-N3-B9-N3-(LB)5-L  
 cat << eof
 var Bc="red" ; var Nc="blue" ; var Lc="yellow"
@@ -246,8 +257,8 @@ select atomno=45; color @Bc; label "%i"
 select atomno=46; color @Lc; label "%i"
 
 for (var an=1; an <=45; an=an+1)
-  		ann=an+1
-	  	select atomno=an,atomno=ann; connect (selected)
+		  ann=an+1
+		  select atomno=an,atomno=ann; connect (selected)
 end for
 
 eof
@@ -268,7 +279,9 @@ eof
 done
 
 if [ $exec -eq 1 ]; then 
-	  $jmolexe -ions "$jmols"
+	  #$jmolexe -ions "$jmols"
+	  #$jmolexe
+	  $jmolexe -s "$jmols"
 fi
 
 # }}}
@@ -283,7 +296,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
+		  vm) $v $0 ` find $hm/scripts/JMOL -name \*.jmol -o -name \*.spt ` $hm/scripts/f.sh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;
