@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-# sh template: preliminary part {{{
+# sbvars() dhelp() {{{
+
+sbvars(){
+# {{{
+s_purpose="convert between different image formats"
+s_project="~/scripts"
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
@@ -9,27 +14,18 @@ export this_script=` basename $0 `
 vim_opts="-n -p"
 v="vim $vim_opts"
 
-define_base_dirs(){
-# {{{
-# main Wales group software directory
-export wg_dir="$shd/../../"
-packdir=$HOME/arch/packed
-unpackdir=$HOME/arch/unpacked
+iexts=( gif png bmp jpg )
+export picdir=$PWD
+export iext=gif
+export oext=eps
+export outdir=$picdir/
+
 # }}}
 }
 
+sbvars
 
-set_base_vars(){
-# {{{
-s_purpose="view source files with vim"
-s_project="Wales group svn repository"
-s_project="~/scripts"
-# }}}
-}
-
-set_base_vars
-
-display_help(){
+dhelp(){
 # general  {{{
 cat << EOF
 =============================================
@@ -58,44 +54,65 @@ cat << EOF
 				with reduced quality Q (in range 1-100). 
 				Output images are stored in the directory called lowQ/
 
+	-pd --picdir	Specify directory with images. 
+						Default: $picdir
+
+	-od	--outdir DIR 
+					Specify an output directory for the 
+						converted images.
+						Default: $outdir 
+
+	-i EXT		specify input image files extension
+
 REMARKS:
-AUTHOR: O. Poplavskyy
+SCRIPT LOCATION:
+	$0
 =============================================
 EOF
 # }}}
 }
-# }}}
-[ -z "$*" ] && ( display_help; exit 0 )
 
-exts=( gif ps pdf png bmp jpg )
-#picdir=$PWD/pics/
-picdir=$PWD
-#picdir=$hm/reptex/pics
-#picdir=$hm/wrk/rep/ppics
-#picdir=$hm/reptex/ppics
+[ -z "$*" ] && ( dhelp; exit 0 )
+# }}}
 
 main(){
 # {{{
 
+# read cmd args {{{
+while [ ! -z "$1" ]; do
+
 case "$1" in
-  rq)
-	  Q=$2
-	  dir=Q$Q
+  -pd|--picdir) export picdir=$2; shift ;;
+  rq) # produce images with reduced quality {{{
+  	  # quality in the range 1..100
+	  quality=$2
+	  dir=$picdir/Q$quality
 	  mkdir -p $dir
-	  find . -maxdepth 1 -iname '*jpg' -exec convert -quality $Q {} $dir/{} \; 
+	  find $picdir -maxdepth 1 -iname '*jpg' -exec convert -quality $quality {} $dir/{} \; 
+	  exit 0;
   ;;
-  *)    cd $picdir/$1
-        #files=( ` ls *.png *.gif *.jpg *.bmp | awk "/^$1/"` )
-          #files=( ` ls *.png *.gif *.jpg *.bmp ` )
-        files=( ` ls *.png ` )
+	# }}}
+	-i) iexts=( $2 ) ; shift ;;
+	-od|--outdir) outdir=$2; shift ;;
+  *)  ;;
+esac    
+shift
+
+done
+#}}}
+# convert {{{
+cd $picdir
+
+for iext in ${iexts[@]}; do 
+  	files=( ` ack -f *.$iext ` )
 	for file in ${files[@]}; do
   		fname=${file%.*}
   		fext=${file##*.}
-		convert $file $fname.eps
+		convert $file $fname.$oext
 	done
-	cd -
-  ;;
-esac    # --- end of case ---
+done
+cd -
+#}}}
 
 # }}}
 }
@@ -104,13 +121,12 @@ esac    # --- end of case ---
 # {{{
 
 script_opts=( $* )
-define_base_dirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
 	  	vm) $v $0; exit ;;
-		h) display_help $*; exit ;;
+		h) dhelp $*; exit ;;
 	  	*) main $* && exit 0 ;;
 	esac
   	shift

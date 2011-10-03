@@ -49,27 +49,27 @@ dojob(){ # {{{
 
 case "$1" in
   	"full") # main (full cycle) mode: {{{ 
-		latex $fname
-		#makeglossaries $fname
-		bibtex $fname
-		latex $fname
-		latex $fname
-		dvitopdf $fname
+		latex $ifname
+		#makeglossaries $ifname
+		bibtex $ifname
+		latex $ifname
+		latex $ifname
+		dvitopdf $ifname
 	;;
 	# }}}
-	"gls") makeglossaries $fname ;;
+	"gls") makeglossaries $ifname ;;
 	"simple") # simple latex-to-pdf {{{
-		latex $fname
-		dvitopdf $fname
+		latex $ifname
+		dvitopdf $ifname
 	;; # }}}
 	"convert") # convert dvi to pdf {{{
-		dvitopdf $fname
+		dvitopdf $ifname
 	;; # }}}
 esac
 
 mkdir -p $outdir
 if [ -f $ffile ]; then
-  	cp $ffile $outdir
+  	cp $ffile $outdir/$outfile
 	echo "$this_script> $ffile copied to: "
 	echo "		$outdir"
 fi
@@ -130,21 +130,30 @@ while [ ! -z "$1" ]
 	    "-s") export  mode="simple" ;;
 	    "-c") export  mode="convert" ;;
 	    "-g") export  mode="gls" ;;
-	    "-od") export outdir=$2; shift ;;
-	    *) 
-	    		export fname=${1%.tex} 
-				export ffile=$fname.pdf
-	    	if [ -f $1.tex ]; then 
-	      		dojob $mode 
-		      else
-			echo "No such file! Exiting..."
-			exit 1
-		fi
-		;;
+	    "-od"|"--outdir") export outdir=$2; shift ;;
+		"-of"|"--outfile") export outfile="$2".pdf; shift ;;
+		"-if"|"--infile") export ifname=$2; shift ;;
+	    *)	export ifname="$1" ;;
 	  esac
 	  shift
 	  # }}}
 done
+
+# exec part {{{
+
+export infile="$ifname".tex
+export ffile="$ifname".pdf
+
+if [ -f $infile ]; then 
+		if [ -z $outfile ]; then
+  			export outfile="$ifname".pdf
+	  	fi
+	    dojob $mode 
+	else
+		echo "No such file! Exiting..."
+		exit 1
+fi
+#}}}
 
 fi
 
