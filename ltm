@@ -97,9 +97,14 @@ OPTIONS:
 				*.blg *.log *.lof *~  		
 				*.lot *.out *.toc 		
 				*.backup *.pdf *.ps *.d *.dmp *.idx 
-	-od DIR
+
+	-od,--outdir  DIR
 		output directory for *.ps *.pdf files. 
 		Default is the current directory
+	-if,--infile FILE 
+		Input file name (without *.tex extension)
+	-of,--outfile FILE
+		Output file name (without *.pdf extension)
 
 	---------------
 	Latex-specific (yet to be implemented)
