@@ -10,15 +10,6 @@ vim_opts="-n -p"
 v="vim $vim_opts"
 logf=gt.log
 
-define_base_dirs(){
-# {{{
-# main Wales group software directory
-export wg_dir="$shd/../../"
-packdir=$HOME/arch/packed
-unpackdir=$HOME/arch/unpacked
-# }}}
-}
-
 display_help(){
 # {{{
 cat << EOF
@@ -73,7 +64,7 @@ case $1 in
  	a) shift; git add $* ;;
 	u) git pull ;;
 	c) git commit -a ;;
-	s) git status | less ;;
+	st) git status | less ;;
 	l) shift; git log $* ;;
 	sm) $0 s | awk '$0 ~ /modified:/ || $0 ~ /new file:/' ;;
 	# }}}
@@ -109,6 +100,16 @@ case $1 in
 		esac
 	;;
         # }}}	
+	# cloning  {{{
+	cl) 
+		repo=$2; rdir=$hm/$repo ; shift 
+		case "$repo" in 
+		  	p) url=/media/7CFA-4F67/$repo ;;
+		esac
+		mkdir -p $rdir
+		git clone $url $rdir
+	;;
+	#}}}
 esac	
 
 # }}}
@@ -118,7 +119,6 @@ esac
 # {{{
 
 script_opts=( $* )
-define_base_dirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
