@@ -32,7 +32,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -45,7 +45,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -58,7 +58,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -71,7 +71,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -84,7 +84,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -97,7 +97,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -110,7 +110,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -123,7 +123,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -136,7 +136,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -149,7 +149,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -162,7 +162,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -175,7 +175,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -188,7 +188,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -201,7 +201,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -214,7 +214,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -227,7 +227,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -240,7 +240,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -253,7 +253,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -266,7 +266,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -279,7 +279,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
   set allowEmbeddedScripts false;
   set appendNew true;
   set appletProxy "";
@@ -292,7 +292,7 @@ function _setFileState() {
   set defaultLoadScript "";
   set defaultVDW Auto;
   set forceAutoBond false;
-  #set defaultDirectory "/home/op/scripts/JMOL";
+  #set defaultDirectory "$HOME/scripts/JML";
   #set loadFormat "http://www.rcsb.org/pdb/files/%FILE.pdb.gz";
   #set smilesUrlFormat "http://cactus.nci.nih.gov/chemical/structure/%FILE/file?format=sdf&get3d=True";
   #set edsUrlFormat "http://eds.bmc.uu.se/eds/dfs/%LC13/%LCFILE/%LCFILE.omap";
@@ -305,7 +305,7 @@ function _setFileState() {
   set percentVdwAtom 23;
   set smallMoleculeMaxAtoms 40000;
   set smartAromatic true;
-  load trajectory /*file*/"/home/op/scripts/JMOL/xyz/1.le";
+  load trajectory /*file*/"$HOME/scripts/JML/xyz/1.le";
 
 }
 

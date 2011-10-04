@@ -1,0 +1,7 @@
+
+
+set echo top left; font echo 20 serif bolditalic ; color echo white
+
+#echo this is|myecho; set echo myecho center
+
+

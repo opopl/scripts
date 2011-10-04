@@ -1,9 +1,8 @@
 
 # init {{{
+#
 width = 640;
 height = 480;
-
-load trajectory "/home/op/scripts/JMOL/xyz/1.le"
 
 #set axes on; color axes white
 #axes scale 2.0
@@ -24,16 +23,10 @@ select all; spacefill 200
 #set perspectiveModel 10;
 #}}}
 #labels {{{
+
 labels on
 color labels black
 color bonds none;
+
 #}}}
-
-#script /home/op/scripts/JMOL/goconnect.jmol
-script /home/op/scripts/JMOL/blnseq.jmol
-
-set echo top left; font echo 20 serif bolditalic ; color echo white
-
-#echo this is|myecho; set echo myecho center
-
 

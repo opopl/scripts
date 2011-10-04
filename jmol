@@ -16,8 +16,10 @@ vim_opts="-n -p"
 v="vim $vim_opts"
 repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
-jmolexe="$hm/arch/unpacked/jmol/jmol.sh"
-jmols="$hm/scripts/JML/m.jmol"
+export jmldir="$hm/scripts/JML"
+jmlfiles=( ` find $jmldir -name \*.spt -o -name \*.jmol ` )
+export jmolexe="$hm/arch/unpacked/jmol/jmol.sh"
+export jmols="$jmldir/m.jmol"
 export exec=0
 
 # }}}
@@ -78,26 +80,32 @@ main(){
 while [ ! -z "$1" ]; do 
 	case "$1" in
 	  v) ;;
-	  x) export exec=1 ;;
-	  i) export image=1 
+	  i) # produce images {{{
+	  export image=1 
 cat << eof
 var filename = "$pic"
 write IMAGE 800 600 $pic_ext @filename
 eof
 ;;
-	  -if) iffile=$2; shift 
+#}}}
+	-if) #  specify an input file {{{
+	  	iffile=$2; shift 
 cat << eof
 		load trajectory "$iffile"
 eof
 ;;
-	  xgo) # execute for Go-model {{{ 
-	  	f=$1.jmol
-		opts=( init blnseq goconnect fin )  
-		for opt in ${opts[@]}; do 
-			$0 -e $opt >> $f 
-		done
-		$jmolexe -s "$f" &
-		;;
+#}}}
+	  x|xgo) # execute for Go-model {{{ 
+	  	export exec=1
+	  	export jmols="$jmldir/$1.jmol"
+cat >& $jmols << eof 
+load trajectory $jmldir/xyz/1.le
+script $jmldir/init.jmol
+script $jmldir/goconnect.jmol
+script $jmldir/blnseq.jmol
+script $jmldir/fin.jmol
+eof
+  		;;
 	  #}}}
 	  # "e" stands for "echo" {{{
 	  -e) s=$2 ; shift
@@ -279,9 +287,8 @@ eof
 done
 
 if [ $exec -eq 1 ]; then 
-	  #$jmolexe -ions "$jmols"
-	  #$jmolexe
-	  $jmolexe -s "$jmols"
+	  $jmolexe -s "$jmols" &
+	  exit 
 fi
 
 # }}}
