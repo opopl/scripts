@@ -17,7 +17,7 @@ v="vim $vim_opts"
 repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
 jmolexe="$hm/arch/unpacked/jmol/jmol.sh"
-jmols="$hm/scripts/JMOL/m.jmol"
+jmols="$hm/scripts/JML/m.jmol"
 export exec=0
 
 # }}}
@@ -296,7 +296,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-		  vm) $v $0 ` find $hm/scripts/JMOL -name \*.jmol -o -name \*.spt ` $hm/scripts/f.sh; exit ;;
+		  vm) $v $0 ` find $hm/scripts/JML -name \*.jmol -o -name \*.spt ` $hm/scripts/f.sh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;
