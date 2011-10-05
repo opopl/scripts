@@ -1,8 +1,8 @@
 #!/bin/bash
 
-entryserver="chimaera.ch.cam.ac.uk"
+entryserver="citadel.ch.cam.ac.uk"
 username="op226"
-machine="leonov"
+machine="mek-quake"
 port=10000
 
 if [ -z "$*"  ]
@@ -17,9 +17,9 @@ echo "					-p 	specify port"
 echo "					-m 	specify machine"
 echo "					-s 	specify entry server"
 echo "DEFAULT VALUES:	"
-echo "			PORT=10000"
-echo "			MACHINE=leonov"
-echo "			SERVER=chimaera.ch.cam.ac.uk"
+echo "			PORT=$port"
+echo "			MACHINE=$machine"
+echo "			SERVER=$entryserver"
 echo "==================================================================="
 	else 
     		while [ ! -z "$1" ] 
