@@ -83,7 +83,7 @@ user="op226"
 mach="$user"@localhost
 
 case "$1" in
-  *) from=$1; to=$mach:~/$2 ;; 
+  *) from=$1; to=$mach:/home/$user/$2 ;; 
 esac    # --- end of case ---
 
 rsync -ave "ssh -p 10000 -oNoHostAuthenticationForLocalhost=yes" $from $to
