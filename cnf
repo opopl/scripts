@@ -102,6 +102,11 @@ else
 # {{{
 		case $1 in
 		  -g) v="$v -g";;
+		  u) # update different stuff {{{
+		  	mkdir -p $hm/.vim/bash-support/templates/
+		  	touch -p $hm/.vim/bash-support/templates/Templates
+		  ;;
+			#}}}
 		  i) # install config files from ~/config directory to home dir {{{ 
 				files=( gitconfig bashrc pinerc vimrc \
 			       		screenrc addressbook cshrc \

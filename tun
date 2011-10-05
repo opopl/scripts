@@ -74,7 +74,7 @@ while [ ! -z "$1" ]
 		esac
 		shift
 done
-
+}
 
 # }}}
 
@@ -84,14 +84,14 @@ done
 script_opts=( $* )
 
 while [ ! -z "$1" ]; do
-  	case "$1" in
+	  case "$1" in
 		  #{{{
-	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
+		  vm) $v $0 $hm/scripts/f.sh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
-	  	*) main $* && exit 0 ;;
+		  *) main $* && exit 0 ;;
 	esac
-  	shift
-        #}}}
+	  shift
+		#}}}
 done
 # }}}

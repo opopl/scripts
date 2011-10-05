@@ -5,3 +5,8 @@ p=` basename $PWD `
 case $p in 
   	p) rsync -avz * /media/7CFA-4F67/p/ ;;
 esac
+
+while [ !-z "$1" ];do
+  	
+  c
+done
