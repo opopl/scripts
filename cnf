@@ -138,7 +138,6 @@ else
 						echo "$cfile doesn't exist!"
 					fi
 					done
-					source $HOME/.bashrc
 				exit
 			;;
 			# }}}

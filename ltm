@@ -129,7 +129,7 @@ while [ ! -z "$1" ]
 	do
 	  case "$1" in
 	    "vm") vim $vim_opts $0 ;;
-	    "c") rm -f *.ps *.dvi *.bbl *.aux *.bak .*swp *.blg *.log *.lof *~ *.lot *.out *.toc *.backup *.d *.dmp *.idx 
+	    "c") rm -f *.ps *.dvi *.bbl *.aux *.bak .*swp *.blg *.log *.lof *~ *.lot *.out *.toc *.backup *.d *.dmp *.idx ; exit 
 		;;
 	    "-f") export  mode="full" ;;
 	    "-s") export  mode="simple" ;;

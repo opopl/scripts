@@ -1,37 +1,32 @@
 #!/bin/bash
 
-# sbvars()  dhelp() {{{
+# sbvars() dhelp() {{{
 
-eo(){
-echo "$this_script> $*"
-}
-
+# sbvars {{{
 sbvars(){
-# {{{
-s_purpose="view source files with vim"
-s_project="~/scripts"
 
+# dhelp()
+s_purpose="ssh tunneling"
+s_project="~/scripts"
 # name of this script 
 export this_script=` basename $0 `
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
-
+# vim 
 vim_opts="-n -p"
 v="vim $vim_opts"
-repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
+# ssh
+export entryserver="citadel.ch.cam.ac.uk"
+export username="op226"
+export machine="mek-quake"
+export port=10000
+export locport=22
+export domain="ch.cam.ac.uk"
 
-entryserver="citadel.ch.cam.ac.uk"
-username="op226"
-machine="mek-quake"
-port=10000
-
-# }}}
 }
-
-sbvars
-
+# }}}
+# dhelp() {{{
 dhelp(){
-#{{{
 cat << EOF
 SCRIPT NAME: 	$this_script
 PURPOSE: 	 	open an ssh tunnel through an external server 
@@ -43,6 +38,7 @@ USAGE: 		$this_script -d -p PORT -m  MACHINE -s SERVER
 					-s 	specify entry server
 
 DEFAULT VALUES:	
+
 			PORT=$port
 			MACHINE=$machine
 			SERVER=$entryserver
@@ -50,12 +46,18 @@ DEFAULT VALUES:
 SCRIPT LOCATION:
 	$0
 EOF
-#}}}
 }
+#}}}
+
+eo(){
+echo "$this_script> $*"
+}
+
+sbvars
 
 [ -z "$*" ] && ( dhelp; exit 0 )
 
-#}}}
+# }}}
 
 main(){
 # {{{
@@ -63,17 +65,39 @@ main(){
 while [ ! -z "$1" ] 
 	do 
 		case "$1" in
-			"-p") 	 port="$2" ;; 
-			"-m")	 machine="$2" ;; 
-			"-s") 	 entryserver="$2" ;;
-			"-d") 	
-				eo " Setting up an ssh tunnel on port $port, machine $machine..."
-				ssh -N -f -L $port:$machine.ch.cam.ac.uk:22 -l $username $entryserver
-				#break
-			;;
+			"-p") 	 export port="$2" ;; 
+			"-m")	 export machine="$2" ;; 
+			"-s") 	 export entryserver="$2" ;;
+			"-d")	 sbvars ;;
+			"-l") 	 
+				log=tun.l.log  
+				netstat -n --protocol inet | grep ':22' | tee $log
+				# list currently active ssh connections
+				netstat -nt ¦ grep yourip:22 | tee -a $log
+				sudo lsof -i -n | egrep '\<ssh\>' | tee -a $log 
+				lsof -i tcp | grep ^ssh | tee -a $log 
+				;;
 		esac
 		shift
 done
+
+eo " Setting up an ssh tunnel:"
+eo ""
+eo "		local port $locport"
+eo "		port $port"
+eo "		remote (private) machine $machine"
+eo "		domain $domain"
+eo "		entry (public) server $entryserver"
+eo "		remote username $username"
+
+ssh -N -f -L $port:$machine.$domain:$locport -l $username $entryserver
+# ssh options: {{{
+# 
+# 	-N
+# 	-f
+# 	-L
+# }}}
+
 }
 
 # }}}
