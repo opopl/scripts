@@ -19,9 +19,10 @@ v="vim $vim_opts"
 export entryserver="citadel.ch.cam.ac.uk"
 export username="op226"
 export machine="mek-quake"
-export port=10000
-export locport=22
+export locport=10000
+export hostport=22
 export domain="ch.cam.ac.uk"
+export exec=0
 
 }
 # }}}
@@ -30,16 +31,18 @@ dhelp(){
 cat << EOF
 SCRIPT NAME: 	$this_script
 PURPOSE: 	 	open an ssh tunnel through an external server 
-USAGE: 		$this_script -d -p PORT -m  MACHINE -s SERVER
+USAGE: 		$this_script -d -hp HOSTPORT -lp LOCPORT -m  MACHINE -s SERVER
 				WHERE:
 					-d 	execute with default values (see below)
-					-p 	specify port
+					-hp 	specify hostport.
+					-lp 	specify local port.
 					-m 	specify machine
 					-s 	specify entry server
 
 DEFAULT VALUES:	
 
-			PORT=$port
+			HOSTPORT=$hostport
+			LOCPORT=$locport
 			MACHINE=$machine
 			SERVER=$entryserver
 
@@ -58,48 +61,91 @@ sbvars
 [ -z "$*" ] && ( dhelp; exit 0 )
 
 # }}}
-
+# main() {{{
 main(){
-# {{{
 
+# read cmd args {{{
 while [ ! -z "$1" ] 
 	do 
 		case "$1" in
-			"-p") 	 export port="$2" ;; 
+			"-hp") 	 export hostport="$2" ;; 
+			"-lp") 	 export locport="$2" ;; 
 			"-m")	 export machine="$2" ;; 
 			"-s") 	 export entryserver="$2" ;;
 			"-d")	 sbvars ;;
-			"-l") 	 
-				log=tun.l.log  
-				netstat -n --protocol inet | grep ':22' | tee $log
+			"-l") 	 netstat -n --protocol inet; exit ;;
+			#"-l1")  	netstat -nt ¦ grep yourip:$hostport ; exit;;
+			"-l1") lsof -i tcp | awk '/^ssh/ || NR==1'; exit ;;
+				#{{{
+				#log=tun.l.log  
+				#rm $log
+				#lcmds=( "netstat -n --protocol inet" )
+						#'lsof -i tcp | grep ^ssh' \
+						#'lsof -i tcp | grep ^ssh' \
+						#)
+				#for cmd in ${lcmds[@]}; do 
+					#echo "============="
+					#echo "$cmd"
+					#echo "============="
+					#eval $cmd
+				#done	
 				# list currently active ssh connections
-				netstat -nt ¦ grep yourip:22 | tee -a $log
-				sudo lsof -i -n | egrep '\<ssh\>' | tee -a $log 
-				lsof -i tcp | grep ^ssh | tee -a $log 
-				;;
+				#sudo lsof -i -n | egrep '\<ssh\>' | tee -a $log 
+				#lsof -i tcp | grep ^ssh | tee -a $log 
+#}}}
+			"r") export exec=1 ;; 
 		esac
 		shift
 done
-
-eo " Setting up an ssh tunnel:"
-eo ""
-eo "		local port $locport"
-eo "		port $port"
-eo "		remote (private) machine $machine"
-eo "		domain $domain"
-eo "		entry (public) server $entryserver"
-eo "		remote username $username"
-
-ssh -N -f -L $port:$machine.$domain:$locport -l $username $entryserver
+#}}}
+# echo {{{
+if [ $exec -eq 1 ]; then 
+	host=$machine.$domain
+	eo " Setting up an ssh tunnel:"
+	eo ""
+	eo "		local port $locport"
+	eo "		hostport $hostport"
+	eo "		remote (private) machine $machine"
+	eo "		domain $domain"
+	eo "		host $host"
+	eo "		entry (public) server $entryserver"
+	eo "		remote username $username"
+#}}}
 # ssh options: {{{
 # 
-# 	-N
-# 	-f
-# 	-L
+# 	-N 		 Do not execute a remote command.  This is useful for just forwarding ports
+#   -p port
+#             Port to connect to on the remote host.  
+# 		      This can be specified on a per-host basis in the
+#             configuration file.
+#
+#	-f     Requests ssh to go to background just before command execution.  {{{
+# 				This is useful if ssh is
+#				going to ask for passwords or passphrases, but the user wants it in the background.  This
+#				implies -n.  The recommended way to 
+# 				start X11 programs at a remote site is with something
+#				like ssh -f host xterm.
 # }}}
+# -L [bind_address:]port:host:hostport {{{
+# 
+#             Specifies that the given port on the local (client) host is to be forwarded to the given
+#             host and port on the remote side.  This works by allocating a socket to listen to port on
+#             the local side, optionally bound to the specified bind_address.  Whenever a connection is
+#             made to this port, the connection is forwarded over the secure channel, and a connection
+#             is made to host port hostport from the remote machine.  Port forwardings can also be
+#             specified in the configuration file.  IPv6 addresses can be specified with an alternative
+#             syntax: [bind_address/]port/host/hostport or by enclosing the address in square brackets.
+#             Only the superuser can forward privileged ports.  By default, the local port is bound in
+#             accordance with the GatewayPorts setting.  However, an explicit bind_address may be used
+#             to bind the connection to a specific address.  The bind_address of “localhost” indicates
+#             that the listening port be bound for local use only, while an empty address or ‘*’ indi‐
+#             cates that the port should be available from all interfaces
+# 		}}}
+# }}}
+ssh -N -f -L $locport:$host:$hostport -l $username $entryserver
+fi
 
 }
-
 # }}}
 
 # main part 
