@@ -50,6 +50,7 @@ dojob(){ # {{{
 case "$1" in
   	"full") # main (full cycle) mode: {{{ 
 		latex $ifname  
+		makeindex $ifname
 		bibtex $ifname 
 		latex $ifname 
 		latex $ifname 

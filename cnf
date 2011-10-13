@@ -74,6 +74,7 @@ OPTS:
 					software - git, svn etc.
 
 	perls			perl-support
+	ncom			Nerd-Commenter
 
 	=================
 	vim stuff 
@@ -172,6 +173,10 @@ else
 				bf=perl-hot-keys.tex
 			;;
 			# }}}
+			"ncom") 
+				od=( $vrt/plugin/ )
+				bf=( NERD_commenter.vim )
+			;;
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"b") bf=( bashrc ) ; od=~/config/ ;; 
 			"ssh") bf=( authorized_keys id_rsa.pub ) ; od=~/.ssh/ ;; 
