@@ -161,6 +161,13 @@ else
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
 			;;
+			auctex) 
+				od=( $VIMRUNTIME/ )
+				bf=( auctex.vim );
+				set_files
+				od=( $HOME/doc/coms/ ) 
+				bf=( auctex.tex );
+			;;
 			# }}}
 			"perls") # perl-support {{{
 				od=$vrt/ftplugin/
