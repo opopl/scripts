@@ -153,11 +153,8 @@ else
 			;;
 		  	lasu) # Latex-Suite {{{
 				od=$vrt/ftplugin/latex-suite/
-				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
-			        	custommacros.vim texrc ../tex_latexSuite.vim \ 
-					wizardfuncs.vim mathmacros.vim brackets.vim \
-				        folding.vim 	)
-					set_files 
+				bf=( `cat $vrt/lasu/f.dat | sed 's/^[ ]*#//g '` )
+				set_files 
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
 			;;

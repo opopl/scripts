@@ -1,0 +1,66 @@
+#!/usr/bin/perl -w
+
+####################################################################################################
+#
+# Program:         getpapers
+#
+# Function:        Extracts the local-url lines from a BibTeX library file exported by Papers
+#                  and copies PDF files to the current directory
+#
+# Author:          Benjamin Bulheller
+#
+# Website:         www.bulheller.com
+#
+# Mail address:    webmaster.-at-.bulheller.com
+#
+# Version:         $Revision: 3076 $, $Date: 2008-07-03 17:20:33 +0100 (Thu, 03 Jul 2008) $
+#
+####################################################################################################
+
+use strict;                          # always use this!!!
+use Data::Dumper;                    # for easy printout of arrays and hashes
+use FindBin qw/$Bin/;                # sets $Bin to the directory of the script
+use File::Copy;                      # to copy and move files
+# use lib $Bin;                      # add the script's directory to the library path
+# use lib "$ENV{HOME}/bin/perllib/"; # adds ~/bin/perllib to the library path
+# use DebugPrint;                    # handy during debugging
+
+my ($File, @Lines, $Line, $Start, $End);
+
+if (not @ARGV) {
+	print "\n";
+	print "Usage:   getpapers  library.bib\n\n";
+	print "library.bib must be a BibTeX library exported by Papers. All local-url fields are\n";
+	print "extracted and the file://localhost prefix is removed in order to copy all files to\n";
+	print "the current directory.\n\n";
+	exit 1;
+}
+
+while (@ARGV) {                                  # while command line parameters are still available
+	$File = shift;                                # read the next given filename
+	
+	if (not -f $File) {
+		print "\nERROR: File $File not found\n\n";
+		next;
+	}
+	
+	@Lines = `grep local-url $File`;              # get all lines containing "local-url"
+	chomp @Lines;                                 # remove line feeds
+
+	foreach $Line ( @Lines ) {
+		$Start =  index $Line, "{";                # determine the position of the first "{"
+		$End   = rindex $Line, "}";                # determine the position of the last "}"
+		$End   = $End - $Start - 1;                # for substr, $End needs to be the length from $Start
+		$Line  = substr $Line, $Start + 1, $End;   # cut out the filename
+		
+		$Line =~ s!file://localhost!!;             # remove the URL prefix
+		$Line =~ s/%20/ /g;                        # replace "%20" with a space (Perl automatically escapes it)
+		
+		if (not -f $Line) {
+			print "WARNING: File $Line not found.\n";
+		}
+		else {
+			copy $Line, ".";
+		}
+	}
+}
