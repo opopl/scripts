@@ -111,7 +111,7 @@ else
 		  i) # install config files from ~/config directory to home dir {{{ 
 				files=( gitconfig bashrc pinerc vimrc \
 			       		screenrc addressbook cshrc \
-				        config 	) 
+				        config cpan_config.pm	) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
 					echo "		from:"
@@ -119,6 +119,9 @@ else
 					echo "		to:"
 					echo "			$HOME"
 					hfile=$HOME/.$file
+					case $file in 
+					  	cpan_config.pm) hfile=$HOME/.cpan/CPAN/MyConfig.pm ;;
+					esac
 					hofile=$HOME/.$file.old
 					if [ -f $hfile ]; then
 					        echo "Backup: $file"
@@ -180,6 +183,10 @@ else
 			"ncom") 
 				od=( $vrt/plugin/ )
 				bf=( NERD_commenter.vim )
+			;;
+			"cpan")
+			od=( $hm/config/ )
+			bf=( cpan_config.pm )
 			;;
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"b") bf=( bashrc ) ; od=~/config/ ;; 
