@@ -74,6 +74,7 @@ OPTS:
 					software - git, svn etc.
 
 	perls			perl-support
+	ncom			Nerd-Commenter
 
 	=================
 	vim stuff 
@@ -110,7 +111,7 @@ else
 		  i) # install config files from ~/config directory to home dir {{{ 
 				files=( gitconfig bashrc pinerc vimrc \
 			       		screenrc addressbook cshrc \
-				        config 	) 
+				        config cpan_config.pm	) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
 					echo "		from:"
@@ -118,6 +119,9 @@ else
 					echo "		to:"
 					echo "			$HOME"
 					hfile=$HOME/.$file
+					case $file in 
+					  	cpan_config.pm) hfile=$HOME/.cpan/CPAN/MyConfig.pm ;;
+					esac
 					hofile=$HOME/.$file.old
 					if [ -f $hfile ]; then
 					        echo "Backup: $file"
@@ -152,13 +156,17 @@ else
 			;;
 		  	lasu) # Latex-Suite {{{
 				od=$vrt/ftplugin/latex-suite/
-				bf=( main.vim envmacros.vim elementmacros.vim bibtex.vim opmacros.vim \
-			        	custommacros.vim texrc ../tex_latexSuite.vim \ 
-					wizardfuncs.vim mathmacros.vim brackets.vim \
-				        folding.vim 	)
-					set_files 
+				bf=( `cat $vrt/lasu/f.dat | sed 's/^[ ]*#//g '` )
+				set_files 
 				bf=( lasu.tex ) 
 				od=( $HOME/doc/coms/ ) 
+			;;
+			auctex) 
+				od=( $VIMRUNTIME/ )
+				bf=( auctex.vim );
+				set_files
+				od=( $HOME/doc/coms/ ) 
+				bf=( auctex.tex );
 			;;
 			# }}}
 			"perls") # perl-support {{{
@@ -172,6 +180,14 @@ else
 				bf=perl-hot-keys.tex
 			;;
 			# }}}
+			"ncom") 
+				od=( $vrt/plugin/ )
+				bf=( NERD_commenter.vim )
+			;;
+			"cpan")
+			od=( $hm/config/ )
+			bf=( cpan_config.pm )
+			;;
         		"rg") od=$hm/.config/ranger/ ; bf=( "*.py" "scope.sh" ) ;;
 			"b") bf=( bashrc ) ; od=~/config/ ;; 
 			"ssh") bf=( authorized_keys id_rsa.pub ) ; od=~/.ssh/ ;; 

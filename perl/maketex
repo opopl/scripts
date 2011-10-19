@@ -1,0 +1,301 @@
+#!/usr/bin/perl -w
+
+####################################################################################################
+#
+# Program:    maketex
+#
+# Function:   Compiles a LaTeX document
+#
+# Author:     Benjamin Bulheller
+#
+# Version:    $Revision: 3011 $, $Date: 2008-05-30 16:14:31 +0100 (Fri, 30 May 2008) $
+#
+# Date:       June 2007
+#
+# Required:   DebugPrint.pm
+#             ReadLatex.pm
+#             GetParameters.pm
+#
+#             All these perl packages are available on the SVN repository (benb/perllib). To use
+#             them, the easiest way is to put them into ~/bin/perllib as maketex and other scripts
+#             look into this folder. But any perl library folder will do as well.
+#
+####################################################################################################
+
+use strict;                          # always use this!!!
+use Data::Dumper;                    # for easy printout of arrays and hashes
+use FindBin qw/$Bin/;                # sets $Bin to the directory of the script
+use lib $Bin;                        # add the script's directory to the library path
+use lib "$ENV{HOME}/bin/perllib/";   # adds ~/bin/perllib to the library path
+use DebugPrint;                      # handy during debugging
+use ReadLatex;                       # to read a LaTeX source code
+use GetParameters;                   # to handle command line parameters
+
+###################################################################################################
+# Configuration Variables
+###################################################################################################
+
+# If no format is specified, the script reads the source to check for a different format than a4.
+# If this is lengthy (in case of a thesis for example), disable it here.
+my $CHECKFORMAT = 1;
+
+# if -s is given, only lines matching the following RegEx will be printed (i.e. filtered out)
+my $WARNINGS = "LaTeX Warning:|Package [A-Za-z]+ Warning:|^!|^l\.|^[Oo]verfull|^[Uu]nderfull";
+my $OMITTEDWARNINGS = "(float specifier changed)|[Oo]verfull|[Uu]nderfull";
+
+###################################################################################################
+# Configuration for GetParameters
+####################################################################################################
+
+my $Parameters = {     # create an anonymous hash
+   clean  => "switch",
+   all    => "switch",
+   full   => "switch",
+   tex    => "switch",
+   bib    => "switch",
+   dvi    => "switch",
+   ps     => "switch",
+   pdf    => "switch",
+	idx    => "switch",
+   s      => "switch",
+   sx     => "switch",
+   f      => "string",
+	xetex  => "switch",
+	pdftex => "switch",
+};
+
+my $Options = {       # create an anonymous hash
+};
+
+my $Help = "\n" .
+"Usage:   maketex [-clean] [-all] [-full] [-tex] [-bib] [-dvi] [-ps] [-pdf]\n" .
+"                 [-idx] [-s] [-f a4] [-pdftex] [-xetex]\n" .
+"                 [file1.tex ...] \n" .
+"\n" .
+"         clean   erases aux, bbl, blg, dvi, log, ps, pdf and toc of each given file\n" .
+"         all     same as \"dvi pdf\"\n" .
+"         full    same as \"clean dvi pdf\"\n" .
+"         tex     runs only latex\n" .
+"         bib     runs only bibtex\n" .
+"         dvi     runs latex, bibtex, latex, latex\n" .
+"         ps      runs latex, dvips\n" .
+"         pdf     runs latex, dvips, ps2pdf\n" .
+"         pdftex  uses pdflatex instead of the latex command\n" .
+"         xetex   uses xelatex instead of the latex command\n" .
+"\n" .
+"         idx     uses makeindex to create an index\n" .
+"         f       choose a paper format (determined from the \\documentclass line otherwise)\n" .
+"         s       (silent) display only error messages of the last BibTeX and LaTeX run\n" .
+"         sx      (extra silent) also omits over/underfull boxes errors and changes [htb] specifiers\n" .
+"\n" .
+"         If no file is specified, all files containing \\begin{document} are compiled.\n" .
+"\n";
+
+####################################################################################################
+
+GetParameters ($Parameters, $Options, $Help);
+
+my (@AllFiles, @Files, $CurPar, $File, %Parameters, $OK, $Line, @Source, $Latex, $Orient);
+
+if ( $Options->{rest} ) {
+	# check whether each given file actually exists
+	foreach $File ( @{$Options->{rest}} ) {
+		if (-f $File) { push @AllFiles, $File }
+		else {
+			# if a file is not found, test .tex extension
+			if (-f "$File.tex") { push @AllFiles, $File }
+			else {
+				# otherwise stop processing
+				print STDERR "\nERROR: File $File could not be found.\n\n";
+				exit 1;
+			}
+		}
+	}
+}
+else { # if no files were given via the command line 
+	@Files = glob "*.tex";   # read all .tex files in the directory
+	
+	if (not @Files) { # if no files were found, stop processing
+		print STDERR "\nERROR: Could not find any .tex files in the current directory.\n\n";
+		exit 2;
+	}
+	
+	# read all files containing begin{document}
+	@AllFiles = `grep -l \"begin{document}\" @Files`;
+	chomp @AllFiles;
+}
+
+if ($Options->{pdftex}) {
+	$Latex = "pdflatex";
+
+	if ($Options->{pdf} or $Options->{ps}) {
+		print STDERR "\nERROR: The output of pdflatex is .pdf, hence the options -ps and -pdf are superfluous\n\n";
+		exit 3;
+	}
+}
+elsif ($Options->{xetex}) {
+	$Latex = "xelatex";
+
+	if ($Options->{pdf} or $Options->{ps}) {
+		print STDERR "\nERROR: The output of xelatex is .pdf, hence the options -ps and -pdf are superfluous\n\n";
+		exit 4;
+	}
+}
+else {
+	$Latex = "latex";
+}
+
+foreach $File ( @AllFiles ) {
+	$Orient = "";
+	
+	# if no format was specified, read the source and see whether it's a poster
+	if ($CHECKFORMAT and not $Options->{f}) {
+		@Source = ReadLatex ($File);
+		
+		$Line = "";
+		# read through the source until the the \documentclass line (a commented one would not match)
+		until (not @Source or $Line =~ m/^(\s+)?\\documentclass/) { $Line = shift @Source }
+		
+		if    ($Line =~ m/a4/) { $Options->{f} = "a4" }
+		elsif ($Line =~ m/a3/) { $Options->{f} = "a3"; print "maketex: paper format a3 determined.\n"; }
+		elsif ($Line =~ m/a2/) { $Options->{f} = "a2"; print "maketex: paper format a2 determined.\n"; }
+		elsif ($Line =~ m/a1/) { $Options->{f} = "a1"; print "maketex: paper format a1 determined.\n"; }
+		elsif ($Line =~ m/a0/) { $Options->{f} = "a0"; print "maketex: paper format a0 determined.\n"; }
+		                  else { $Options->{f} = "a4" }
+
+		if ($Line =~ m/landscape/) { $Orient = " -t landscape " }
+	}
+	
+	# cut away the .tex extension
+	$File =~ s/\.tex$//;
+	
+	$OK = 0;
+	
+	if ($Options->{clean}) { &clean ($File); $OK = 1; }
+	if ($Options->{full} ) { &full  ($File); $OK = 1; }
+	if ($Options->{all}  ) { &all   ($File); $OK = 1; }
+	if ($Options->{tex}  ) { &tex   ($File); $OK = 1; }
+	if ($Options->{bib}  ) { &bib   ($File); $OK = 1; }
+	if ($Options->{dvi}  ) { &dvi   ($File); $OK = 1; }
+	if ($Options->{ps}   ) { &ps    ($File); $OK = 1; }
+	if ($Options->{pdf}  ) { &pdf   ($File); $OK = 1; }
+	
+	# run at least latex
+	if (not $OK) { &tex ($File) }
+}
+
+
+####################################################################################################
+# SUBROUTINES
+####################################################################################################
+
+sub clean {
+	my $File = shift;
+	
+	`rm -rf $File.aux`;
+	`rm -rf $File.bbl`;
+	`rm -rf $File.blg`;
+	`rm -rf $File.dvi`;
+	`rm -rf $File.log`;
+	`rm -rf $File.pdf`;
+	`rm -rf $File.ps`;
+	`rm -rf $File.toc`;
+}
+
+sub full {
+	my $File = shift;
+	
+	&clean ($File);
+	&all ($File);
+}
+
+sub all {
+	my $File = shift;
+	
+	if ($Latex eq "latex" ) {
+		&dvi ($File);
+		&pdf ($File);
+	}
+	else { # if pdflatex or xelatex is used the output is already pdf
+		&dvi ($File);
+	}
+}
+
+sub tex {
+	my $File = shift;
+	my @Output;
+	
+	@Output = `$Latex -halt-on-error -interaction=nonstopmode $File`;
+	&PrintOutput (\@Output);
+}
+
+sub bib {
+	my $File = shift;
+	my @Output;
+	
+	@Output = `bibtex $File`;
+	&PrintOutput (\@Output);
+}
+
+sub dvi {
+	my $File = shift;
+	my @Output;
+	
+	`$Latex -halt-on-error -interaction=nonstopmode $File`;
+	push @Output, `bibtex $File`;
+
+	if ($Options->{idx}) { push @Output, `makeindex $File` }
+
+	`$Latex -halt-on-error -interaction=nonstopmode $File`;
+	push @Output, `$Latex -halt-on-error -interaction=nonstopmode $File`;
+	
+	&PrintOutput (\@Output);
+}
+
+sub ps {
+	my $File = shift;
+	my @Output;
+	
+	push @Output, `$Latex -halt-on-error -interaction=nonstopmode $File`;
+	push @Output, `dvips -Ppdf -t $Options->{f} $Orient -o $File.ps $File.dvi 2>&1`;
+	
+	&PrintOutput (\@Output);
+}
+
+sub pdf {
+	my $File = shift;
+	my @Output;
+	
+	push @Output, `$Latex -halt-on-error -interaction=nonstopmode $File`;
+
+	if ($Options->{idx}) {
+		push @Output, `makeindex $File`;
+		`$Latex -halt-on-error -interaction=nonstopmode $File`;
+	}
+	
+	push @Output, `dvips -Ppdf -t $Options->{f} $Orient -o $File.ps $File.dvi 2>&1`;
+	push @Output, `ps2pdf -sPAPERSIZE=$Options->{f} -dAutoFilterColorImages=false -sColorImageFilter=FlateEncode $File.ps`;
+	
+	&PrintOutput (\@Output);
+}
+
+sub PrintOutput {
+	my @Output = @{$_[0]};
+	my @Warnings;
+	
+	chomp @Output;
+	
+	if ($Options->{s}) {
+		@Warnings = grep /$WARNINGS/, @Output;
+		print "\n", join "\n", @Warnings, "\n";
+	}
+	elsif ($Options->{sx}) {
+		@Warnings = grep /$WARNINGS/, @Output;
+		@Warnings = grep (!/$OMITTEDWARNINGS/, @Warnings);
+		print "\n", join "\n", @Warnings, "\n";
+	}
+	else {
+		print join "\n", @Output;
+		print "\n";
+	}
+}
