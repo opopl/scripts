@@ -140,7 +140,7 @@ while [ ! -z "$1" ]
 	    "-g") export  mode="gls" ;;
 	    "-od"|"--outdir") export outdir=$2; shift ;;
 		"-of"|"--outfile") export outfile="$2".pdf; shift ;;
-		"-if"|"--infile") export ifname=$2; shift ;;
+		"-if"|"--infile") export ifname=${2%.tex}; shift ;;
 		"--exe") export exe=$2; shift ;;
 	    *)	export ifname="$1" ;;
 	  esac
