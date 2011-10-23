@@ -41,7 +41,8 @@ cat << EOF
 
 	l, lol 		
 			git log
-	st		git status
+	s, st		
+			git status
 	sm		git status for modified & new files
 	c		git commit -a 
 	u		git pull
@@ -75,9 +76,9 @@ case $1 in
  	a) shift; git add $* ;;
 	u) git pull ;;
 	c) git commit -a ;;
-	st) git status | vim -  ;;
+	s|st) git status ;;
 	l) shift; git log $* ;;
-	sm) $0 s | awk '$0 ~ /modified:/ || $0 ~ /new file:/' ;;
+	sm) $0 s | awk '/^modified:/ ' ;;
 	# }}}
 	# SVN {{{
 	sv) shift;
