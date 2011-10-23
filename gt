@@ -66,6 +66,7 @@ case $1 in
 	c) git commit -a ;;
 	st) git status | less ;;
 	l) shift; git log $* ;;
+	lol) git log --graph --decorate --pretty=oneline --abbrev-commit ;;
 	sm) $0 s | awk '$0 ~ /modified:/ || $0 ~ /new file:/' ;;
 	# }}}
 	# SVN {{{
