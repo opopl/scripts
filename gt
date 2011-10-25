@@ -71,11 +71,14 @@ sbvars
 main(){
 # {{{
 
-case $1 in 
+arg=$1
+shift
+case $arg in 
   	# base git commands {{{
  	a) shift; git add $* ;;
 	ar) git archive --format=tar HEAD | gzip > argit.tar.gz ;;
-	u) git pull ;;
+	pu) git push $* ;;
+	u) git pull $* ;;
 	c) git commit -a ;;
 	s|st) git status ;;
 	l) shift; git log $* ;;

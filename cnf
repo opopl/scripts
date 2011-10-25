@@ -110,8 +110,10 @@ else
 			#}}}
 		  i) # install config files from ~/config directory to home dir {{{ 
 				files=( gitconfig bashrc pinerc vimrc \
-			       		screenrc addressbook cshrc \
-				        config cpan_config.pm	) 
+			       		screenrc addressbook cshrc inputrc \
+				        config cpan_config.pm
+						bash_completion
+						) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
 					echo "		from:"
@@ -185,6 +187,15 @@ else
 			perl -MCPAN -e "CPAN::Shell->force(qw(install $mod ));"
 			;;
 		  	#}}}
+			"rc")
+				od=( $hm/config/ )
+				bf=( pinerc inputrc bashrc bash_completion ) 
+				;;
+			"bc")
+		   		k=bash_completion	
+			  od=( / )
+				bf=( /etc/$k $hm/.$k $hm/config/bash_completion ) ; 
+				;;
 			"ncom") 
 				od=( $vrt/plugin/ )
 				bf=( NERD_commenter.vim )
