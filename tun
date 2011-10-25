@@ -156,7 +156,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
 	  case "$1" in
 		  #{{{
-		  vm) $v $0 $hm/scripts/f.sh; exit ;;
+		  vm) $v $0 $hm/scripts/f.sh $shd/inc/tun.i.dat; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 		  *) main $* && exit 0 ;;

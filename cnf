@@ -136,7 +136,7 @@ else
 						ftype=`file $cfile | awk -F ':' '{ print $2 }' | sed 's/^[ ]*//g' `
 						case $ftype in 
 						  	"directory") mkdir -p $hfile ; cp -r $cfile/* $hfile/	;;
-							*) cp -r $cfile $hfile ;;
+							*) mkdir -p $( dirname $hfile );  cp -r $cfile $hfile ;;
 						esac
 					else
 						echo "$cfile doesn't exist!"
@@ -180,6 +180,11 @@ else
 				bf=perl-hot-keys.tex
 			;;
 			# }}}
+			"pi") # installing perl modules through cpan {{{
+			mod=$2; shift
+			perl -MCPAN -e "CPAN::Shell->force(qw(install $mod ));"
+			;;
+		  	#}}}
 			"ncom") 
 				od=( $vrt/plugin/ )
 				bf=( NERD_commenter.vim )

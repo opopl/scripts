@@ -74,10 +74,12 @@ main(){
 case $1 in 
   	# base git commands {{{
  	a) shift; git add $* ;;
+	ar) git archive --format=tar HEAD | gzip > argit.tar.gz ;;
 	u) git pull ;;
 	c) git commit -a ;;
 	s|st) git status ;;
 	l) shift; git log $* ;;
+	rs) git co -- . ;;
 	lol) git log --graph --decorate --pretty=oneline --abbrev-commit ;;
 	sm) $0 s | awk '$0 ~ /modified:/ || $0 ~ /new file:/' ;;
 	# }}}
