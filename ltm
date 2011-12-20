@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# set_base_vars {{{
-set_base_vars(){
+# sbvars {{{
+sbvars(){
 
 export outdir=$PWD
 # directory where this script resides
@@ -28,6 +28,7 @@ export dvips_opts="-Pamz -Pcmz"
 export dvips_opts="-Ppdf"
 
 export mode="full"
+export exe="latex"
 # }}}
 }
 #}}}
@@ -49,11 +50,11 @@ dojob(){ # {{{
 
 case "$1" in
   	"full") # main (full cycle) mode: {{{ 
-		latex $ifname  
+		$exe $ifname  
 		makeindex $ifname
 		bibtex $ifname 
-		latex $ifname 
-		latex $ifname 
+		$exe $ifname 
+		$exe $ifname 
 		dvitopdf $ifname 
 
 		#latex $ifname && bibtex $ifname && latex $ifname && latex $ifname && dvitopdf $ifname 
@@ -78,7 +79,7 @@ fi
 
 } # }}}
 
-set_base_vars
+sbvars
 
 if [ -z "$1" ]
  	then
@@ -139,7 +140,8 @@ while [ ! -z "$1" ]
 	    "-g") export  mode="gls" ;;
 	    "-od"|"--outdir") export outdir=$2; shift ;;
 		"-of"|"--outfile") export outfile="$2".pdf; shift ;;
-		"-if"|"--infile") export ifname=$2; shift ;;
+		"-if"|"--infile") export ifname=${2%.tex}; shift ;;
+		"--exe") export exe=$2; shift ;;
 	    *)	export ifname="$1" ;;
 	  esac
 	  shift

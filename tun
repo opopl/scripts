@@ -12,6 +12,10 @@ s_project="~/scripts"
 export this_script=` basename $0 `
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
+# include directory
+export incdir="$shd/inc/"
+# include file
+export incfiles=( ` ls $incdir/$this_script.*i.dat` )
 # vim 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -61,6 +65,13 @@ sbvars
 [ -z "$*" ] && ( dhelp; exit 0 )
 
 # }}}
+cati(){
+if [ -z $3 ]; then  
+cat $incdir/$this_script.$1.i.dat | awk "/^$2/"
+else 
+cat $incdir/$this_script.$1.i.dat | awk "/^$2/ { print \$$3 }"
+fi
+}
 # main() {{{
 main(){
 
@@ -70,10 +81,15 @@ while [ ! -z "$1" ]
 		case "$1" in
 			"-hp") 	 export hostport="$2" ;; 
 			"-lp") 	 export locport="$2" ;; 
-			"-m")	 export machine="$2" ;; 
+			c) pkill ssh;;
+			"-m")	 export machine=`$shd/$this_script -lm $2 | awk '{ print $2 }'  `; 
+					echo $2 $machine $0
+						shift
+						;; 
 			"-s") 	 export entryserver="$2" ;;
 			"-d")	 sbvars ;;
 			"-l") 	 netstat -n --protocol inet; exit ;;
+			"-lm") 	 cati machines $2 ; exit ;;
 			#"-l1")  	netstat -nt ¦ grep yourip:$hostport ; exit;;
 			"-l1") lsof -i tcp | awk '/^ssh/ || NR==1'; exit ;;
 				#{{{
@@ -156,7 +172,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
 	  case "$1" in
 		  #{{{
-		  vm) $v $0 $hm/scripts/f.sh; exit ;;
+		  vm) $v $0 $hm/scripts/f.sh $shd/inc/tun.i.dat; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 		  *) main $* && exit 0 ;;
