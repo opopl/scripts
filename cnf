@@ -112,7 +112,7 @@ else
 				files=( gitconfig bashrc pinerc vimrc \
 			       		screenrc addressbook cshrc inputrc \
 				        config cpan_config.pm
-						bash_completion
+						#bash_completion
 						) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
