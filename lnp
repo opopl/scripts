@@ -18,6 +18,7 @@ unpackdir=$HOME/arch/unpacked
 #ehd='/media/OneTouch4 Mini/'
 ehd="/media/O*"
 basedir="$ehd"
+basedir="$hm"
 docdir="$basedir/doc/"
 Adir="$basedir/doc/A/"
 papdir="$basedir/doc/papers/"
@@ -110,13 +111,13 @@ esac
 
 case $papname in 
   	"a")# all papers for a given FIELD {{{
-	cd $docdir/$fdir 
-	papers=( ` ls *.pdf ` )
-	for paper in ${papers[@]}; do
-	  	echo $paper $this_script
-	  	$this_script $field ${paper%.pdf}
-	done
-	cd -
+			cd $docdir/$fdir 
+			papers=( ` ls *.pdf ` )
+			for paper in ${papers[@]}; do
+			  	echo $paper $this_script
+			  	$this_script $field ${paper%.pdf}
+			done
+			cd -
 	;;
 	# }}}
 	*) # process a given paper, e.g., MillerWales99 {{{
@@ -150,13 +151,13 @@ while [ ! -z "$1" ]; do
 		  #{{{
 	  	vm) $v $0; exit ;;
 		c) # cleaning links {{{
-		olddir=`pwd`
-		cd $Adir
-		ls 
-		letters=( ` ls ` )
-		for letter in ${letters[@]}; do
-		  	cd $letter; rm -f * ; cd $Adir
-		done
+				olddir=`pwd`
+				cd $Adir
+				ls 
+				letters=( ` ls ` )
+				for letter in ${letters[@]}; do
+				  	cd $letter; rm -f * ; cd $Adir
+				done
 		cd $olddir
 		# }}} 
 		;;

@@ -1,22 +1,31 @@
 #!/usr/bin/env bash
 
+# sbvars() dhelp() {{{
+
 sbvars(){
 # {{{
-s_purpose="view scripts"
-s_project="~/scripts"
-# directory where this script resides
-export shd="`dirname $(readlink -f $0)`"
+s_purpose=" ... list papers .."
+s_project=" ~/wrk/p/"
+
 # name of this script 
 export this_script=` basename $0 `
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+# shell functions file
+export fsh="$hm/scripts/f.sh"
+
+export field="ChemPhys"
+export pdir="$hm/doc/papers/$field/"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
-repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
+gitdirs=( "config" "scripts" "templates" "vrt" "install" "coms" "cit" )
 
 # }}}
 }
 
 sbvars
+source $fsh
 
 dhelp(){
 # {{{
@@ -26,7 +35,11 @@ cat << EOF
 SCRIPT NAME: $this_script 
 PROJECT: $s_project
 PURPOSE: $s_purpose
-USAGE: $this_script [ OPTIONS ] 
+USAGE: $this_script [ OPTIONS ] PAPER
+	PAPER can be also a substring of the full paper name,
+	e.g., 
+	$this_script Ande
+	will list all available papers which begin with Ande
 
 	OPTIONS:
 
@@ -37,7 +50,7 @@ USAGE: $this_script [ OPTIONS ]
 			display the help message
 
 	vm		v(iew) m(yself), i.e., edit this script
-	-g		g(raphical) vim  invocation
+	-g		gvim invocation
 	
 	============
 EOF
@@ -45,7 +58,15 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-some option
+	a 	all papers 
+	ch  ChemPhys papers
+
+DEFAULTS:
+
+	Field:
+		$field
+	Papers directory:
+		$pdir
 
 EOF
 # }}}
@@ -53,6 +74,8 @@ EOF
 cat << EOF
 REMARKS:
 AUTHOR: O. Poplavskyy
+SCRIPT LOCATION:
+	$0
 =============================================
 EOF
 # }}}
@@ -61,18 +84,22 @@ EOF
 
 [ -z "$*" ] && ( dhelp; exit 0 )
 
+#}}}
+
 main(){
-# {{{
+# read cmd args {{{
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  make|awk|perl) files=( ${files[@]} `find $dir/* ` ) ;;
-	  *) files=( ${files[@]} `find $shd -name $1 ` ) ;;
+	  a) cd $pdir; ls *.pdf | sed 's/*.pdf$//g' ;;
+	  *) 
+	  	pkey=$1
+	  	pfiles=( ` find $pdir -name $pkey\*.pdf | sed "s/^.*\///" ` )
+	  	find $pdir -name $pkey\*.pdf | sed "s/^.*\///g; s/\.pdf$//g"
+	  ;;
 	esac    
 	shift
 done
-	
-$v ${files[@]}
 
 # }}}
 }
@@ -82,10 +109,11 @@ $v ${files[@]}
 
 script_opts=( $* )
 
+# read cmd args => main()  {{{
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0; exit ;;
+	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

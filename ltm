@@ -46,15 +46,52 @@ ps2pdf $ps2pdf_opts $1.ps $1.pdf
 
 }
 # }}}
+
+c_a(){
+  #c_idx $1 
+  c_lof $1
+  c_lot $1
+#aux_fig_refs.pl $sopts --infile $1.aux > n; mv n $1.aux
+}
+
+
+c_idx(){
+idx_ins_hpage.pl $1.idx > n;  mv n $1.idx 
+}
+
+c_lof(){
+lof_fig_refs.pl $sopts --infile $1.lof > n; mv n $1.lof
+}
+
+c_lot(){
+lot_tab_refs.pl $sopts --infile $1.lot > n; mv n $1.lot
+}
+
+exe(){
+$exe $1
+}
+
 dojob(){ # {{{
 
 case "$1" in
   	"full") # main (full cycle) mode: {{{ 
-		$exe $ifname  
-		makeindex $ifname
-		bibtex $ifname 
-		$exe $ifname 
-		$exe $ifname 
+		case $ifname in 
+		  	pap) 
+					exe $ifname	; c_a $ifname
+					c_idx $ifname ; makeindex $ifname.idx 
+					bibtex $ifname
+					exe $ifname	 ; c_a $ifname
+					exe $ifname	 ; c_a $ifname
+			;;
+			*) 
+					exe $ifname	;  $ifname
+					c_idx $ifname ; makeindex $ifname.idx 
+					bibtex $ifname
+					exe $ifname	 ;  $ifname
+					exe $ifname	 ;  $ifname
+			;;
+		esac
+
 		dvitopdf $ifname 
 
 		#latex $ifname && bibtex $ifname && latex $ifname && latex $ifname && dvitopdf $ifname 
@@ -108,6 +145,11 @@ OPTIONS:
 		Input file name (without *.tex extension)
 	-of,--outfile FILE
 		Output file name (without *.pdf extension)
+	
+	--sopts OPTIONS 
+		Any additional options which might 
+		be passed further with the script, e.g.
+			$this_script --sopts "--proj pap --sect blnall"
 
 	---------------
 	Latex-specific (yet to be implemented)
@@ -142,6 +184,7 @@ while [ ! -z "$1" ]
 		"-of"|"--outfile") export outfile="$2".pdf; shift ;;
 		"-if"|"--infile") export ifname=${2%.tex}; shift ;;
 		"--exe") export exe=$2; shift ;;
+		"--sopts") export sopts="$2"; shift ;;
 	    *)	export ifname="$1" ;;
 	  esac
 	  shift
