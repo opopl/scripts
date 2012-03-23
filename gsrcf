@@ -1,3 +1,39 @@
 #!/bin/bash
 
-rsync -avz $srcf:~/downloads/* $hm/doc/papers/ChemPhys/
+mach=$srcf
+
+pdir="$hm/wrk/p/"
+bibf="$pdir/repdoc.bib"
+bibdir="$pdir/nbib"
+
+papdir="$hm/doc/papers/ChemPhys/"
+
+rsync -avz $mach:~/downloads/* $papdir
+rsync -avz $mach:~/Downloads/*.bib $bibdir
+
+date=` date +'\%H:\%M:\%S (\%a, \%d-\%b-\%Y)'`
+
+while [ ! -z  "$1" ]; do  
+	case $1 in 
+		bib) # {{{
+	for f in ` find $bibdir -name \*.bib`; do 
+	  	echo "Appending:	"
+	   	echo "			$f 	"
+		echo "		 to: 	"
+		echo "			$bibf"
+		echo "%=========================" >> $bibf
+	  	echo "% Added from srcf on $date" >> $bibf
+		echo "%=========================" >> $bibf
+		cat $f >> $bibf
+		echo "Removing:"
+		echo "		$f "
+		rm -f $f
+	done 
+	
+	echo "Removing bib files on $mach..." 
+	ssh $mach rm -f ~/Downloads/*.bib
+	;;
+	#}}}
+	esac
+	shift
+done 

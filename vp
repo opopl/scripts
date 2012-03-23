@@ -22,8 +22,7 @@ unpackdir=$HOME/arch/unpacked
 
 set_base_vars(){
 # {{{
-s_purpose="view source files with vim"
-s_project="Wales group svn repository"
+s_purpose="view paper's tex source"
 s_project="~/scripts"
 # }}}
 }
@@ -94,7 +93,9 @@ case "$1" in
 	paps=( ToanThirumalai10 ) 
   ;;
 	#}}}
-	*) files=( ` find $ptexdir -name p.$1\*.\*.tex -o -name p.$1\*.tex ` ) ;;
+	*) files=( ` find $ptexdir -name p.$1\*.\*.tex -o -name p.$1\*.tex ` \
+				pap-nc.0.tex pap-preamble.0.tex \ 
+				`find $ptexdir -name up.$1\*.i.dat `) ;;
 esac    
 
 #files=( ` ls p.${paps[$2]}.*.tex ` )

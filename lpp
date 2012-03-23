@@ -4,8 +4,8 @@
 
 sbvars(){
 # {{{
-s_purpose=" ... list papers .."
-s_project=" ~/wrk/p/"
+s_purpose=" ... script purpose ..."
+s_project=" ~/scripts"
 
 # name of this script 
 export this_script=` basename $0 `
@@ -13,9 +13,6 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
-
-export field="ChemPhys"
-export pdir="$hm/doc/papers/$field/"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -35,11 +32,7 @@ cat << EOF
 SCRIPT NAME: $this_script 
 PROJECT: $s_project
 PURPOSE: $s_purpose
-USAGE: $this_script [ OPTIONS ] PAPER
-	PAPER can be also a substring of the full paper name,
-	e.g., 
-	$this_script Ande
-	will list all available papers which begin with Ande
+USAGE: $this_script [ OPTIONS ] 
 
 	OPTIONS:
 
@@ -58,15 +51,7 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-	a 	all papers 
-	ch  ChemPhys papers
-
-DEFAULTS:
-
-	Field:
-		$field
-	Papers directory:
-		$pdir
+some option
 
 EOF
 # }}}
@@ -91,13 +76,9 @@ main(){
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  a) cd $pdir; ls *.pdf | sed 's/*.pdf$//g' ;;
-	  #at) mktex.pl --listpapers ;;
-	  at) ls p.*.tex | sed '/^p.\w*\.\w*\.tex/d' | sed 's/^p\.//g; s/\.tex$//g' ;;
-	  *) 
-	  	pkey=$1
-	  	pfiles=( ` find $pdir -name $pkey\*.pdf | sed "s/^.*\///" ` )
-	  	find $pdir -name $pkey\*.pdf | sed "s/^.*\///g; s/\.pdf$//g"
+	  "")
+	  ;;
+	  *)
 	  ;;
 	esac    
 	shift
@@ -115,7 +96,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
+	  	vm) $v $0 $fsh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

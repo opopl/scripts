@@ -94,9 +94,7 @@ main(){
 				;;
 		  "usebbl")
 		  		kfile="$proj.bbl"
-				#short_key=` perl -ne "if ( /^\\\\bibitem\\[(.*)\\]{$pkey}/ ){ print \"\$1\n\";}" $kfile `
-				#echo "$short_key" 
-				perl -ne "if ( /^\\\\bibitem\\[(.*)\\]{$pkey}/ ){ print \"\$1\n\";}" $kfile
+				perl -ne "if ( /^\\\\bibitem\\[(\w+)(\W+?.*?|.*?)([0-9]+)\\]{$pkey}/ ){ print \"\$1\$3\n\";}" $kfile
 				;; 
 		esac
 	#esac    

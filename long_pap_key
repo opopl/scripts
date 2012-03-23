@@ -5,7 +5,7 @@
 
 sbvars(){
 # {{{
-s_purpose=" ... script purpose ..."
+s_purpose=" convert the short paper key to its long one"
 s_project=" ~/scripts"
 
 # name of this script 
@@ -14,6 +14,7 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 
 export kfile="keys.i.dat"
+export proj="pap"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -51,8 +52,9 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-some option
-
+DEFAULTS:
+	Project:	
+		$proj
 EOF
 # }}}
 # final general part {{{
@@ -77,7 +79,21 @@ main(){
 while [ ! -z "$1" ]; do 
 	case "$1" in
 	  "") ;;
-	  *) cat $kfile | awk "/$1/ { print \$2}" ;;
+	  *) 
+				pkey=$1
+				lowkey=`echo $pkey | tr '[:upper:]' '[:lower:]' `
+				awk "tolower(\$1) ~ /$lowkey/ { print NR }" $kfile > tmp.nr
+				num=`cat tmp.nr`
+				rm -f tmp.nr
+				if [ ! -z "$num" ]; then
+						cat $kfile | awk "NR==$num { print \$2} "
+				else
+						kfile="$proj.bbl"
+						# key without numbers
+						wnkey=`echo $pkey | sed 's/[0-9]*$//g' `
+                		perl -ne "if ( /^\\\\bibitem\\[$wnkey.*?[0-9]+\\]{(.*)}/i ){ print \"\$1\n\";}" $kfile
+				fi
+                ;;
 	esac    
 	shift
 done
