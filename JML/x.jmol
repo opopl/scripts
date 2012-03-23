@@ -1,0 +1,5 @@
+load trajectory /home/op/scripts/JML/xyz/1.le
+script /home/op/scripts/JML/init.jmol
+script /home/op/scripts/JML/goconnect.jmol
+script /home/op/scripts/JML/blnseq.jmol
+script /home/op/scripts/JML/fin.jmol

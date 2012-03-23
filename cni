@@ -88,7 +88,9 @@ case "$1" in
 	  quality=$2
 	  dir=$picdir/Q$quality
 	  mkdir -p $dir
-	  find $picdir -maxdepth 1 -iname '*jpg' -exec convert -quality $quality {} $dir/{} \; 
+	  cd $picdir
+	  #find $picdir -maxdepth 1 -iname '*jpg' -exec convert -quality $quality {} $dir/{} \; 
+	  find . -maxdepth 1 -iname '*jpg' -exec convert -quality $quality {} $dir/{} \; 
 	  exit 0;
   ;;
 	# }}}
