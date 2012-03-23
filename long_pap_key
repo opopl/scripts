@@ -1,17 +1,24 @@
+
 #!/usr/bin/env bash
+
+# sbvars() dhelp() {{{
 
 sbvars(){
 # {{{
-s_purpose="view scripts"
-s_project="~/scripts"
-# directory where this script resides
-export shd="`dirname $(readlink -f $0)`"
+s_purpose=" convert the short paper key to its long one"
+s_project=" ~/scripts"
+
 # name of this script 
 export this_script=` basename $0 `
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+
+export kfile="keys.i.dat"
+export proj="pap"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
-repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
+gitdirs=( "config" "scripts" "templates" "vrt" "install" "coms" "cit" )
 
 # }}}
 }
@@ -37,7 +44,7 @@ USAGE: $this_script [ OPTIONS ]
 			display the help message
 
 	vm		v(iew) m(yself), i.e., edit this script
-	-g		g(raphical) vim  invocation
+	-g		gvim invocation
 	
 	============
 EOF
@@ -45,14 +52,17 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-some option
-
+DEFAULTS:
+	Project:	
+		$proj
 EOF
 # }}}
 # final general part {{{
 cat << EOF
 REMARKS:
 AUTHOR: O. Poplavskyy
+SCRIPT LOCATION:
+	$0
 =============================================
 EOF
 # }}}
@@ -61,18 +71,32 @@ EOF
 
 [ -z "$*" ] && ( dhelp; exit 0 )
 
+#}}}
+
 main(){
-# {{{
+# read cmd args {{{
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  make|awk|perl) files=( ${files[@]} `find $dir/* ` ) ;;
-	  *) files=( ${files[@]} `find $shd -name $1 ` ) ;;
+	  "") ;;
+	  *) 
+				pkey=$1
+				lowkey=`echo $pkey | tr '[:upper:]' '[:lower:]' `
+				awk "tolower(\$1) ~ /$lowkey/ { print NR }" $kfile > tmp.nr
+				num=`cat tmp.nr`
+				rm -f tmp.nr
+				if [ ! -z "$num" ]; then
+						cat $kfile | awk "NR==$num { print \$2} "
+				else
+						kfile="$proj.bbl"
+						# key without numbers
+						wnkey=`echo $pkey | sed 's/[0-9]*$//g' `
+                		perl -ne "if ( /^\\\\bibitem\\[$wnkey.*?[0-9]+\\]{(.*)}/i ){ print \"\$1\n\";}" $kfile
+				fi
+                ;;
 	esac    
 	shift
 done
-	
-$v ${files[@]}
 
 # }}}
 }
@@ -82,10 +106,11 @@ $v ${files[@]}
 
 script_opts=( $* )
 
+# read cmd args => main()  {{{
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0; exit ;;
+	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

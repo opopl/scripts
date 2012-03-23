@@ -1,24 +1,35 @@
 #!/usr/bin/env bash
-
-sbvars(){
-# {{{
-s_purpose="view scripts"
-s_project="~/scripts"
+ 
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
 
 vim_opts="-n -p"
+#vim_opts="$vim_opts -g" 
 v="vim $vim_opts"
 repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
+define_base_dirs(){
+# {{{
+# main Wales group software directory
+export wg_dir="$shd/../../"
+packdir=$HOME/arch/packed
+unpackdir=$HOME/arch/unpacked
 # }}}
 }
 
-sbvars
 
-dhelp(){
+set_base_vars(){
+# {{{
+s_purpose="view paper's tex source"
+s_project="~/scripts"
+# }}}
+}
+
+set_base_vars
+
+display_help(){
 # {{{
 # general beginning part {{{
 cat << EOF
@@ -37,7 +48,7 @@ USAGE: $this_script [ OPTIONS ]
 			display the help message
 
 	vm		v(iew) m(yself), i.e., edit this script
-	-g		g(raphical) vim  invocation
+	-g		gvim invocation
 	
 	============
 EOF
@@ -45,7 +56,18 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-some option
+pf		Protein folding
+pull		Pulling experiments and theory
+bln		BLN model
+
+pf:
+	1 	Thirumalai10	
+
+pull:
+	1	ToanThirumalai10
+
+bln:
+	1	GuoBrooks97	
 
 EOF
 # }}}
@@ -59,19 +81,24 @@ EOF
 # }}}
 }
 
-[ -z "$*" ] && ( dhelp; exit 0 )
+[ -z "$*" ] && ( display_help; exit 0 )
 
 main(){
 # {{{
 
-while [ ! -z "$1" ]; do 
-	case "$1" in
-	  make|awk|perl) files=( ${files[@]} `find $dir/* ` ) ;;
-	  *) files=( ${files[@]} `find $shd -name $1 ` ) ;;
-	esac    
-	shift
-done
-	
+ptexdir="$hm/wrk/p/"
+
+case "$1" in
+  pull) # {{{
+	paps=( ToanThirumalai10 ) 
+  ;;
+	#}}}
+	*) files=( ` find $ptexdir -name p.$1\*.\*.tex -o -name p.$1\*.tex ` \
+				pap-nc.0.tex pap-preamble.0.tex \ 
+				`find $ptexdir -name up.$1\*.i.dat `) ;;
+esac    
+
+#files=( ` ls p.${paps[$2]}.*.tex ` )
 $v ${files[@]}
 
 # }}}
@@ -81,12 +108,13 @@ $v ${files[@]}
 # {{{
 
 script_opts=( $* )
+define_base_dirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
 	  	vm) $v $0; exit ;;
-		h) dhelp $*; exit ;;
+		h) display_help $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;
 	esac

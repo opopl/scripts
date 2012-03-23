@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 
+# sbvars() dhelp() {{{
+
 sbvars(){
 # {{{
-s_purpose="view scripts"
-s_project="~/scripts"
-# directory where this script resides
-export shd="`dirname $(readlink -f $0)`"
+s_purpose=" ... convert PDF papers to DJVU format and copy to:"
+s_project=" ~/scripts"
+
 # name of this script 
 export this_script=` basename $0 `
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+
+
+export papdir=$hm/doc/papers/ChemPhys/
+export ddir=$hm/wrk/p/djvu
 
 vim_opts="-n -p"
 v="vim $vim_opts"
-repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
+gitdirs=( "config" "scripts" "templates" "vrt" "install" "coms" "cit" )
 
 # }}}
 }
@@ -25,7 +32,11 @@ cat << EOF
 =============================================
 SCRIPT NAME: $this_script 
 PROJECT: $s_project
-PURPOSE: $s_purpose
+PURPOSE: 
+	Convert a PDF paper in directory: 
+		$papdir	
+	to DJVU format and copy the final DJVU file to:
+		$ddir
 USAGE: $this_script [ OPTIONS ] 
 
 	OPTIONS:
@@ -37,7 +48,7 @@ USAGE: $this_script [ OPTIONS ]
 			display the help message
 
 	vm		v(iew) m(yself), i.e., edit this script
-	-g		g(raphical) vim  invocation
+	-g		gvim invocation
 	
 	============
 EOF
@@ -45,7 +56,9 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-some option
+	FILE	- filename for the paper in the PDF format. e.g.
+		$this_script FILE takes FILE.pdf as input and then
+		produces FILE.djvu as output
 
 EOF
 # }}}
@@ -53,6 +66,8 @@ EOF
 cat << EOF
 REMARKS:
 AUTHOR: O. Poplavskyy
+SCRIPT LOCATION:
+	$0
 =============================================
 EOF
 # }}}
@@ -61,18 +76,31 @@ EOF
 
 [ -z "$*" ] && ( dhelp; exit 0 )
 
+#}}}
+
 main(){
-# {{{
+# read cmd args {{{
+
+
+
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  make|awk|perl) files=( ${files[@]} `find $dir/* ` ) ;;
-	  *) files=( ${files[@]} `find $shd -name $1 ` ) ;;
+	  "")
+	  ;;
+	  *) 
+	  files=( ` find $papdir -name $1\*.pdf ` )
+	  for p in ${files[@]}; do
+			echo "$this_script> Converting file: "
+			echo "	$p"
+			pbare=$( basename $p )
+			dp=${pbare%.pdf}.djvu
+	  		pdf2djvu $p -o $ddir/$dp
+	  done
+	  ;;
 	esac    
 	shift
 done
-	
-$v ${files[@]}
 
 # }}}
 }
@@ -82,10 +110,11 @@ $v ${files[@]}
 
 script_opts=( $* )
 
+# read cmd args => main()  {{{
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0; exit ;;
+	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

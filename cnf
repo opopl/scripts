@@ -42,6 +42,9 @@ OPTS:
 	wgg	git for wg (in .git subdirectory)
 			config description
 
+
+	sshd	openssh server
+
 	rg	ranger
 	s	screen
 
@@ -112,7 +115,7 @@ else
 				files=( gitconfig bashrc pinerc vimrc \
 			       		screenrc addressbook cshrc inputrc \
 				        config cpan_config.pm
-						bash_completion
+						#bash_completion
 						) 
 				for file in ${files[@]}; do
 				  	echo "Copying $file to $HOME..."
@@ -229,6 +232,7 @@ else
 				od=$wgdir/../.git/ 
 				;;
 			sh) bf=( .bashrc .profile .bash_profile ) ;;
+			sshd) bf=( sshd_config ) ; od="/etc/ssh/";;
 			vcs) od=$VIMRUNTIME/plugin/; cd $od;  bf=( ` ls vcs*.vim ` ); set_files
 		       	     od=$HOME/doc/coms/; bf=( vcscommand.tex ) 
 					;;

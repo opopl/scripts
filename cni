@@ -15,7 +15,7 @@ vim_opts="-n -p"
 v="vim $vim_opts"
 
 iexts=( gif png bmp jpg )
-export picdir=$PWD
+export bpicdir=$PWD/ppics/
 export iext=gif
 export oext=eps
 export outdir=$picdir/
@@ -82,7 +82,7 @@ main(){
 while [ ! -z "$1" ]; do
 
 case "$1" in
-  -pd|--picdir) export picdir=$2; shift ;;
+  -pd|--picdir) export picdir=$bpicdir/$2; shift ;;
   rq) # produce images with reduced quality {{{
   	  # quality in the range 1..100
 	  quality=$2

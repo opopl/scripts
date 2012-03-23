@@ -207,6 +207,10 @@ eoo "$*"
 pref_eoo="$this_script"
 }
 
+eoos(){
+echo "$pref_eoo> $*"
+}
+
 eoo(){
 echo "$pref_eoo> $*"
 echo "$pref_eoo> $*" >> $log_file
