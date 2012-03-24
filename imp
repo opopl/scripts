@@ -1,27 +1,32 @@
+
 #!/usr/bin/env bash
 
 # sbvars() dhelp() {{{
 
 sbvars(){
 # {{{
-s_purpose="list various stuff"
+s_purpose=" ... script purpose ..."
 s_project=" ~/scripts"
 
 # name of this script 
 export this_script=` basename $0 `
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
+# shell functions file
+export fsh="$hm/scripts/f.sh"
+# directory where this script looks for files
+# which it has to improve
+export dir=$shd
 
 vim_opts="-n -p"
 v="vim $vim_opts"
 gitdirs=( "config" "scripts" "templates" "vrt" "install" "coms" "cit" )
 
-ls="ls --color"
-
 # }}}
 }
 
 sbvars
+source $fsh
 
 dhelp(){
 # {{{
@@ -50,13 +55,13 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-	-d 	--dir	list directories 
-	-s	--scr	list scripts 
+	-d DIR	- 	directory where to look for files
+	-f FILE	-	specify filename to be improved
+	-a		-	all files in the directory
 
-	-f S		list files of the type *S*
-	--idat		list files *.i.dat
-
-	--cf		list files in a compact way
+DEFAULTS:
+	directory where to search for files:
+		$dir
 
 EOF
 # }}}
@@ -81,17 +86,14 @@ main(){
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  --scr) cat $shd/inc/scripts.i.dat ;;
-	  -d|--dir) $ls -l | grep '^d' | awk '{ print $NF }';;
-	  ft) ;;
-	  --idat) find . -name \*.i.dat | sed 's_\.\/__g' ;;
-		  #case "$2" in
-
-		#esac
- #l="ls -alF"
- #ldir="ls -l | egrep '^d'"
-	  *)
+	  -a) files=( ` ack $dir -f -n ` ) 
+	  		for f in ${files[@]}; do 
+				scr_nice.pl --infile $f
+			done
 	  ;;
+	  -f) f=$2; shift; scr_nice.pl --infile $f ;;
+	  -d) export dir=$2; shift ;;
+	  *) ;;
 	esac    
 	shift
 done
@@ -108,7 +110,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
+	  	vm) $v $0 $fsh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

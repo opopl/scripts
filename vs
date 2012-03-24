@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# sbvars() dhelp() {{{
+
 sbvars(){
 # {{{
 s_purpose="view scripts"
@@ -11,7 +13,6 @@ export this_script=` basename $0 `
 
 vim_opts="-n -p"
 v="vim $vim_opts"
-repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
 # }}}
 }
@@ -45,7 +46,7 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-some option
+	make|awk|perl 	
 
 EOF
 # }}}
@@ -53,11 +54,14 @@ EOF
 cat << EOF
 REMARKS:
 AUTHOR: O. Poplavskyy
+SCRIPT LOCATION:
+	$0
 =============================================
 EOF
 # }}}
 # }}}
 }
+# }}}
 
 [ -z "$*" ] && ( dhelp; exit 0 )
 
@@ -66,8 +70,8 @@ main(){
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  make|awk|perl) files=( ${files[@]} `find $dir/* ` ) ;;
-	  *) files=( ${files[@]} `find $shd -name $1 ` ) ;;
+	  i) files=( $shd/inc/scripts.i.dat ) ;;
+	  *) files=( ${files[@]} `find $shd/$1 -name \* | sed '/~$/d' ` ) ;;
 	esac    
 	shift
 done

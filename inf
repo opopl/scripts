@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
  
+#{{{
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
@@ -67,6 +68,8 @@ EOF
 # }}}
 # }}}
 }
+
+#}}}
 
 [ -z "$*" ] && ( display_help; exit 0 )
 

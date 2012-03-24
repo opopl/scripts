@@ -1,0 +1,78 @@
+
+Name 	Purpose
+
+======
+Location: ~/scripts
+=====
+
+lnp			Create links to papers
+cnp			Convert PDF paper to DJVU; copy it
+cn			Converter script, pine dblatex etc.
+cnf			Configuration 
+cni			Converting between image formats
+cpd			Copy data files from the cluster
+cpdoc		Syncing with leonov
+cpi			Convert images in ppics/ dir, e.g. cpi HT92 
+crx			Make a file executable, chmod +rx
+gcl			git cloning 
+gclone		git cloning: git clone $hm/git/$1.git $hm/$1
+get			Shortcuts for downloading files with wget
+gitcat		= git cat-file ...
+gitgraph		
+gitgrep
+gpu			shortcut for git pull
+gsrcf		syncing with srcf
+gt			shortcuts for git commands 
+inf			display different info
+ins			install things
+bt			Working with bibtex files
+ivrt		install vrt, i.e. VIMRUNTIME directory
+jmol		using JMOL
+k			kill things (kill)
+l			list things (ls)
+vs			view scripts, e.g.: \
+				vs perl - view only perl-related scripts
+ltm			stands for "l(a)t(ex) m(ake)": latex => pdf
+lsp			list papers
+mkgit		initialize a bare git repo
+mscp		copy files through ssh tunneling
+npdf		count number of pages in a PDF document
+rmp			remove papers (their p.*.tex form)
+rnf			rename files
+tun			establish an ssh tunnel through an external server
+snc			synchronizing
+# svf		removed on 14:40:28 (Sat, 24-Mar-2012):
+short_pap_key  given a paper key, return its short version \
+				(using the corresponding *.bbl file)
+s			invoke GNU screen (with no arguments).
+			For usage, use: s h.
+se			search google using elinks
+vep			view a PDF paper using its key, e.g. vep HT92
+vp			view the tex-file using the paper key, e.g. vp -g GuoTH92
+				Editor: (g)vim
+
+======
+Location: ~/wrk/p
+=====
+
+vps 		see vp - do the same, but using the short paper key.
+				E.g. vp lim10 will open Luccioli10
+
+vrep		open files related to rep
+wbib		work with Text::Bibtex
+v			view text files within p/ 
+up			upload/update: pics.tar.gz, p-git.tar.gz
+gta			add files for git update
+gppics		sync with opdesk
+bpe
+bps
+ch
+cbib
+cbib.pl
+pe
+pe.pl
+psec
+scr_nice.pl	Make useful changes across all scripts, 
+			e.g. display_help => dhelp() etc.
+imp - bash shell covering script for
+			scr_nice.pl

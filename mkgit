@@ -81,7 +81,7 @@ while [ ! -z "$1" ]; do
 	  *)
 		  gdir=$hm/git/$1.git
 		  mkdir -p $gdir
-		  git init --bare $gdir
+		  git init --bare --shared $gdir
 	  ;;
 	esac    
 	shift

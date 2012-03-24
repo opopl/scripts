@@ -54,7 +54,25 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-some option
+	x|xgo - load an XYZ trajectory into JMOL 
+			( native state conformation for the Go-like model ); 
+			then display it with the pre-defined 
+			configuration settings set-up in x.jmol
+
+	=========
+	Echoing:
+	=========
+
+	-if FILE	specify an input file
+	i			produce images
+
+	-e S		echo different things depending on S. 
+				Depending on S, print the following:
+					goconnect 	- print Go-like model connectivities
+					init		- initialization part
+					blnseq		- BLN model sequence
+					final		- final part
+					exe 		- what is the JMOL executable?
 
 EOF
 # }}}
@@ -89,7 +107,7 @@ eof
 ;;
 #}}}
 	-if) #  specify an input file {{{
-	  	iffile=$2; shift 
+	  	export iffile=$2; shift 
 cat << eof
 		load trajectory "$iffile"
 eof
@@ -278,6 +296,7 @@ set echo top left; font echo 20 serif bolditalic ; color echo white
 eof
 		  ;;
 		#}}}
+		exe) echo "$jmolexe" ; exit 0;;
 		esac 
 		exit 0
 	  ;;

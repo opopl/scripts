@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
  
+# dhelp() sbvars() {{{
+
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
@@ -80,6 +82,7 @@ EOF
 # }}}
 # }}}
 }
+#}}}
 
 [ -z "$*" ] && ( display_help; exit 0 )
 
@@ -89,16 +92,12 @@ main(){
 ptexdir="$hm/wrk/p/"
 
 case "$1" in
-  pull) # {{{
-	paps=( ToanThirumalai10 ) 
-  ;;
-	#}}}
-	*) files=( ` find $ptexdir -name p.$1\*.\*.tex -o -name p.$1\*.tex ` \
+  	*) files=( ` find $ptexdir -name p.$1\*.\*.tex -o -name p.$1\*.tex ` \
 				pap-nc.0.tex pap-preamble.0.tex \ 
-				`find $ptexdir -name up.$1\*.i.dat `) ;;
+				`find $ptexdir -name up.$1\*.i.dat ` \ 
+				`find $ptexdir -name bibt.$1\*.tex `) ;;
 esac    
 
-#files=( ` ls p.${paps[$2]}.*.tex ` )
 $v ${files[@]}
 
 # }}}

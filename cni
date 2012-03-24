@@ -16,6 +16,7 @@ v="vim $vim_opts"
 
 iexts=( gif png bmp jpg )
 export bpicdir=$PWD/ppics/
+export bpicdir=""
 export iext=gif
 export oext=eps
 export outdir=$picdir/

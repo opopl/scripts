@@ -13,6 +13,8 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
+# bibliography file with papers 
+export bibf-"repdoc.bib"
 
 export field="ChemPhys"
 export pdir="$hm/doc/papers/$field/"
@@ -94,6 +96,7 @@ while [ ! -z "$1" ]; do
 	  a) cd $pdir; ls *.pdf | sed 's/*.pdf$//g' ;;
 	  #at) mktex.pl --listpapers ;;
 	  at) ls p.*.tex | sed '/^p.\w*\.\w*\.tex/d' | sed 's/^p\.//g; s/\.tex$//g' ;;
+	  #ax) perl -ne "/^\@article\{\w*,/" $bibf ;;
 	  *) 
 	  	pkey=$1
 	  	pfiles=( ` find $pdir -name $pkey\*.pdf | sed "s/^.*\///" ` )

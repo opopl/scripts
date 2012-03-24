@@ -29,6 +29,7 @@ export dvips_opts="-Ppdf"
 
 export mode="full"
 export exe="latex"
+export exe="perltex --nosafe"
 # }}}
 }
 #}}}
