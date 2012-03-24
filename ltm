@@ -185,12 +185,14 @@ while [ ! -z "$1" ]
 		"-if"|"--infile") export ifname=${2%.tex}; shift ;;
 		"--exe") export exe=$2; shift ;;
 		"--sopts") export sopts="$2"; shift ;;
+		"--texopts") export texopts="$2"; shift ;;
 	    *)	export ifname="$1" ;;
 	  esac
 	  shift
 	  # }}}
 done
 
+exe="$exe $texopts"
 # exec part {{{
 
 export infile="$ifname".tex
