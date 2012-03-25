@@ -8,7 +8,7 @@ export this_script=` basename $0 `
 vim_opts="-n -p"
 v="vim $vim_opts"
 
-define_base_dirs(){
+sbdirs(){
 # {{{
 # main Wales group software directory
 export wg_dir="$shd/../../"
@@ -17,7 +17,7 @@ unpackdir=$HOME/arch/unpacked
 # }}}
 }
 
-display_help(){
+dhelp(){
 # {{{
 cat << EOF
 =============================================
@@ -54,7 +54,7 @@ EOF
 # }}}
 }
 
-[ -z $* ] && ( display_help; exit 0 )
+[ -z $* ] && ( dhelp; exit 0 )
 
 main(){
 # {{{
@@ -79,13 +79,13 @@ esac    # --- end of case ---
 # {{{
 
 script_opts=( $* )
-define_base_dirs
+sbdirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
 	  	vm) $v $0; exit ;;
-		h) display_help $*; exit ;;
+		h) dhelp $*; exit ;;
 	  	*) main $* && exit 0 ;;
 	esac
   	shift
@@ -93,5 +93,3 @@ while [ ! -z "$1" ]; do
 done
 
 # }}}
-
-

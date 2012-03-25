@@ -253,4 +253,3 @@ line, so both of the above lines might appear. The options will apply to any
 transfer involving the specified directory or any of its subdirectories.
 |;
 }
-

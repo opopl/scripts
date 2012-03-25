@@ -10,4 +10,3 @@ base_output_dir="out"
 output_dir="$data_dir/$base_output_dir"
 
 source $shd/f.sh
-

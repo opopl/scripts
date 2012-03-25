@@ -2,5 +2,3 @@
 
 str="$*"
 $brw "www.google.co.uk/search?q=$str"
-
-

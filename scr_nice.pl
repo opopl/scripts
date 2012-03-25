@@ -67,9 +67,12 @@ my $fscr = do { local $/;  <INFILE> };
 close(INFILE);
 
 # perform changes on fscr {{{
-$fscr =~ s/display_help/dhelp/g;
-$fscr =~ s/set_base_vars/sbvars/g;
-$fscr =~ s/set_base_dirs/sbdirs/g;
+
+$fscr =~ s/dhelp/dhelp/g;
+$fscr =~ s/sbvars/sbvars/g;
+$fscr =~ s/sbdirs/sbdirs/g;
+$fscr =~ s/sbdirs/sbdirs/g;
+
 # }}}
 my @flines= split "\n",$fscr;
 
@@ -85,4 +88,3 @@ close(N);
 copy("$infile.new","$infile");
 
 ##}}}
-

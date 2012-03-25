@@ -2,36 +2,29 @@
  
 # dhelp() sbvars() {{{
 
+sbvars(){
+# {{{
+
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
+# shell functions file
+export fsh="$hm/scripts/f.sh"
 
 vim_opts="-n -p"
 #vim_opts="$vim_opts -g" 
 v="vim $vim_opts"
 repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
-define_base_dirs(){
-# {{{
-# main Wales group software directory
-export wg_dir="$shd/../../"
-packdir=$HOME/arch/packed
-unpackdir=$HOME/arch/unpacked
-# }}}
-}
-
-
-set_base_vars(){
-# {{{
 s_purpose="view paper's tex source"
 s_project="~/scripts"
 # }}}
 }
 
-set_base_vars
+sbvars
 
-display_help(){
+dhelp(){
 # {{{
 # general beginning part {{{
 cat << EOF
@@ -58,25 +51,14 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-pf		Protein folding
-pull		Pulling experiments and theory
-bln		BLN model
-
-pf:
-	1 	Thirumalai10	
-
-pull:
-	1	ToanThirumalai10
-
-bln:
-	1	GuoBrooks97	
-
 EOF
 # }}}
 # final general part {{{
 cat << EOF
 REMARKS:
 AUTHOR: O. Poplavskyy
+SCRIPT LOCATION:
+	$0
 =============================================
 EOF
 # }}}
@@ -84,7 +66,7 @@ EOF
 }
 #}}}
 
-[ -z "$*" ] && ( display_help; exit 0 )
+[ -z "$*" ] && ( dhelp; exit 0 )
 
 main(){
 # {{{
@@ -92,11 +74,24 @@ main(){
 ptexdir="$hm/wrk/p/"
 
 case "$1" in
-  	*) files=( ` find $ptexdir -name p.$1\*.\*.tex -o -name p.$1\*.tex ` \
-				pap-nc.0.tex pap-preamble.0.tex \ 
-				`find $ptexdir -name up.$1\*.i.dat ` \ 
-				`find $ptexdir -name bibt.$1\*.tex `) ;;
+  -s) 
+  		eoos "-s: using the short key..."
+  		if [ ! -z "$2" ]; then  
+ 			 pkey=$2; shift 
+	   		 pkey="$1" 
+			 lkey=`long_pap_key $pkey`
+			 $0 $opt $lkey
+		#else
+              #eoor "-s: using the short key..."
+		fi
+		;;
+  	*) pkey=$1 ;;
 esac    
+
+files=( ` find $ptexdir -name p.$pkey\*.\*.tex -o -name p.$pkey\*.tex ` \
+	pap-nc.0.tex pap-preamble.0.tex \ 
+	`find $ptexdir -name up.$pkey\*.i.dat ` \ 
+	`find $ptexdir -name bibt.$pkey\*.tex `) 
 
 $v ${files[@]}
 
@@ -107,13 +102,12 @@ $v ${files[@]}
 # {{{
 
 script_opts=( $* )
-define_base_dirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0; exit ;;
-		h) display_help $*; exit ;;
+	  	vm) $v $0 $fsh; exit ;;
+		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;
 	esac
@@ -122,5 +116,3 @@ while [ ! -z "$1" ]; do
 done
 
 # }}}
-
-

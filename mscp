@@ -49,4 +49,3 @@ case "$direction" in
 	"f") $copy_command $username@localhost:$source $target ;;
 esac
 esac
-

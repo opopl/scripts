@@ -5,4 +5,3 @@
 
 intermediate=op226@citadel.ch.cam.ac.uk
 ssh $intermediate -C -e none ssh $@
-

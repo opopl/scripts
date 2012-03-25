@@ -31,4 +31,3 @@ sub wanted {
 foreach $f (@ffiles) {
 system("cat $f | tr '[a-z]' '[A-Z]' > n; mv n $f")  
 }
-

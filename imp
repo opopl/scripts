@@ -88,10 +88,13 @@ while [ ! -z "$1" ]; do
 	case "$1" in
 	  -a) files=( ` ack $dir -f -n ` ) 
 	  		for f in ${files[@]}; do 
+			  	eoos "Improving file: $f"
 				scr_nice.pl --infile $f
 			done
 	  ;;
-	  -f) f=$2; shift; scr_nice.pl --infile $f ;;
+	  -f) f=$2; shift; scr_nice.pl --infile $f
+			  	eoos "Improving file: $f"
+				;;
 	  -d) export dir=$2; shift ;;
 	  *) ;;
 	esac    
