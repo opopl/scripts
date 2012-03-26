@@ -1,40 +1,35 @@
 #!/usr/bin/env bash
 
-# sh template: preliminary part {{{
+# sbvars() dhelp() {{{
+
+sbvars(){
+#{{{
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
+# shell file with functions
+export fsh="$hm/scripts/f.sh"
+export bfile=`mktex.pl --var bibfile `.bib
 
 vim_opts="-n -p"
 v="vim $vim_opts"
 
-sbdirs(){
-# {{{
-# main Wales group software directory
-export wg_dir="$shd/../../"
-packdir=$HOME/arch/packed
-unpackdir=$HOME/arch/unpacked
-# }}}
-}
-
-
-sbvars(){
-# {{{
-s_purpose="script for working with BibTeX files"
-s_project="~/scripts"
 # }}}
 }
 
 sbvars
+source $fsh
 
-display_help(){
+dhelp(){
 # general part {{{
 cat << EOF
 =============================================
 SCRIPT NAME: $this_script 
-PROJECT: $s_project
-PURPOSE: $s_purpose
+PROJECT: 
+	~/scripts/
+PURPOSE: 
+	script for working with BibTeX files
 USAGE: $this_script [ OPTIONS ] [ BIBTEX FILE(S) ]
 
 	OPTIONS:
@@ -62,6 +57,9 @@ cat << EOF
 	l		list:
 
 REMARKS:
+DEFAULTS:
+	bib-file:
+		$bfile
 USAGE EXAMPLES:
 	$this_script rm k repdoc.bib 
 			remove all keywords from repdoc.bib
@@ -71,8 +69,10 @@ AUTHOR: O. Poplavskyy
 EOF
 # }}}
 }
+
+[ -z "$*" ] && ( dhelp; exit 0 )
+
 # }}}
-[ -z "$*" ] && ( display_help; exit 0 )
 
 main(){
 # {{{
@@ -80,6 +80,10 @@ main(){
 case "$1" in
   "")
   ;;
+  verr) bt.pl --infile $bfile --list keys  >& n; cat n | awk '/error/' >& $bfile.err; v err ;;
+  vwarn) bt.pl --list keys --infile $bfile >& n; cat n | awk '/warning/' >& $bfile.warn; v warn ;;
+  lk) bt.pl --list keys --infile $bfile | sort > bib.pkeys.i.dat; cat bib.pkeys.i.dat ;;
+  la) bt.pl --list authors | sort > bib.auth.i.dat; cat bib.auth.i.dat ;;
 esac    # --- end of case ---
 
 # }}}
@@ -89,13 +93,12 @@ esac    # --- end of case ---
 # {{{
 
 script_opts=( $* )
-sbdirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0; exit ;;
-		h) display_help $*; exit ;;
+	  	vm) $v $0 $fsh $shd/$this_script.pl; exit ;;
+		h) dhelp $*; exit ;;
 	  	*) main $* && exit 0 ;;
 	esac
   	shift

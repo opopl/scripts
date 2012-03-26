@@ -14,7 +14,7 @@ export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
 # bibliography file with papers 
-export bibf-"repdoc.bib"
+export bibf="repdoc.bib"
 
 export field="ChemPhys"
 export pdir="$hm/doc/papers/$field/"

@@ -4,8 +4,8 @@
 
 sbvars(){
 # {{{
-s_purpose=" Remove papers "
-s_project=" ~/scripts"
+s_purpose=" ... list papers .."
+s_project=" ~/wrk/p/"
 
 # name of this script 
 export this_script=` basename $0 `
@@ -13,11 +13,11 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
-export pdfview="evince"
+# bibliography file with papers 
+export bibf="repdoc.bib"
 
 export field="ChemPhys"
 export pdir="$hm/doc/papers/$field/"
-export papdir=$hm/doc/papers/ChemPhys/
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -37,7 +37,11 @@ cat << EOF
 SCRIPT NAME: $this_script 
 PROJECT: $s_project
 PURPOSE: $s_purpose
-USAGE: $this_script [ OPTIONS ] 
+USAGE: $this_script [ OPTIONS ] PAPER
+	PAPER can be also a substring of the full paper name,
+	e.g., 
+	$this_script Ande
+	will list all available papers which begin with Ande
 
 	OPTIONS:
 
@@ -55,6 +59,9 @@ EOF
 # }}}
 # actual interesting part {{{
 cat << EOF
+
+	a 	all papers 
+	ch  ChemPhys papers
 
 DEFAULTS:
 
@@ -82,47 +89,10 @@ EOF
 #}}}
 
 main(){
+# read cmd args {{{
 
-# intro messages {{{
-
-e_delim 100 "="
-eoos "Input (PDF) papers directory: $papdir" 
-
-#}}}
-# while-loop  {{{
-
-while [ ! -z "$1" ]; do 
-	case "$1" in
-	  "") ;;
-	  -s) # short paper key {{{
-	  	eoos "-s: short paper key option"	
-	  	export pkey=`lpk $2 ` ; 
-		 	eoos "Short paper key provided: $2"  
-		if [ ! -z $pkey ]; then 
-		 	eoos "Long paper key is: $pkey"  
-		  else
-		 	eoor "Couldn't convert to the long form: $2"  
-		  fi
-	  shift ;;
-		# }}}
-	  *) pkey=$1  
-		 	eoos "Long paper key is: $pkey"  
-			;;
-	esac    
-	shift
-done
-
-#}}}
-# dealing with files {{{
-
-if [ ! -z $pkey ]; then  
-	files=( ` find $papdir -name $pkey\*.pdf ` )
-		  for p in ${files[@]}; do
-				$pdfview $p
-		  done
-fi
-#}}}
-
+mv $pdir/$1.pdf $pdir/$2.pdf
+# }}}
 }
 
 # main part 
