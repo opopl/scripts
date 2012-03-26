@@ -13,6 +13,7 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
+export pdfview="evince"
 
 export field="ChemPhys"
 export pdir="$hm/doc/papers/$field/"
@@ -80,21 +81,48 @@ EOF
 #}}}
 
 main(){
-# read cmd args {{{
+
+# intro messages {{{
+
+e_delim 100 "="
+eoos "Input (PDF) papers directory: $papdir" 
+eoos "Output (DJVU) directory: $ddir" 
+
+#}}}
+# while-loop  {{{
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  "")
-	  ;;
-	  *)
-     	pkey=$1
-        find $pdir -name $pkey\*.pdf -exec evince '{}' \; 
-	  ;;
+	  "") ;;
+	  -s) # short paper key {{{
+	  	eoos "-s: short paper key option"	
+	  	export pkey=`lpk $2 ` ; 
+		 	eoos "Short paper key provided: $2"  
+		if [ ! -z $pkey ]; then 
+		 	eoos "Long paper key is: $pkey"  
+		  else
+		 	eoor "Couldn't convert to the long form: $2"  
+		  fi
+	  shift ;;
+		# }}}
+	  *) pkey=$1  
+		 	eoos "Long paper key is: $pkey"  
+			;;
 	esac    
 	shift
 done
 
-# }}}
+#}}}
+# dealing with files {{{
+
+if [ ! -z $pkey ]; then  
+	files=( ` find $papdir -name $pkey\*.pdf ` )
+		  for p in ${files[@]}; do
+				$pdfview $p
+		  done
+fi
+#}}}
+
 }
 
 # main part 

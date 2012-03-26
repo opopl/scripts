@@ -63,15 +63,15 @@ my $infile=$opt{infile};
 #}}}
 
 open(INFILE,"<$infile") || warn $!;
+( "$infile" eq "$this_script" ) && die "Cannot edit itself!\n";
 my $fscr = do { local $/;  <INFILE> };
 close(INFILE);
 
 # perform changes on fscr {{{
 
 $fscr =~ s/dhelp/dhelp/g;
-$fscr =~ s/sbvars/sbvars/g;
-$fscr =~ s/sbdirs/sbdirs/g;
-$fscr =~ s/sbdirs/sbdirs/g;
+$fscr =~ s/(set|define)_base_vars/sbvars/g;
+$fscr =~ s/(set|define)_base_dirs/sbdirs/g;
 
 # }}}
 my @flines= split "\n",$fscr;
@@ -85,6 +85,6 @@ foreach my $line (@flines){
 }
 
 close(N);
-copy("$infile.new","$infile");
+move("$infile.new","$infile");
 
 ##}}}

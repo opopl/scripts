@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 
 # sbvars() dhelp() {{{
@@ -86,7 +85,7 @@ main(){
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  -a) files=( ` ack $dir -f -n ` ) 
+	  -a) files=( ` ack $dir -f -n | sed '/\.\(new|bak\)$/d' ` ) 
 	  		for f in ${files[@]}; do 
 			  	eoos "Improving file: $f"
 				scr_nice.pl --infile $f

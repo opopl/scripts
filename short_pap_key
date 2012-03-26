@@ -2,6 +2,10 @@
 
 # sbvars() dhelp() {{{
 
+gvar(){
+  $hm/wrk/p/mktex.pl --var $1 
+}
+
 sbvars(){
 # {{{
 s_purpose=" ... script purpose ..."
@@ -11,6 +15,9 @@ s_project=" ~/scripts"
 export this_script=` basename $0 `
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
+# getting variables script - gvar() refers to mktex.pl
+export bibfile=`gvar bibfile`
+export bibstyle=`gvar bibstyle`
 
 export kfile="keys.i.dat"
 export proj="pap"
@@ -81,16 +88,67 @@ EOF
 #}}}
 
 main(){
+  #{{{
+bibt=bibt.$pkey
+kfiles=( "keys.i.dat" $proj.bbl $bibt.bbl )
 
-kfiles ( "keys.i.dat" $proj.bbl )
-sk=`cat $kfile | awk "/$pkey/ { print \$1}"  `
-;;
-kfile="$proj.bbl"
-perl -ne "if ( /^\\\\bibitem\\[(\w+)(\W+?.*?|.*?)([0-9]+)\\]{$pkey}/ ){ print \"\$1\$3\n\";}" $kfile
-;; 
-esac
+for kfile in ${kfiles[@]}; do
+  	case $kfile in
+	  	"keys.i.dat") 
+				cat $kfile | awk "/$pkey/ { print \$1}" > tmp.$bibt.sk  
+				sk=`cat tmp.$bibt.sk`
+				if [ ! -z "$sk" ]; then 
+					echo $sk | awk ' { print $1 } ' 
+					exit 0
+				fi
+				;;
+		*.bbl) 
+			if [ -f "$kfile" ]; then 
+			   # use existing bbl file  {{{
+				perl -ne "if ( /^\\\\bibitem\\[(\w+)(\W+?.*?|.*?)([0-9]+)\\]{$pkey}/ ){ print \"\$1\$3\n\";}" $kfile > tmp.$bibt.sk 
+				sk=`cat tmp.$bibt.sk`
+				if [ ! -z "$sk" ]; then 
+					echo "$sk"
+					exit 0
+				fi	  
+			  # }}}
+			else
+			    # no bbl file {{{
+			  	# if no bbl-file exists, do latex bibtex to 
+				# produce one
+				if [ "$kfile" == "$bibt.bbl" ]; then
+					bbl_file="$bibt.bbl"
+					tmp="tmp.$bibt.tex"
+					#cat << EOF > $tmp ... {{{
+cat << EOF > $tmp
+\\documentclass{report}
+
+\\begin{document}
+\\cite{$pkey}
+\\input{jnames}
+\\bibliographystyle{$bibstyle}
+\\bibliography{$bibfile}
+\\end{document}
+EOF
+#}}}
+					#now latex & bibtex on $tmp; then extract the short key  {{{
+	  				ltm --infile $tmp >& /dev/null
+					mv tmp.$bibt.bbl $bibt.bbl
+					perl -ne "if ( /^\\\\bibitem\\[(\w+)(\W+?.*?|.*?)([0-9]+)\\]{$pkey}/ ){ print \"\$1\$3\n\";}" $kfile > tmp.$bibt.sk 
+					sk=`cat tmp.$bibt.sk`
+					if [ ! -z "$sk" ]; then 
+						echo "$sk"
+						exit 0
+					fi	  
+					rm -f tmp.$bibt.*
+				  	#}}}
+	  #}}}
+				fi
+			  fi
+		;;
+  	esac
 done
-
+#}}}
 }
 
 # main part 

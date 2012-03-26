@@ -11,7 +11,7 @@ v="vim $vim_opts"
 repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
 
-define_base_dirs(){
+sbdirs(){
 # {{{
 # main Wales group software directory
 export wg_dir="$shd/../../"
@@ -21,7 +21,7 @@ unpackdir=$HOME/arch/unpacked
 }
 
 
-display_help(){
+dhelp(){
 # {{{
 # general beginning part {{{
 cat << EOF
@@ -62,9 +62,9 @@ EOF
 # }}}
 }
 
-[ -z "$*" ] && ( display_help; exit 0 )
+[ -z "$*" ] && ( dhelp; exit 0 )
 
-set_base_vars(){
+sbvars(){
 # {{{
 s_purpose="copy data files from the cluster"
 s_project="~/scripts"
@@ -80,7 +80,7 @@ local="$datadir"
 }
 #}}}
 
-set_base_vars
+sbvars
 
 main(){
 # {{{ 
@@ -101,13 +101,13 @@ esac    # --- end of case ---
 # {{{
 
 script_opts=( $* )
-define_base_dirs
+sbdirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
 	  	vm) $v $0; exit ;;
-		h) display_help $*; exit ;;
+		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;
 	esac

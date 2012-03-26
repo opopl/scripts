@@ -9,7 +9,7 @@ export this_script=` basename $0 `
 vim_opts="-n -p"
 v="vim $vim_opts"
 
-define_base_dirs(){
+sbdirs(){
 # {{{
 # main Wales group software directory
 export wg_dir="$shd/../../"
@@ -24,14 +24,14 @@ papdir="$basedir/doc/papers/"
 }
 
 
-set_base_vars(){
+sbvars(){
 # {{{
 s_purpose="make links"
 s_project="~/scripts"
 # }}}
 }
 
-set_base_vars
+sbvars
 
 display_help(){
 # {{{
@@ -142,7 +142,7 @@ esac
 # {{{
 
 script_opts=( $* )
-define_base_dirs
+sbdirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in

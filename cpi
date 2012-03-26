@@ -13,6 +13,8 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
+# directory with figures
+pdir="$hm/wrk/p/ppics"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -78,10 +80,24 @@ while [ ! -z "$1" ]; do
 	case "$1" in
 	  "")
 	  ;;
-	  *) cni -pd $hm/wrk/p/ppics/$1 ;;
+	  -s) 
+	  	eoos "-s: short paper key option"	
+	  	export pkey=`lpk $2 ` ; 
+		 	eoos "Short paper key provided: $2"  
+		if [ ! -z $pkey ]; then 
+		 	eoos "Long paper key is: $pkey"  
+		  else
+		 	eoor "Couldn't convert to the long form: $2"  
+		  fi
+	  shift ;;
+	  *) export pkey=$1  
+		 eoos "Long paper key is: $pkey"  
+		;;
 	esac    
 	shift
 done
+	  	
+[ ! -z $pkey ] && ( e_delim 100 ; cni -pd $pdir/$pkey;  e_delim 100 )
 
 # }}}
 }

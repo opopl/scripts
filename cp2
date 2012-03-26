@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# sbvars set_base_dirs dhelp {{{
+# sbvars sbdirs dhelp {{{
 
 sbvars(){
 # {{{

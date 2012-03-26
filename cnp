@@ -11,6 +11,8 @@ s_project=" ~/scripts"
 export this_script=` basename $0 `
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
+# shell functions file
+export fsh="$hm/scripts/f.sh"
 
 
 export papdir=$hm/doc/papers/ChemPhys/
@@ -24,6 +26,7 @@ gitdirs=( "config" "scripts" "templates" "vrt" "install" "coms" "cit" )
 }
 
 sbvars
+source $fsh
 
 dhelp(){
 # {{{
@@ -79,30 +82,54 @@ EOF
 #}}}
 
 main(){
-# read cmd args {{{
 
+# intro messages {{{
 
+e_delim 100 "="
+eoos "Input (PDF) papers directory: $papdir" 
+eoos "Output (DJVU) directory: $ddir" 
 
+#}}}
+# while-loop  {{{
 
 while [ ! -z "$1" ]; do 
 	case "$1" in
-	  "")
-	  ;;
-	  *) 
-	  files=( ` find $papdir -name $1\*.pdf ` )
-	  for p in ${files[@]}; do
-			echo "$this_script> Converting file: "
-			echo "	$p"
-			pbare=$( basename $p )
-			dp=${pbare%.pdf}.djvu
-	  		pdf2djvu $p -o $ddir/$dp
-	  done
-	  ;;
+	  "") ;;
+	  -s) # short paper key {{{
+	  	eoos "-s: short paper key option"	
+	  	export pkey=`lpk $2 ` ; 
+		 	eoos "Short paper key provided: $2"  
+		if [ ! -z $pkey ]; then 
+		 	eoos "Long paper key is: $pkey"  
+		  else
+		 	eoor "Couldn't convert to the long form: $2"  
+		  fi
+	  shift ;;
+		# }}}
+	  *) pkey=$1  
+		 	eoos "Long paper key is: $pkey"  
+			;;
 	esac    
 	shift
 done
 
-# }}}
+#}}}
+# dealing with files {{{
+
+if [ ! -z $pkey ]; then  
+	files=( ` find $papdir -name $pkey\*.pdf ` )
+		  for p in ${files[@]}; do
+				eoos "	Converting file: "
+				eoos "		$p"
+				pbare=$( basename $p )
+				dp=${pbare%.pdf}.djvu
+				e_delim 50 "-"
+		  		pdf2djvu $p -o $ddir/$dp
+				e_delim 50 "-"
+		  done
+fi
+#}}}
+
 }
 
 # main part 
@@ -114,7 +141,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
+	  	vm) $v $0 $fsh; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

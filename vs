@@ -71,7 +71,13 @@ main(){
 while [ ! -z "$1" ]; do 
 	case "$1" in
 	  i) files=( $shd/inc/scripts.i.dat ) ;;
-	  *) files=( ${files[@]} `find $shd/$1 -name \* | sed '/~$/d' ` ) ;;
+	  -t) 
+	 	topic=$2; shift  
+	  files=( ${files[@]} `find $shd/$1 -name \* | sed '/~$/d' ` ) 
+	  ;;
+	  *)
+	  files=( `find $shd -name \* | sed '/~$/d'` )
+	  ;;
 	esac    
 	shift
 done

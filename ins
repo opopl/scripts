@@ -1,7 +1,9 @@
 #!/bin/bash
  
-#{{{
-# directory where this script resides
+# sbvars() dhelp() {{{
+
+sbvars(){
+  #{{{
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
@@ -10,25 +12,19 @@ vim_opts="-n -p"
 v="vim $vim_opts"
 venus="0502790@venus.phys.uu.nl"
 repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" ) 
-
-define_base_dirs(){
-# main Wales group software directory
-
-export wg_dir="$shd/../../"
+export ext=.tar.gz
 packdir=$HOME/arch/packed
 unpackdir=$HOME/arch/unpacked
-
+#}}}
 }
 
-define_base_vars(){
-ext=.tar.gz
-}
+sbvars
 
 cdpack(){
 cd $packdir
 }
 
-display_help(){
+dhelp(){
 # {{{
 cat << EOF
 =============================================
@@ -59,7 +55,7 @@ EOF
 }
 #}}}
 
-[ -z $* ] && ( display_help; exit 0 )
+[ -z $* ] && ( dhelp; exit 0 )
 
 # main part 
 # {{{
@@ -74,7 +70,7 @@ while [ ! -z "$1" ]; do
   	case "$arg" in
 		  #{{{
 	  	vm) $v $0; exit ;;
-		h) display_help $*; exit ;;
+		h) dhelp $*; exit ;;
 		vim) cd $unpackdir/$1 ; ./i ;; 
 		#*) atool $packdir/$1$ext -X $unpackdir/  ;;
 		-r) ;;

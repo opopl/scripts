@@ -9,7 +9,7 @@ vim_opts="-n -p"
 v="vim $vim_opts"
 repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 
-define_base_dirs(){
+sbdirs(){
 # {{{
 # main Wales group software directory
 export wg_dir="$shd/../../"
@@ -19,7 +19,7 @@ unpackdir=$HOME/arch/unpacked
 }
 
 
-set_base_vars(){
+sbvars(){
 # {{{
 s_purpose="view source files with vim"
 s_project="Wales group svn repository"
@@ -27,7 +27,7 @@ s_project="~/scripts"
 # }}}
 }
 
-set_base_vars
+sbvars
 
 display_help(){
 # {{{
@@ -88,7 +88,7 @@ esac    # --- end of case ---
 # {{{
 
 script_opts=( $* )
-define_base_dirs
+sbdirs
 
 while [ ! -z "$1" ]; do
   	case "$1" in

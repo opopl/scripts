@@ -9,7 +9,7 @@ v="vim $vim_opts"
 let screen_num=1
 screen_opts=""
 
-display_help(){
+dhelp(){
 # {{{
 cat << EOF
 =============================================
@@ -56,7 +56,7 @@ screen_opts="-r $screen_opts"
 }
 
 case "$1" in
-  	"h") display_help ;;
+  	"h") dhelp ;;
 	"vm") $v $shd/$this_script;;
 	"") screen -s bash;;
 	*) 

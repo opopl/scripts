@@ -10,6 +10,8 @@ s_project="~/scripts"
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
+# shell functions file
+export fsh="$hm/scripts/f.sh"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -25,6 +27,7 @@ export outdir=$picdir/
 }
 
 sbvars
+source $fsh
 
 dhelp(){
 # general  {{{
@@ -105,15 +108,25 @@ done
 #}}}
 # convert {{{
 cd $picdir
+eoos "Directory with image files: $picdir"
+eoos "Output extension: $oext"
+e_delim 50 "-"
 
 for iext in ${iexts[@]}; do 
-  	files=( ` ack -f *.$iext ` )
+  	files=( ` find . -name \*.$iext ` )
 	for file in ${files[@]}; do
   		fname=${file%.*}
   		fext=${file##*.}
+	    eoos "converting: $file; input extension: $fext; output extension: $oext"
 		convert $file $fname.$oext
+		if [ -f $fname.$oext ]; then 
+		  	eoos  	"	Output file exists! - converted."
+		else
+			eoor 	" 	Couldn't convert file: $file"
+  		fi 
 	done
 done
+e_delim 50 "-"
 cd -
 #}}}
 
@@ -128,7 +141,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0; exit ;;
+	  	vm) $v $0 $fsh; exit ;;
 		h) dhelp $*; exit ;;
 	  	*) main $* && exit 0 ;;
 	esac

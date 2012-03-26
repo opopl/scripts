@@ -15,7 +15,7 @@ alias cdop="cd ~/svn/SCRIPTS/op/"
 sync_files=( ".vimrc" ".bashrc" ".pinerc"  ) 
 sync_dirs=( "scripts" "vrt" "templates" "doc/coms" ) 
 
-define_base_dirs(){
+sbdirs(){
 # main Wales group software directory
 
 export wg_dir="$shd/../../"
@@ -25,7 +25,7 @@ unpackdir=$HOME/arch/unpacked
 }
 # }}}
 
-display_help(){
+dhelp(){
 # general {{{
 cat << EOF
 =============================================
@@ -87,7 +87,7 @@ EOF
 # }}}
 }
 
-[ -z $* ] && ( display_help; exit 0 )
+[ -z $* ] && ( dhelp; exit 0 )
 
 # main part 
 # {{{
@@ -100,7 +100,7 @@ while [ ! -z "$1" ]; do
   	case "$arg" in
 		  # {{{
 	  	vm) $v $0; exit ;;
-		h) display_help $*; exit ;;
+		h) dhelp $*; exit ;;
 		iwg) cd ~/svn/SCRIPTS/op/; $rsync iwg $venus:~/ ;;
 		op) cd ~/svn/SCRIPTS/
 			$rsync ./op ./all $clust:~/svn/SCRIPTS/ 

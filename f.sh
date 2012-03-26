@@ -207,8 +207,21 @@ eoo "$*"
 pref_eoo="$this_script"
 }
 
+e_delim(){
+  num=$1
+  s="="
+  if [ ! -z "$2" ]; then 
+		export s=$2
+  fi
+perl -e "print \"$s\"x$num; print \"\\n\""
+}
+
 eoos(){
 echo "$pref_eoo> $*"
+}
+
+eoor(){
+eoos "Error: $1"
 }
 
 eoo(){
