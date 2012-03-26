@@ -90,12 +90,13 @@ EOF
 main(){
   #{{{
 bibt=bibt.$pkey
-kfiles=( "keys.i.dat" $proj.bbl $bibt.bbl )
+kdat="keys.i.dat"
+kfiles=( $kdat $bibt.bbl )
 
 for kfile in ${kfiles[@]}; do
   	case $kfile in
 	  	"keys.i.dat") 
-				cat $kfile | awk "/$pkey/ { print \$1}" > tmp.$bibt.sk  
+				cat $kfile | awk "/$pkey/ { print \$2}" > tmp.$bibt.sk  
 				sk=`cat tmp.$bibt.sk`
 				if [ ! -z "$sk" ]; then 
 					echo $sk | awk ' { print $1 } ' 
@@ -103,16 +104,7 @@ for kfile in ${kfiles[@]}; do
 				fi
 				;;
 		*.bbl) 
-			if [ -f "$kfile" ]; then 
-			   # use existing bbl file  {{{
-				perl -ne "if ( /^\\\\bibitem\\[(\w+)(\W+?.*?|.*?)([0-9]+)\\]{$pkey}/ ){ print \"\$1\$3\n\";}" $kfile > tmp.$bibt.sk 
-				sk=`cat tmp.$bibt.sk`
-				if [ ! -z "$sk" ]; then 
-					echo "$sk"
-					exit 0
-				fi	  
-			  # }}}
-			else
+			if [ ! -f "$kfile" ]; then 
 			    # no bbl file {{{
 			  	# if no bbl-file exists, do latex bibtex to 
 				# produce one
@@ -134,17 +126,18 @@ EOF
 					#now latex & bibtex on $tmp; then extract the short key  {{{
 	  				ltm --infile $tmp >& /dev/null
 					mv tmp.$bibt.bbl $bibt.bbl
-					perl -ne "if ( /^\\\\bibitem\\[(\w+)(\W+?.*?|.*?)([0-9]+)\\]{$pkey}/ ){ print \"\$1\$3\n\";}" $kfile > tmp.$bibt.sk 
-					sk=`cat tmp.$bibt.sk`
-					if [ ! -z "$sk" ]; then 
-						echo "$sk"
-						exit 0
-					fi	  
 					rm -f tmp.$bibt.*
 				  	#}}}
 	  #}}}
 				fi
 			  fi
+				perl -ne "if ( /^\\\\bibitem\\[(\w+)(\W+?.*?|.*?)([0-9]+)\\]{$pkey}/ ){ print \"\$1\$3\n\";}" $kfile > tmp.$bibt.sk 
+					sk=`cat tmp.$bibt.sk`
+					if [ ! -z "$sk" ]; then 
+						echo "$sk"
+						ch.pl --var $pkey --val $sk --infile "$kdat"
+						exit 0
+					fi	  
 		;;
   	esac
 done
