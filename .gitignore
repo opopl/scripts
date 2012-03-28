@@ -2,3 +2,4 @@
 tags
 *.new
 *.bak
+tmp.*

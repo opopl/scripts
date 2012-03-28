@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+echo "deb http://notesalexp.org/debian/`lsb_release -cs`/ `lsb_release -cs` main contrib non-free" | sudo tee -a /etc/apt/sources.list
+
+wget -O - http://notesalexp.org/debian/alexp_key.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install cuneiform yagf

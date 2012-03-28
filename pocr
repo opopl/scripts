@@ -13,9 +13,11 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
+export cuneiform_v="0.9.0"
 
 export papdir=$hm/doc/papers/ChemPhys/
-export ddir="$hm/wrk/p/djvu"
+export ocrdir=$hm/wrk/p/ocr/
+export ocrexe="ocrodjvu"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -35,10 +37,10 @@ cat << EOF
 SCRIPT NAME: $this_script 
 PROJECT: $s_project
 PURPOSE: 
-	Convert a PDF paper in directory: 
+	Perform OCR on a PDF paper in the directory: 
 		$papdir	
-	to DJVU format and copy the final DJVU file to:
-		$ddir
+	The OCR files and the final output are stored in:
+		$ocrdir
 USAGE: $this_script [ OPTIONS ] 
 
 	OPTIONS:
@@ -58,9 +60,23 @@ EOF
 # actual interesting part {{{
 cat << EOF
 
-	FILE	- filename for the paper in the PDF format. e.g.
-		$this_script FILE takes FILE.pdf as input and then
-		produces FILE.djvu as output
+
+	-r RANGE
+		-	specify range of pages in the PDF file,
+			on which to perform OCR. RANGE can be e.g.:
+
+			3-20 	- STARTPAGE-FINALPAGE
+			3		- single page
+			15-		- STARTPAGE- 
+							i.e., specify a starting page 
+							and then go through the document till end.
+			-20		- -FINALPAGE  
+							i.e., specify a final page 
+							starting from the first page of the document,
+							go until FINALPAGE.
+
+	-s SPKEY - specify the paper name in short format. 
+					E.g. $this_script -s tomh10
 
 EOF
 # }}}
@@ -84,6 +100,9 @@ main(){
 
 # intro messages {{{
 
+e_delim 100 "="
+eoos "Input (PDF) papers directory: $papdir" 
+eoos "Output (ocr PDF) directory: $ocrdir" 
 
 #}}}
 # while-loop  {{{
@@ -91,9 +110,9 @@ main(){
 while [ ! -z "$1" ]; do 
 	case "$1" in
 	  "") ;;
-	  --ddir) export ddir=$2; shift ;;
-	  --ddpap) export ddir="$hm/doc/papers/djvu"; shift ;;
-	  --outfile) export outfile=$2; shift ;;
+	  --ocrdir) export ocrdir=$2; mkdir -p $ocrdir; shift ;;
+	  --ocrexe) export ocrexe=$2; shift ;;
+	  --papdir) export papdir=$2; shift ;;
 	  -r) # specify page range {{{
 	  		if [ ! -z $2 ]; then 
 	  			range=$2; shift 
@@ -129,10 +148,12 @@ while [ ! -z "$1" ]; do
 		 	eoos "Short paper key provided: $2"  
 		if [ ! -z $pkey ]; then 
 		 	eoos "Long paper key is: $pkey"  
+	  		shift 
 		  else
 		 	eoor "Couldn't convert to the long form: $2"  
-		  fi
-	  shift ;;
+			exit 1
+		fi
+			;;
 		# }}}
 	  *) pkey=$1  
 		 	eoos "Long paper key is: $pkey"  
@@ -144,30 +165,19 @@ done
 #}}}
 # dealing with files {{{
 
-e_delim 100 "="
-eoos "Input (PDF) papers directory: $papdir" 
-eoos "Output (DJVU) directory: $ddir" 
+mkdir -p $ocrdir
 
+if [ -z $1 ]; then 
 if [ ! -z $pkey ]; then  
 	files=( ` find $papdir -name $pkey\*.pdf ` )
 		  for p in ${files[@]}; do
-				eoos "	Converting file: "
-				eoos "		$p"
 				pbare=$( basename $p )
 				pbare=${pbare%.pdf}
+				eoos "Bare PDF filename: $pbare "
+				num_pages=` npdf $papdir/$pbare`
 				# page range {{{
-				num_pages=` npdf ${p%.pdf} `
 				eoos "Number of pages in the PDF file: "
 				eoos "	$num_pages"
-				if [ -z $range ]; then
-				  #{{{
-				  	norange=1
-					range="1-$num_pages"
-					start=1
-					fin="$num_pages"
-				  #}}}
-				else
-				  #{{{
 				eoos "Extracting the necessary pages from the PDF file..."
 				eoos "Pages are:"
 				# deal with start and fin {{{
@@ -190,54 +200,72 @@ if [ ! -z $pkey ]; then
 						  		eoos "Final page: $fin"
 						fi
 				fi
-				if [ "$start" == "$fin" ]; then 
+				if [ "$start" -eq "$fin" ]; then 
 							export opts="$start"
 					  	else
 							export opts="$start-$fin"
 			  	fi
-				if [ "$start" == "1" ]; then 
-				  if [ "$fin" == "$num_pages" ]; then 
-					norange=1
-				  fi
-				fi
-			  #}}}
 			  	#}}}
-			  	fi
 				# new "bare" name
-				if [ "$norange" == "1" ]; then
-						nbare=$pbare
-				  	else 
-						nbare=$pbare.$opts
-				fi
+				nbare=$pbare.$opts
 				finpdf="$nbare.pdf"
-				if [ "$norange" == "1" ]; then
-				  	cp $p $ddir
-				else
-					eoos "Running pdftk to extract the required pages..."
-					pdftk $p cat $start-$fin output $ddir/$finpdf
-			  	fi
+				eoos "Running pdftk to extract the required pages..."
+				pdftk $p cat $start-$fin output $ocrdir/$finpdf
 
 			  	# }}}
 
-				eoos "Running pdf2djvu on:"
-				eoos "   $finpdf"
-				eoos " ...in directory:"
-				eoos "	$ddir"
-
-				if [ -z $outfile ]; then 
-					ofile="$ddir/${finpdf%.pdf}.djvu"
-				  else 
-					ofile="$ddir/$outfile"
-				fi
-
-				eoos "Output DJVU file is:"
-				eoos "	$ofile"
-
+					eoos "OCR engine: $ocrexe"
+					ofile="$ocrdir/ocr.$finpdf"
+				case $ocrexe in 
+				  	"pdfocr") 
+					#{{{
+				# working directory for pdfocr {{{
+				wocrdir="$ocrdir/w_$nbare"
+				eoos "	Performing OCR on file: "
+				eoos "		$p"
+				eoos "Removing previous working directory..."
+				rm -rf $wocrdir
+				eoos "Creating working directory for ocr:"
+				eoos "		$wocrdir"
+				mkdir -p $wocrdir
+			    #}}}
+				# 
 				e_delim 50 "-"
-				pdf2djvu -o $ofile  $ddir/$finpdf
+				eoos "Removing previous OCR file..."
+				rm -rf $ofile
+				pdfocr -i $ocrdir/$finpdf -c -o $ofile -l eng -k -w $wocrdir 
 				e_delim 50 "-"
+				eoos "Bundling the hocr html file..."
+				cat ` find $wocrdir/pdfocr -name \*.hocr ` > $ocrdir/$nbare.html 
+				#hocrfiles=( `find $wocrdir/pdfocr -name \*.hocr ` )
+				;;
+				
+			  #}}}
+					"ocrodjvu") 
+					#{{{
+						odjvu=$ocrdir/${finpdf%.pdf}.djvu
+						eoos " PDF-to-DJVU conversion on: "
+						eoos "  $finpdf"
+						eoos "	 Output DJVU file is: "
+						eoos "		$odjvu"
+						pdf2djvu -o $odjvu --pages=$start-$fin $ocrdir/$finpdf	
+						eoos "Now performing OCR recognition on the djvu file: "	
+						eoos "	$odjvu"
+						ocr_djvu="$ocrdir/ocr.`basename $odjvu`"
+						ocrodjvu $odjvu -o $ocr_djvu	
+						ocr_txt="p.$nbare.djvu.tex"
+						eoos "OCR text will be saved in:"
+						eoos "	$ocr_txt"
+						eoos "DJVU OCR file is:"
+						eoos "$ocr_djvu"
+						#djvused $ocr_djvu -e 'print-pure-txt' >& $ocr_txt
+						;;
+					  #}}}
+				 esac
 		  done
 fi
+fi
+exit 0
 #}}}
 
 }
@@ -252,6 +280,8 @@ while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
 	  	vm) $v $0 $fsh; exit ;;
+		rm) rm -rf $ocrdir/* ;;
+		ls) find $ocrdir -name \* ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

@@ -194,6 +194,10 @@ else
 				od=( $hm/config/ )
 				bf=( pinerc inputrc bashrc bash_completion ) 
 				;;
+			pdfocr) 
+				od=( $hm/arch/unpacked/pdfocr/ )
+				bf=( pdfocr.rb ) 
+				;;
 			"bc")
 		   		k=bash_completion	
 			  od=( / )

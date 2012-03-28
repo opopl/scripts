@@ -16,8 +16,11 @@ export fsh="$hm/scripts/f.sh"
 export pdfview="evince"
 
 export field="ChemPhys"
-export pdir="$hm/doc/papers/$field/"
-export papdir=$hm/doc/papers/ChemPhys/
+export ptexdir="$hm/wrk/p/"
+export papdir="$hm/doc/papers/$field/"
+export djvudir="$hm/doc/papers/djvu/"
+export ocrdir="$djvudir/ocr/"
+export view_djvu_tex=1
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -28,6 +31,52 @@ gitdirs=( "config" "scripts" "templates" "vrt" "install" "coms" "cit" )
 
 sbvars
 source $fsh
+
+# PDF-to-DJVU conversion 
+f_pdf2djvu(){
+#{{{
+	eoos "DJVU file does not exist; will do PDF-to-DJVU conversion..."
+	e_delim 50 "-"
+	eoos "$range"
+	cnp --ddir $djvudir -r $range $pkey
+	if [ -f $fdjvu ]; then
+		eoos "File created:"
+		eoos "	$fdjvu"
+	else
+		eoor "DJVU file was not created."
+		exit 1
+	fi
+#}}}
+}
+
+
+djvu_check_text(){
+# check whether fdjvu contains text... {{{
+if [ ! -f $fdjvu ]; then 
+  	is_ocr=""
+else
+	djtxt ${fdjvu%.djvu} >& tmp.is_ocr 
+	djtxt_code="$?"	
+	is_ocr=`cat tmp.is_ocr | sed 's/^\s*$//g '`
+fi
+if [ "$djtxt_code" -ne "0" ]; then
+	eoos "DJVU file is corrupt! Removing..."
+	rm -rf $fdjvu
+	f_pdf2djvu
+	is_ocr=` djtxt ${fdjvu%.djvu} | sed 's/^\s*$//g '`
+fi
+
+if [ -z "$is_ocr" ]; then 
+	eoos "The DJVU file does not contain text, one needs OCR!"
+	is_ocr=0
+	ocrfile=$fdjvu_ocr
+else
+	eoos "The DJVU file contains text!"
+	is_ocr=1
+	ocrfile=$fdjvu
+fi
+#}}}
+}
 
 dhelp(){
 # {{{
@@ -61,8 +110,15 @@ DEFAULTS:
 	Field:
 		$field
 	Papers directory:
-		$pdir
-
+		$papdir
+	Papers tex directory:
+		$ptexdir
+	DJVU directory:
+		$djvudir
+	DJVU OCR directory:
+		$ocrdir
+	PDF viewer:
+		$pdfview
 EOF
 # }}}
 # final general part {{{
@@ -94,6 +150,164 @@ eoos "Input (PDF) papers directory: $papdir"
 while [ ! -z "$1" ]; do 
 	case "$1" in
 	  "") ;;
+	  -r) # specify page range {{{
+	  		if [ ! -z $2 ]; then 
+	  			export range=$2; shift 
+			else 
+			  eoor "Range does not exist!"
+			  #exit 1
+			fi
+			# getting start, fin from $range {{{
+			if [ ! -z "$range" ]; then 
+				export start=` echo "$range" | sed -e 's_^\([0-9]*\)\-.*_\1_g'  `
+				export fin=` echo "$range" | sed -e 's_^.*\-\([0-9]*\)$_\1_g'  `
+				# checking start and fin {{{
+				if [ ! -z "$start" ]; then  
+					eoos "Starting page is: $start"
+				  else
+					export start=1
+					eoos "Starting page was undefined. Setting it to $start"
+				  fi
+				if [ ! -z "$fin" ]; then  
+				  	eoos "Final page is: $fin"
+				  else
+					eoos "Final page was undefined. Will set it to the document's last page number."
+				fi
+			  	#}}}
+		  	fi
+		  #}}}
+			#exit 0
+	  ;;
+	#}}}
+	  -t) # read text from djvu, instead of viewing the pdf file {{{
+
+			 	# page range {{{
+				num_pages=` npdf $papdir/$pkey`
+				eoos "Number of pages in the PDF file: "
+				eoos "	$num_pages"
+				if [ -z "$range" ]; then
+				  	norange=1
+					range="1-$num_pages"
+					start=1
+					fin="$num_pages"
+				else
+				  #{{{
+				eoos "Extracting the necessary pages from the PDF file..."
+				eoos "Pages are:"
+				# deal with start and fin {{{
+				if [ ! -z "$start" ]; then 
+				  		eoos "Starting page: $start"
+				  		if [ -z "$fin" ]; then 
+						  	eoos "Final page was not specified before;"
+							eoos "	Now setting it to the last page number: $num_pages"
+							export fin=$num_pages
+						else
+						  	eoos "Final page: $fin"
+						fi
+				else
+				  		export start=1
+				  		eoos "Starting page: $start"
+						if [ ! -z "$fin" ]; then
+						  		eoos "Final page: $fin"
+						  	else
+							  	export fin="$num_pages"
+						  		eoos "Final page: $fin"
+						fi
+				fi
+				if [ "$start" == "$fin" ]; then 
+							export opts="$start"
+					  	else
+							export opts="$start-$fin"
+			  	fi
+			  	#}}}
+			  	#}}}
+			  	fi
+			  	#}}}
+			# vars {{{
+	  		eoos "Will read text from the corresponding DJVU file,"
+			eoos "  instead of opening PDF..."
+			eoos "DJVU directory is:"
+			eoos "	$djvudir"
+			eoos "$norange"
+
+			if [[ $norange -eq 1 ]]; then 
+					djvu_bare="$pkey.djvu"
+			  	else
+					djvu_bare="$pkey.$range.djvu"
+			fi
+
+			djvu_ocr="ocr.$djvu_bare"
+			fdjvu="$djvudir/$djvu_bare"
+			fdjvu_ocr="$ocrdir/$djvu_ocr"
+
+	  		p_djvu_tex="$ptexdir/p.$djvu_bare.tex"
+
+			eoos "The corresponding tex file will be:"
+			eoos "	$p_djvu_tex"
+			rm -f $p_djvu_tex
+		  	#}}}
+
+			djvu_check_text
+			if [ ! -f $fdjvu ]; then 
+				f_pdf2djvu
+		  	fi
+			# OCR recognition (ocrodjvu) {{{
+			if [ "$is_ocr" -eq "0" ]; then
+				if [ ! -f $fdjvu_ocr ]; then
+				  	eoos "OCR djvu file does not exist, will perform OCR... "
+					e_delim 50 "-"
+					ocrodjvu $fdjvu -o $fdjvu_ocr
+					if [ -f $fdjvu_ocr ]; then 
+					  eoos "OCR djvu file created:"
+					  eoos "	$fdjvu_ocr"
+					else 
+					  eoor "OCR djvu file was not created."
+					  exit 1
+					fi
+				fi
+			fi
+		  	#}}}
+			# write to p_djvu_tex {{{
+			if [ ! -f $p_djvu_tex ]; then
+			  eoos "OCR tex file does not exist, doing djvused on the OCR DJVU file: "
+			  eoos "	$ocrfile"
+
+cat << EOF >& $p_djvu_tex
+% ==========================================
+% 
+% Filename: 
+%		$p_djvu_tex
+% Paper key:
+%		$pkey
+% Page range:
+%		$range
+% Original DJVU file:
+%		$ocrfile
+% Created on:
+% 	` date +'%H:%M:%S (%a, %d-%b-%Y)'`
+%
+% ==========================================
+EOF
+				djvused $ocrfile -e 'print-pure-txt' >> $p_djvu_tex
+			fi
+		  	#}}}
+			if [ "$view_djvu_tex" -eq "1" ]; then 
+				$v $p_djvu_tex 
+			fi
+	  			exit 0
+	  ;;
+	  --nv) export view_djvu_tex=0 ;;
+	# }}}
+	# rmdjvu rmdjvua {{{
+	--rmdjvu) 
+		rm -rf $ptexdir/p.$pkey.*djvu.tex; 
+		eoos "Removing DJVU tex files for $pkey..."
+		exit 0 ;;
+	--rmdjvua) rm -rf $ptexdir/p.*djvu.tex
+		eoos "Removing ALL DJVU tex files..."
+			 exit 0
+				;;
+			  #f}}}
 	  -s) # short paper key {{{
 	  	eoos "-s: short paper key option"	
 	  	export pkey=`lpk $2 ` ; 
@@ -134,7 +348,7 @@ script_opts=( $* )
 while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
-	  	vm) $v $0 $hm/scripts/f.sh; exit ;;
+	  	vm) $v $0 $shd/f.sh $shd/cnp $shd/pocr; exit ;;
 		h) dhelp $*; exit ;;
 		-g) v="$v -g" ;;
 	  	*) main $* && exit 0 ;;

@@ -48,21 +48,41 @@ EOF
 cat << EOF
 	============
 
-	rm *		remove:
-				k 	 	keywords 
+	--------------------------
+	List ...
+	--------------------------
 
-	v		view:
-				abs 	 	abstract 
-				
-	l		list:
+	lk		list paper keys
+	lkkw	list paper keys for the given keyword
+	la		list authors
+	lak		list authors, number of keys and the list of keys 
+
+	--------------------------
+	pk* - Given the key, print:
+	--------------------------
+
+	pkt		print entry title given its key
+
+	--------------------------
+	File operations 
+	--------------------------
+
+	rw		re-write the bibfile
 
 REMARKS:
 DEFAULTS:
 	bib-file:
 		$bfile
 USAGE EXAMPLES:
-	$this_script rm k repdoc.bib 
-			remove all keywords from repdoc.bib
+	$this_script lk S
+		List all paper keys which name begins with S, e.g,
+		$this_script lk A lists all keys starting with 'A'
+	$this_script la AUTH
+		List all authors whose name begins with AUTH, e.g.
+		$this_script la A  gives all authors whose name begins with 'A'
+	$this_script lak AUTH 
+		List authors beginning with AUTHOR - number of entries - entries
+		e.g. $this_script lak W lists all authors whose name begins with 'W'
 
 AUTHOR: O. Poplavskyy
 =============================================
@@ -80,11 +100,33 @@ main(){
 case "$1" in
   "")
   ;;
-  verr) bt.pl --infile $bfile --list keys  >& n; cat n | awk '/error/' >& $bfile.err; v err ;;
-  vwarn) bt.pl --list keys --infile $bfile >& n; cat n | awk '/warning/' >& $bfile.warn; v warn ;;
-  lk) bt.pl --list keys --infile $bfile | sort > bib.pkeys.i.dat; cat bib.pkeys.i.dat ;;
-  la) bt.pl --list authors | sort > bib.auth.i.dat; cat bib.auth.i.dat ;;
-esac    # --- end of case ---
+  verr) bt.pl --infile $bfile --list pkeys  >& n; cat n | awk '/error/' >& $bfile.err; v err ;;
+  vwarn) bt.pl --list pkeys --infile $bfile >& n; cat n | awk '/warning/' >& $bfile.warn; v warn ;;
+  lk)  #list keys {{{
+  		opt="pkeys"
+  		ofile="bib.$opt.i.dat"
+  		bt.pl --list $opt --infile $bfile --startstring $2 > n 2>/dev/null; 
+  		cat n | sed '/warning:/d; /error:/d' | sort > $ofile ; 
+  		cat $ofile   
+		;;
+	  #}}}
+  la)  #list authors {{{
+  		ofile="bib.auth.i.dat"
+  		bt.pl --list authors --infile $bfile --startstring $2 > n 2>/dev/null; 
+  		cat n | sed '/warning:/d; /error:/d ' > $ofile ; 
+  		cat $ofile   
+		;;
+	  #}}}
+  lak)  #list authors and their keys{{{
+  		opt="auth_pkeys"
+  		ofile="bib.$opt.i.dat"
+  		bt.pl --list $opt --infile $bfile --startstring $2 > n 2>/dev/null ; 
+  		cat n | sed '/warning:/d; /error:/d ' > $ofile ; 
+  		cat $ofile   
+		;;
+	  #}}}
+
+  esac    # --- end of case ---
 
 # }}}
 }
