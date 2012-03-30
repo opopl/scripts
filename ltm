@@ -9,6 +9,8 @@ export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
 
+export bbl_nice=0
+
 # ps2pdf_opts dvips_opts vim_opts {{{
 
 # ps2pdf options taken from http://www.cs.toronto.edu/~dross/latex/
@@ -81,6 +83,9 @@ case "$1" in
 					exe $ifname	; c_a $ifname
 					c_idx $ifname ; makeindex $ifname.idx 
 					bibtex $ifname
+					if [[ $bbl_nice -eq 1 ]]; then 
+					  	bbl_nice.pl --infile $ifname.bbl
+					fi
 					exe $ifname	 ; c_a $ifname
 					exe $ifname	 ; c_a $ifname
 			;;
@@ -177,6 +182,7 @@ while [ ! -z "$1" ]
 	    "vm") vim $vim_opts $0 ;;
 	    "c") rm -f *.ps *.dvi *.bbl *.aux *.bak .*swp *.blg *.log *.lof *~ *.lot *.out *.toc *.backup *.d *.dmp *.idx ; exit 
 		;;
+		"--bbl_nice") export bbl_nice=1 ;;
 	    "-f") export  mode="full" ;;
 	    "-s") export  mode="simple" ;;
 	    "-c") export  mode="convert" ;;

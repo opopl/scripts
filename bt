@@ -2,15 +2,28 @@
 
 # sbvars() dhelp() {{{
 
+
 sbvars(){
-#{{{
+# {{{
 # directory where this script resides
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
 # shell file with functions
 export fsh="$hm/scripts/f.sh"
+# script author 
+export sauthor="O. Poplavskyy"
+# input bib file
 export bfile=`mktex.pl --var bibfile `.bib
+# output bib file
+export bofile="new.$bfile"
+# the underlying perl script
+export pl="bt.pl"
+# initial options for the perl script,
+# 	see subroutine set_plopts() below
+export plopts0=""
+# command-line for this script
+export extcmd="$this_script $*"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -18,7 +31,7 @@ v="vim $vim_opts"
 # }}}
 }
 
-sbvars
+sbvars $*
 source $fsh
 
 dhelp(){
@@ -49,6 +62,13 @@ cat << EOF
 	============
 
 	--------------------------
+	View...
+	--------------------------
+
+	verr	view list of errors 
+	vwarn	view list of warnings
+
+	--------------------------
 	List ...
 	--------------------------
 
@@ -73,6 +93,8 @@ REMARKS:
 DEFAULTS:
 	bib-file:
 		$bfile
+	output bib-file:
+		$bofile
 USAGE EXAMPLES:
 	$this_script lk S
 		List all paper keys which name begins with S, e.g,
@@ -84,7 +106,10 @@ USAGE EXAMPLES:
 		List authors beginning with AUTHOR - number of entries - entries
 		e.g. $this_script lak W lists all authors whose name begins with 'W'
 
-AUTHOR: O. Poplavskyy
+AUTHOR: 
+	$sauthor
+SCRIPT LOCATION:
+	$0
 =============================================
 EOF
 # }}}
@@ -94,40 +119,159 @@ EOF
 
 # }}}
 
+# run_pl() {{{
+run_pl(){
+$pl $plopts $* > n 2>/dev/null ; 
+if [ -z $ofile ]; then 
+	if [[ $use_sort -eq 1 ]]; then 
+		cat n | sed '/warning:/d; /error:/d ' | sort 
+	else
+		cat n | sed '/warning:/d; /error:/d '
+	fi
+else
+	if [[ $use_sort -eq 1 ]]; then 
+		cat n | sed '/warning:/d; /error:/d ' | sort > $ofile;
+	else 
+		cat n | sed '/warning:/d; /error:/d ' > $ofile;
+	fi
+	cat $ofile
+fi
+}
+#}}}
+# set_mkey() {{{
+set_mkey(){
+
+if [ ! -z "$1" ]; then 
+		export mkey=` echo $1 ` 
+else
+  	if [ -z "$pkey" ]; then 
+		eoor "Key was not provided! "
+	else
+	  	export mkey="$pkey"
+	fi
+fi
+		eood "Key provided: $mkey"
+}
+#}}}
+# set_plopts() {{{
+set_plopts(){
+  export plopts="$plopts0"
+
+  if [ ! -z "$extcmd" ]; then 
+		export plopts="$plopts --extcmd \"$extcmd\""
+  fi
+  if [ ! -z "$bfile" ]; then 
+		export plopts="$plopts --infile $bfile"
+  fi
+  rm -rf tmp.bt.title
+  
+  if [ ! -z "$bofile" ]; then 
+		export plopts="$plopts --outfile $bofile"
+  fi
+  if [ ! -z "$mkey" ]; then 
+		export plopts="$plopts --pkey $mkey"
+  fi
+  if [ ! -z "$listopt" ]; then 
+		export plopts="$plopts --list $listopt"
+  fi
+  if [ ! -z "$startstring" ]; then 
+		export plopts="$plopts --startstring $startstring"
+  fi
+  if [ ! -z "$author" ]; then 
+		export plopts="$plopts --author $author"
+  fi
+  if [ ! -z "$title" ]; then 
+		#export plopts="$plopts --title \"$title\""
+		#export plopts="$plopts --title \'$title\'"
+		echo "$title" >& tmp.bt.title
+  fi
+  case "$regime" in 
+		"debug") export plopts="$plopts --debug" ;;
+  esac
+
+  case $1 in 
+		rw) export plopts="$plopts --rewrite" ;;
+  esac
+}
+#}}}
+
 main(){
 # {{{
 
+while [ ! -z "$1" ]; do
 case "$1" in
-  "")
-  ;;
-  verr) bt.pl --infile $bfile --list pkeys  >& n; cat n | awk '/error/' >& $bfile.err; v err ;;
-  vwarn) bt.pl --list pkeys --infile $bfile >& n; cat n | awk '/warning/' >& $bfile.warn; v warn ;;
-  lk)  #list keys {{{
-  		opt="pkeys"
-  		ofile="bib.$opt.i.dat"
-  		bt.pl --list $opt --infile $bfile --startstring $2 > n 2>/dev/null; 
-  		cat n | sed '/warning:/d; /error:/d' | sort > $ofile ; 
-  		cat $ofile   
+  "") ;;
+	  verr) bt.pl --infile $bfile --list pkeys  >& n; cat n | awk '/error/' >& $bfile.err; v err ;;
+  vwarn) bt.pl --list pkeys $plopts >& n; cat n | awk '/warning/' >& $bfile.warn; v warn ;;
+	rw) set_plopts $1 ;;
+	-h) export head_num="$2" ;;
+	  -s) # short paper key {{{
+	  	eood "-s: short paper key option"	
+	  	export pkey=`lpk $2 ` ; 
+		 	eood "Short paper key provided: $2"  
+		if [ ! -z $pkey ]; then 
+		 	eood "Long paper key is: $pkey"  
+		  else
+		 	eoor "Couldn't convert to the long form: $2"  
+		  fi
+	  shift ;;
+		# }}}
+  lk|la|lak|lkt) # {{{
+		case $1 in 
+			lk) export listopt="pkeys" ;;
+			la) export listopt="authors" ;;
+			lak) export listopt="auth_pkeys" ;;
+			lkt) export listopt="pkey_titles" ;;
+		esac
+		case $1 in 
+			lk|la|lak) export startstring="$2" ; export use_sort=1  ;;
+			lkt) export author="$2" ;;
+		esac
+  		export ofile="bib.$listopt.i.dat"
+		set_plopts
+  		run_pl
 		;;
-	  #}}}
-  la)  #list authors {{{
-  		ofile="bib.auth.i.dat"
-  		bt.pl --list authors --infile $bfile --startstring $2 > n 2>/dev/null; 
-  		cat n | sed '/warning:/d; /error:/d ' > $ofile ; 
-  		cat $ofile   
-		;;
-	  #}}}
-  lak)  #list authors and their keys{{{
-  		opt="auth_pkeys"
-  		ofile="bib.$opt.i.dat"
-  		bt.pl --list $opt --infile $bfile --startstring $2 > n 2>/dev/null ; 
-  		cat n | sed '/warning:/d; /error:/d ' > $ofile ; 
-  		cat $ofile   
-		;;
-	  #}}}
+		#}}}
+  	  pk*) # print ... given the paper key {{{	
+		case "$1" in
+			pkt) pvar="title" ;;
+			pka) pvar="author" ;;
+			pkab) pvar="abstract" ;;
+			pkv) pvar="volume" ;;
+			pkp) pvar="pages" ;;
+			pky) pvar="year" ;;
+			pkj) pvar="journal" ;;
+			pktex) pvar="paptex" ;; 
+		esac
 
+		inf=$pvar
+		case "$pvar" in
+			author) inf="authors" ;;
+			paptex) inf="latex-formatted entry" ;;
+		esac
+
+		eood "Option $1: given key, show the $inf"
+		set_mkey $2
+		plopts0="--print $pvar"
+		set_plopts
+		run_pl $plopts
+		;;
+	#}}}
+	tk) # print paper key(s), given the title  {{{
+		export listopt="title_pkeys"
+		shift
+		export title=`echo "$*"`
+		eood "Option $1: given paper title (or its substring), "
+		eood "		show the corresponding keys "
+		pvar="keys"
+		plopts0="--print $pvar"
+		set_plopts
+		run_pl
+	;;
+  	#}}}
   esac    # --- end of case ---
-
+  shift 
+done
 # }}}
 }
 
@@ -140,6 +284,11 @@ while [ ! -z "$1" ]; do
   	case "$1" in
 		  #{{{
 	  	vm) $v $0 $fsh $shd/$this_script.pl; exit ;;
+		-g) v="$v -g" ;;
+		-d) export regime="debug" ;;
+		-i|--infile) export bfile=$2; set_plopts; shift ;;
+		-o|--outfile) export bofile=$2; set_plopts; shift ;;
+		--pkey) export mkey="$2"; set_plopts ; shift ;;
 		h) dhelp $*; exit ;;
 	  	*) main $* && exit 0 ;;
 	esac

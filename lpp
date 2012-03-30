@@ -13,6 +13,7 @@ export this_script=` basename $0 `
 export shd="`dirname $(readlink -f $0)`"
 # shell functions file
 export fsh="$hm/scripts/f.sh"
+export psel="it"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -78,11 +79,81 @@ while [ ! -z "$1" ]; do
 	case "$1" in
 	  "")
 	  ;;
-	  *)
+	  even) export psel="even" ;;
+	  odd) export psel="even" ;;
+	  -r) # specify page range {{{
+	  		if [ ! -z $2 ]; then 
+	  			export range=$2; shift 
+			else 
+			  eoor "Range does not exist!"
+			  #exit 1
+			fi
+			# getting start, fin from $range {{{
+			if [ ! -z $range ]; then 
+				export start=` echo "$range" | sed -e 's_^\([0-9]*\)\-.*_\1_g'  `
+				export fin=` echo "$range" | sed -e 's_^.*\-\([0-9]*\)$_\1_g'  `
+				# checking start and fin {{{
+				if [ ! -z $start ]; then  
+					eoos "Starting page is: $start"
+				  else
+					export start=1
+					eoos "Starting page was undefined. Setting it to $start"
+				  fi
+				if [ ! -z $fin ]; then  
+				  	eoos "Final page is: $fin"
+				  else
+					eoos "Final page was undefined. Will set it to the document's last page number."
+				fi
+			  	#}}}
+		  	fi
+		  #}}}
+			#exit 0
 	  ;;
+	#}}}
+	  -i|--infile) export infile=$2; shift ;;
+	  *) ;;
 	esac    
 	shift
 done
+
+# printing {{{
+
+if [ -z $infile ]; then 
+	eoor "No input file! Exiting..."
+	exit 1
+  else
+	eoos "Input file is:"
+	eoos "	$infile"
+fi
+
+export fname=${infile%.pdf}
+export num_pages=`npdf $fname`
+eoos "Number of pages is:"
+eoos "	$num_pages"
+
+if [ -z $fin ]; then 
+	export fin="$num_pages"
+fi
+if [ -z $start ]; then 
+	export start=1
+fi
+
+case $psel in
+	even)
+		seq="`seq $fin -2 $start | sed 's/$/,/g' `"
+	;;
+	odd) 
+		seq="`seq $start 2 $fin | sed 's/$/,/g' `"
+	;;
+	it)  seq="$start-$fin";;
+esac
+
+seq=`echo $seq | sed 's/,$//g; s/\s*//g' `
+eoos "Pages to print: "
+eoos "	$seq"
+opts="-P $seq" 
+lp -P "$seq" $infile
+#}}}
 
 # }}}
 }

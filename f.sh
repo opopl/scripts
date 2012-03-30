@@ -189,6 +189,12 @@ eo(){ # {{{
 
 # eoo {{{
 
+eood(){
+case "$regime" in
+  	debug) eoos "$*" ;;
+esac
+}
+
 eoos(){
 
 pref_eoo="$this_script.code"
@@ -221,7 +227,12 @@ echo "$pref_eoo> $*"
 }
 
 eoor(){
-eoos "Error: $1"
+eoos "Error: $*"
+exit 1 
+}
+
+eoow(){
+eoos "Warning: $*"
 }
 
 eoo(){
@@ -256,6 +267,10 @@ dir_size(){
 
 du -hc $1 | awk '/total/{ print $1 }'  
 
+}
+
+file_size(){
+wc -c $1 | awk '{print $1}'
 }
 
 use(){

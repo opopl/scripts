@@ -59,7 +59,7 @@ else
 	djtxt_code="$?"	
 	is_ocr=`cat tmp.is_ocr | sed 's/^\s*$//g '`
 fi
-if [ "$djtxt_code" -ne "0" ]; then
+if [[ $djtxt_code -ne 0 ]]; then
 	eoos "DJVU file is corrupt! Removing..."
 	rm -rf $fdjvu
 	f_pdf2djvu
