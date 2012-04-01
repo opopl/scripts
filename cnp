@@ -16,6 +16,7 @@ export fsh="$hm/scripts/f.sh"
 
 export papdir=$hm/doc/papers/ChemPhys/
 export ddir="$hm/wrk/p/djvu"
+export ddir="$hm/doc/papers/djvu"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
