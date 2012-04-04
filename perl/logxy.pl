@@ -3,6 +3,9 @@
 # use {{{
 use strict;
 use warnings;
+use lib ( "$ENV{PERLLIB}" );
+use lib ( "$ENV{HOME}/lib/perl/5.10.1" );
+use lib ( "$ENV{HOME}/share/perl/5.10.1" );
 
 use Getopt::Long;
 use File::Basename;

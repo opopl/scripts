@@ -88,10 +88,11 @@ case "$1" in
   	*) pkey=$1 ;;
 esac    
 
-files=( ` find $ptexdir -name p.$pkey\*.\*.tex -o -name p.$pkey\*.tex ` \
+files=( ` find $ptexdir -name p.$pkey\*.\*.tex -o -name p.$pkey\*.tex | sed '/\.eq\./d'` \
 	pap-nc.0.tex pap-preamble.0.tex \ 
 	`find $ptexdir -name up.$pkey\*.i.dat ` \ 
-	`find $ptexdir -name bibt.$pkey\*.tex `) 
+	`find $ptexdir -name bibt.$pkey\*.tex ` \ 
+	`find $ptexdir -name p.$pkey.*.dat ` ) 
 
 $v ${files[@]}
 

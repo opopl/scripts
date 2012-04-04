@@ -76,6 +76,7 @@ open(INFILE,"<$infile") || warn $!;
 while(<INFILE>){
 	#{{{
 	chomp; 
+		next if /^\s*\\addvspace/;
 
 	m/^[ \t]*(\\contentsline[ \t]*\{figure\}\{\\numberline[ \t]*)\{(.*)\}\{(.*)\}\}\{([0-9]*)\}\{figure\.(.*)\}/g;
 
