@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+
+sbvars(){
+# {{{
+s_purpose="start pathsampling jobs"
+s_project="~/gops/pbs/s"
+# directory where this script resides
+export shd="`dirname $(readlink -f $0)`"
+# name of this script 
+export this_script=` basename $0 `
+# shell functions file
+export fsh="$hm/scripts/f.sh"
+# executable
+export pexe="PATHSAMPLE"
+export pexe="P"
+
+vim_opts="-n -p"
+v="vim $vim_opts"
+
+# }}}
+}
+
+sbvars
+source $fsh
+
+dhelp(){
+# {{{
+# general beginning part {{{
+cat << EOF
+=============================================
+SCRIPT NAME: $this_script 
+PROJECT: 
+	gops
+PURPOSE: 
+	Running pathsampling program P
+USAGE: $this_script [ OPTIONS ] 
+
+	OPTIONS:
+
+	============
+	General
+	============
+
+			display the help message
+
+	vm		v(iew) m(yself), i.e., edit this script
+	-g		gvim invocation
+	
+	============
+EOF
+# }}}
+# actual interesting part {{{
+cat << EOF
+
+
+EOF
+# }}}
+# final general part {{{
+cat << EOF
+REMARKS:
+AUTHOR: 
+	O. Poplavskyy
+LOCATION:
+	$0
+=============================================
+EOF
+# }}}
+# }}}
+}
+
+[ -z "$*" ] && ( dhelp; exit 0 )
+
+main(){
+# {{{
+
+case "$1" in
+  [0-9]*) cp pdata.$1 pathdata; $pexe ;;
+  *)
+  ;;
+esac    # --- end of case ---
+
+# }}}
+}
+
+# main part 
+# {{{
+
+script_opts=( $* )
+
+while [ ! -z "$1" ]; do
+  	case "$1" in
+		  #{{{
+	  	vm) $v $0; exit ;;
+		h) dhelp $*; exit ;;
+		-g) v="$v -g" ;;
+	  	*) main $* && exit 0 ;;
+	esac
+  	shift
+        #}}}
+done
+
+# }}}
