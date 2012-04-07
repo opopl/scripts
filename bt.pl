@@ -3,6 +3,10 @@
 # use ... dhelp() {{{
 # use ... ; define $this_script; $shd; $pref_eoo {{{
 
+use lib ( "$ENV{PERLLIB}" );
+use lib ( "$ENV{HOME}/lib/perl/5.10.1" );
+use lib ( "$ENV{HOME}/share/perl/5.10.1" );
+
 use strict;
 use warnings;
 use File::Basename;

@@ -1,0 +1,8 @@
+Term::ReadLine
+File::Grep
+Statistics::LineFit
+LaTeX::BibTeX
+LaTeX::Table
+LaTeX::TOM 
+#Bundle::CPAN
+LaTeX::Table::Types::Xtab
