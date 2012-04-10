@@ -7,6 +7,8 @@ sbvars(){
 export shd="`dirname $(readlink -f $0)`"
 # name of this script 
 export this_script=` basename $0 `
+# shell functions file
+export fsh="$hm/scripts/f.sh"
 
 vim_opts="-n -p"
 v="vim $vim_opts"
@@ -15,10 +17,12 @@ repos=( "config" "scripts" "templates" "vrt" "install" "doc-coms" "doc-cit" )
 export ext=.tar.gz
 packdir=$HOME/arch/packed
 unpackdir=$HOME/arch/unpacked
+ifiles=( `find . -name $this_script.\*.dat` )
 #}}}
 }
 
 sbvars
+source $fsh
 
 cdpack(){
 cd $packdir
@@ -69,7 +73,7 @@ while [ ! -z "$1" ]; do
   	shift
   	case "$arg" in
 		  #{{{
-	  	vm) $v $0; exit ;;
+	  	vm) $v $0 ${ifiles[@]} $fsh; exit ;;
 		h) dhelp $*; exit ;;
 		vim) cd $unpackdir/$1 ; ./i ;; 
 		#*) atool $packdir/$1$ext -X $unpackdir/  ;;

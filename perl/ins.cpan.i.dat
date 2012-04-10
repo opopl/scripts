@@ -6,3 +6,6 @@ LaTeX::Table
 LaTeX::TOM 
 #Bundle::CPAN
 LaTeX::Table::Types::Xtab
+Hash::MultiKey 
+DateTime 
+File::Cat
